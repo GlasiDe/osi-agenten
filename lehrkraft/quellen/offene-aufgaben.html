@@ -25,8 +25,8 @@
 </style>
 </head>
 <body>
-<h1>OSI-Agenten · Was noch offen ist – Schritt für Schritt</h1>
-<div class="muted">Für die Lehrkraft · Stand 01.10.2026 · Spielversion 1.1.0</div>
+<h1>OSI-Agenten · Offene Aufgaben und Ausbau-Ideen</h1>
+<div class="muted">Für Lehrkräfte · Stand 06.10.2026 · Spielversion 1.1.0</div>
 
 <div class="box warn"><b>Für den Start wird nichts davon gebraucht.</b> Einsatz 0 bis Finale und das Abschlussverhör sind vollständig spielbar. Die offenen Teile sind <b>freiwillige Bonus-Akten</b> („Außeneinsätze“, im Spiel versiegelt) und Begleitmaterial. Versiegelte Akten werden einfach übersprungen – sie bringen keine Punkte und blockieren nichts.</div>
 
@@ -39,14 +39,14 @@
   <li>Stundenende: alle <code>.osiagent</code>-Dateien einsammeln (z. B. als Abgabe auf der Lernplattform) und in die Einsatzzentrale ziehen.</li>
 </ol>
 
-<h2>B · Außeneinsätze in Packet Tracer (5 Dateien – von dir zu erstellen)</h2>
-<p>Pro Einsatz gibt es am Ende einen versiegelten Bonus-Schritt mit einem Teaser. Für jeden brauchst du <b>eine .pkt-Datei</b> und <b>einen kurzen Arbeitsauftrag</b> (½ Seite). So gehst du vor:</p>
+<h2>B · Außeneinsätze in Packet Tracer (5 Dateien – noch zu erstellen)</h2>
+<p>Am Ende der Einsätze E1–E5 steht je ein versiegelter Bonus-Schritt mit einem Teaser. Für jeden werden <b>eine .pkt-Datei</b> und <b>ein kurzer Arbeitsauftrag</b> (½ Seite) gebraucht. Vorgehen:</p>
 <ol>
   <li>Netz in Packet Tracer aufbauen (Vorschläge unten) und im <b>Simulationsmodus</b> selbst durchspielen.</li>
-  <li>Datei speichern als <code>Aussen_E1_Wer-hoert-mit.pkt</code> usw. Tipp: einen Zustand <i>vor</i> der Beobachtung speichern (PCs ohne Konfiguration bzw. leere Tabellen), damit die SuS selbst auslösen.</li>
-  <li>Arbeitsauftrag schreiben: Was sollen sie auslösen, was beobachten, welche 2–3 Fragen beantworten? (Wenn du mir den Text gibst, mache ich daraus ein druckfertiges A4-PDF im Spiel-Design.)</li>
+  <li>Datei speichern als <code>Aussen_E1_Wer-hoert-mit.pkt</code> usw. Tipp: einen Zustand <i>vor</i> der Beobachtung speichern (PCs ohne Konfiguration bzw. leere Tabellen), damit die Lernenden selbst auslösen.</li>
+  <li>Arbeitsauftrag schreiben: Was sollen sie auslösen, was beobachten, welche 2–3 Fragen beantworten? Ein druckfertiges A4-PDF im Spiel-Design entsteht, wenn der Auftrag als HTML in <code>lehrkraft/quellen/</code> angelegt und mit <code>npm run pdf</code> erzeugt wird (siehe CONTRIBUTING.md).</li>
   <li>Freischalten: Im jeweiligen Spielstand Lehrkraft-Modus (Strg + Alt + L) → <b>„Außeneinsätze in diesem Spielstand freischalten“</b>. Das schaltet <b>alle fünf</b> auf einmal frei; die Akte zeigt dann „Die Unterlagen bekommt ihr von eurer Lehrkraft“.</li>
-  <li>Datei + Auftrag verteilen (z. B. über die Lernplattform). Optional: Wenn alle fünf fertig sind, kann ich den Text der Akten so ändern, dass sie direkt auf die Dateinamen verweisen.</li>
+  <li>Datei + Auftrag verteilen (z. B. über die Lernplattform). Optional: Sind alle fünf fertig, können die Texte der versiegelten Akten (Schritte vom Typ <code>sealed</code> in <code>spiel/content/eN.js</code>) direkt auf die Dateinamen verweisen.</li>
 </ol>
 
 <div class="pt"><h3>E1 · „Wer hört mit?“ – Switch gegen Hub (L1/L2)</h3>
@@ -63,33 +63,35 @@
 <b>Aufbau:</b> Ein LAN mit zwei DHCP-Servern, die <b>unterschiedliche Standardgateways</b> verteilen (Server 1 → Router .1, Server 2 → ein zweiter Router). Für den sichtbaren Extra-Hop in tracert muss das zweite Gateway ein Router sein, der weiterleitet. Dahinter ein „Internet“-Server.<br>
 <b>Beobachtung:</b> PCs auf DHCP stellen (bzw. neu anfordern lassen), im Simulationsmodus DHCP filtern: ein Discover, zwei Offers. Danach <code>ipconfig /all</code> und <code>tracert</code> zum Internet-Server vergleichen.<br>
 <b>Fragen-Ideen:</b> Welches Offer hat der PC genommen und woran seht ihr das? Wie unterscheidet sich die tracert-Ausgabe? Woran erkennt man einen zweiten DHCP-Server?<br>
-<span class="muted">Bitte vorab testen, welches Angebot Packet Tracer bei dir annimmt. Das hängt vom Ablauf in der Simulation ab. Wenn es immer derselbe Server ist, im Arbeitsauftrag auf „Beobachtet, welches Angebot gewinnt“ ausweichen.</span></div>
+<span class="muted">Vorab testen, welches Angebot Packet Tracer annimmt. Das hängt vom Ablauf in der Simulation ab. Wenn es immer derselbe Server ist, im Arbeitsauftrag auf „Beobachtet, welches Angebot gewinnt“ ausweichen.</span></div>
 
 <div class="pt"><h3>E4 · „Wer hebt ab?“ – 3-Wege-Handshake (L4)</h3>
 <b>Aufbau:</b> PC und Server-PT mit HTTP-Dienst, ein Switch genügt.<br>
 <b>Beobachtung:</b> Im Webbrowser des PCs die Seite aufrufen, Simulationsmodus mit Filter TCP/HTTP: SYN – SYN, ACK – ACK, dann die HTTP-Anfrage. Danach den HTTP-Dienst am Server ausschalten und erneut aufrufen.<br>
 <b>Fragen-Ideen:</b> In welcher Reihenfolge kommen die Flags? Was kommt zurück, wenn kein Dienst lauscht?<br>
-<span class="muted">Bitte vorab prüfen, was Packet Tracer bei abgeschaltetem Dienst zurückschickt. Ich bin nicht sicher, ob PT dann wie ein echtes Betriebssystem RST, ACK sendet. Falls nicht, die zweite Frage weglassen oder als „Was zeigt der Browser?“ stellen.</span></div>
+<span class="muted">Vorab prüfen, was Packet Tracer bei abgeschaltetem Dienst zurückschickt. Ungeklärt ist, ob PT dann wie ein echtes Betriebssystem RST, ACK sendet. Falls nicht, die zweite Frage weglassen oder als „Was zeigt der Browser?“ stellen.</span></div>
 
 <div class="pt"><h3>E5 · „Name gegen Adresse“ – DNS (L7)</h3>
 <b>Aufbau:</b> PC, DNS-Server (Server-PT, Dienst DNS mit A-Eintrag, z. B. <code>lohn.firma.intern → 192.168.50.20</code>), Webserver .20. Für den zweiten Teil einen zweiten DNS-Server mit <b>anderem</b> A-Eintrag für denselben Namen.<br>
 <b>Beobachtung:</b> <code>nslookup</code> und Browser am PC; im Simulationsmodus DNS filtern. Dann am PC den zweiten DNS-Server eintragen und vergleichen.<br>
 <b>Fragen-Ideen:</b> Welche Adresse liefert welcher Server? Woran seht ihr in der nslookup-Ausgabe, welcher Server geantwortet hat? Was zeigt die Adresszeile des Browsers?</div>
 
-<h2>C · Weitere offene Punkte aus dem Etappenplan</h2>
+<h2>C · Weitere Ideen für Begleitmaterial</h2>
+<p>Beiträge sind willkommen – am besten vorher ein Issue auf GitHub eröffnen (github.com/GlasiDe/osi-agenten).</p>
 <table>
-  <tr><th style="width:26%">Punkt</th><th>Was zu tun ist</th><th style="width:16%">Wer</th></tr>
-  <tr><td>Arbeitsaufträge zu B</td><td>Je ½ Seite, als PDF im Spiel-Design</td><td>Text von dir, PDF von mir</td></tr>
-  <tr><td><code>.pcapng</code>-Boni</td><td>Echte Mitschnitte zum Öffnen im echten Wireshark (z. B. DORA, Handshake, DNS, HTTP-Seitenaufruf). Am einfachsten im eigenen Testnetz oder in einer VM aufnehmen. Wichtig: nur eigener, harmloser Verkehr ohne Zugangsdaten oder personenbezogene Daten.</td><td>Aufnahme von dir, Aufgaben dazu von mir</td></tr>
-  <tr><td>Agenten-Handbuch (PDF)</td><td>Das 📘 Handbuch aus dem Spiel als Spickzettel zum Ausdrucken (Schichten, PDUs, Ports, Befehle, Filter)</td><td>ich, auf Zuruf</td></tr>
-  <tr><td>Lehrkraft-Handbuch (PDF)</td><td>Ablauf, Einsatzzentrale, Freischalten, Updates verteilen. Größtenteils schon im Lösungs-PDF und in diesem Blatt enthalten.</td><td>ich, auf Zuruf</td></tr>
-  <tr><td>Eigenes Lehrkraft-Passwort</td><td>Das Standard-Passwort ist öffentlich. Wer den Lehrkraft-Modus vor der eigenen Lerngruppe verbergen möchte, setzt ein eigenes (Anleitung in der README).</td><td>du</td></tr>
+  <tr><th style="width:26%">Punkt</th><th>Was zu tun ist</th></tr>
+  <tr><td>Arbeitsaufträge zu B</td><td>Je ½ Seite, als PDF im Spiel-Design</td></tr>
+  <tr><td><code>.pcapng</code>-Boni</td><td>Echte Mitschnitte zum Öffnen im echten Wireshark (z. B. DORA, Handshake, DNS, HTTP-Seitenaufruf). Am einfachsten im eigenen Testnetz oder in einer VM aufnehmen. Wichtig: nur eigener, harmloser Verkehr ohne Zugangsdaten oder personenbezogene Daten. Dazu passende Aufgaben.</td></tr>
+  <tr><td>Agenten-Handbuch (PDF)</td><td>Das 📘 Handbuch aus dem Spiel als Spickzettel zum Ausdrucken (Schichten, PDUs, Ports, Befehle, Filter)</td></tr>
+  <tr><td>Lehrkraft-Handbuch (PDF)</td><td>Ablauf, Einsatzzentrale, Freischalten, Updates verteilen. Größtenteils schon im Lösungs-PDF und in diesem Blatt enthalten.</td></tr>
+  <tr><td>Eigenes Lehrkraft-Passwort</td><td>Das Standard-Passwort ist öffentlich. Wer den Lehrkraft-Modus vor der eigenen Lerngruppe verbergen möchte, setzt ein eigenes (Anleitung in der README).</td></tr>
 </table>
 
 <h2>D · Wenn während des Einsatzes Fehler auftauchen</h2>
 <ul>
-  <li>Melde mir Einsatz + Schritt (Titel reicht) und am besten die <code>.osiagent</code>-Datei. Texte korrigiere ich, ohne Spielstände zu gefährden (IDs bleiben).</li>
-  <li>Neue Version: Ich zähle die Version hoch und baue die ZIP. Die SuS entpacken sie in denselben Ordner; fehlt der Stand, laden sie ihre letzte <code>.osiagent</code>-Datei.</li>
+  <li>Fehler als Issue auf GitHub melden (github.com/GlasiDe/osi-agenten): Einsatz und Schritt (Titel reicht) und was passiert ist. <b>Keine <code>.osiagent</code>-Dateien anhängen</b> – sie enthalten Kürzel der Lernenden, und Issues sind öffentlich.</li>
+  <li>Korrekturen gefährden keine Spielstände: Schritt- und Aufgaben-IDs bleiben immer gleich.</li>
+  <li>Neue Versionen erscheinen als GitHub-Release. Die Lernenden entpacken die neue ZIP in denselben Ordner; fehlt der Spielstand danach, laden sie ihre letzte <code>.osiagent</code>-Datei.</li>
 </ul>
 </body>
 </html>
