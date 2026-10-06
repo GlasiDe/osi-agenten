@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<title>OSI-Agenten – Mindestanforderungen (Lehrkraft)</title>
+<style>
+  @page { size: A4; margin: 13mm 14mm 15mm; }
+  body { font: 9.8pt/1.38 "Segoe UI", Arial, sans-serif; color: #111; margin: 0; }
+  h1 { font-size: 16pt; margin: 0 0 1mm; }
+  h2 { font-size: 12pt; margin: 5mm 0 2mm; padding: 1.3mm 3mm; background: #10262b; color: #fff; border-radius: 2mm; break-after: avoid; }
+  h3 { font-size: 10.3pt; margin: 3mm 0 1mm; color: #b35d16; break-after: avoid; }
+  table { border-collapse: collapse; width: 100%; margin: 1mm 0 2mm; }
+  td, th { border: 1px solid #ccc; padding: 1mm 2mm; vertical-align: top; text-align: left; }
+  th { background: #eee; font-size: 9pt; }
+  tr { break-inside: avoid; }
+  .box { border: 1px solid #bbb; border-radius: 2mm; padding: 2.5mm 3.5mm; margin: 2mm 0; break-inside: avoid; }
+  .warn { border: 2px solid #ff8a2a; background: #fff3e6; }
+  .muted { color: #666; font-size: 8.5pt; }
+  .must { font-weight: 700; color: #8f1d0b; white-space: nowrap; }
+  .nice { color: #0a5c34; white-space: nowrap; }
+  ul { margin: 1mm 0 2mm; padding-left: 5mm; }
+  li { margin-bottom: .6mm; }
+  code { background: #eee; padding: 0 1mm; border-radius: 1mm; }
+</style>
+</head>
+<body>
+<h1>OSI-Agenten · Mindestanforderungen für den Start</h1>
+<div class="muted">Für die Lehrkraft · Stand 01.10.2026 · Spielversion 1.1.0 · Zielgruppe: ITA (Profilfach Betriebssysteme/Netzwerke), Fachinformatik (LF 3/9)</div>
+
+<div class="box warn"><b>Kurz gesagt:</b> Das Spiel <b>erarbeitet</b> das OSI-Modell selbst – OSI-Vorkenntnisse sind nicht nötig. Vorausgesetzt werden aber Netzwerk-Grundlagen, an die das Spiel mit Sätzen wie „ihr kennt es schon“ anknüpft. Ohne die sechs Punkte im ersten Abschnitt bleiben die Lernenden ab Einsatz 2 stecken. Weil alle im eigenen Tempo spielen, kann die Klasse mit Einsatz 0 und 1 starten, während ihr die Voraussetzungen für Einsatz 2–3 im Unterricht noch festigt.</div>
+
+<h2>1 · Absolutes Minimum (vor Einsatz 2 sicher, vorher anbahnen)</h2>
+<table>
+  <tr><th style="width:4%">#</th><th style="width:30%">Können</th><th>Woran man es im Spiel braucht</th><th style="width:13%">ab</th></tr>
+  <tr><td>1</td><td><b>Hexadezimal lesen</b>, Bit/Byte (1 Byte = 8 Bit = 2 Hex-Ziffern)</td><td>MAC-Adressen (48 Bit, 6 Byte), OUI = erste 3 Byte, Schreibweisen <code>dc:a6:32…</code> / <code>DC-A6-32…</code>; später ASCII/UTF-8 und <code>%40</code> = 64 (E5)</td><td>E2 (E5)</td></tr>
+  <tr><td>2</td><td><b>IPv4-Adresse + Subnetzmaske</b>: entscheiden, ob ein Ziel im <b>eigenen Netz</b> liegt</td><td>Im ganzen Spiel und im Verhör nur <b>/24</b> (255.255.255.0) – ausführliches Subnetting ist nicht nötig. Lektion E3 knüpft mit „ihr kennt das vom Subnetting“ an.</td><td>E0, E3</td></tr>
+  <tr><td>3</td><td><b>Rollen der Geräte</b>: Hub, Switch, Router; Standardgateway = Router ins fremde Netz</td><td>E0 ordnet sie den Schichten zu, erklärt aber nur kurz, was sie tun. Fehler-Triage in E0 enthält schon ein falsches Gateway.</td><td>E0</td></tr>
+  <tr><td>4</td><td><b>MAC- vs. IP-Adresse</b>: wozu es beide gibt</td><td>Kern von E0 (neuer Frame je Etappe, IP bleibt) und E2/E3.</td><td>E0</td></tr>
+  <tr><td>5</td><td><b>Windows-Eingabeaufforderung</b>: Befehl tippen, Ausgabe lesen; <code>ipconfig</code>, <code>ping</code></td><td>Simuliertes Terminal ab E2 (mit Spickzettel). <code>arp -a</code>, <code>tracert</code>, <code>route print</code>, <code>netstat</code>, <code>nslookup</code> erklärt das Spiel.</td><td>E2</td></tr>
+  <tr><td>6</td><td><b>Wozu DHCP und ARP da sind</b> (Grundidee, je ein Satz)</td><td>E2 („ARP – ihr kennt es schon“) und E3 („Ihr kennt DHCP schon“) vertiefen nur. DORA, Optionen und Schwachstellen erklärt das Spiel selbst.</td><td>E2, E3</td></tr>
+</table>
+
+<h2>2 · Hilfreich, aber im Spiel erklärt</h2>
+<table>
+  <tr><th style="width:30%">Thema</th><th>Was das Spiel selbst vermittelt</th><th style="width:13%">wo</th></tr>
+  <tr><td>Wireshark</td><td>Simulierte Ansicht mit Filterzeile und Spickzettel, Lektion „Die Nadel im Heuhaufen“. Wer Wireshark schon einmal gesehen hat, ist schneller.</td><td>E0, E2</td></tr>
+  <tr><td>TCP vs. UDP, Ports</td><td>Tabelle TCP/UDP, Portbereiche, Sockets, 3-Wege-Handshake (ohne Sequenznummern/Fenster). Grundunterschied „verbindungsorientiert / verbindungslos“ sollte bekannt sein.</td><td>E0, E4</td></tr>
+  <tr><td>Übertragungsmedien</td><td>Twisted Pair, LWL, Funk, Autonegotiation, LEDs</td><td>E1</td></tr>
+  <tr><td>DNS, HTTP/HTTPS</td><td>Vollständig erarbeitet: nslookup, Rückwärtssuche, GET/POST, Statuscodes, Schloss/Zertifikat</td><td>E5</td></tr>
+  <tr><td>Virtualisierung</td><td>Ein Satz: VMs bekommen eigene MAC-Adressen (Hyper-V-OUI) – Bezug zu VirtualBox</td><td>E2</td></tr>
+</table>
+<p class="muted">Nur angeteasert (nicht nötig, nicht abgefragt): VLAN, WLAN, Firewall, TLS im Detail, NAT, Port-Security/802.1X, DHCP-Snooping.</p>
+
+<h2>3 · Schneller Vorab-Check für eure Lerngruppe (10 Minuten, mündlich oder an der Tafel)</h2>
+<ul>
+  <li>Wie viele Bit hat eine MAC-Adresse? Was bedeutet <code>ff</code> als Zahl?</li>
+  <li>PC <code>192.168.1.20/24</code> will zu <code>192.168.1.200</code> und zu <code>192.168.2.5</code>: direkt oder über das Gateway?</li>
+  <li>Was macht ein Switch anders als ein Hub? Was macht ein Router?</li>
+  <li>Wozu braucht ein PC DHCP? Wozu ARP?</li>
+  <li>Welcher Befehl zeigt IP-Adresse, Maske und Gateway an?</li>
+</ul>
+<p>Wer vier von fünf sicher beantwortet, kann starten. Bei Lücken in Punkt 1 oder 2: erst Einsatz 0 und 1 spielen lassen und parallel üben.</p>
+
+<h2>4 · Technik und Organisation (Minimum)</h2>
+<table>
+  <tr><th style="width:30%">Punkt</th><th>Minimum</th></tr>
+  <tr><td>Gerät</td><td>Ein Gerät pro Person (zu zweit an einem Gerät geht auch), aktueller Browser (Edge, Chrome, Firefox …). Kein Internet, keine Installation, keine Admin-Rechte.</td></tr>
+  <tr><td>Verteilung</td><td>ZIP aus <code>verteilen/</code> (z. B. über die Lernplattform): entpacken und <code>spiel/index.html</code> per Doppelklick öffnen. Oder online spielen (Link in der README) – auf Tablets der einzige Weg.</td></tr>
+  <tr><td>Sicherung</td><td>Am Stundenende <b>Export</b> (<code>.osiagent</code>) → abgeben (zu zweit: auch an die andere Person). Ohne Export ist der Stand bei Browserwechsel weg.</td></tr>
+  <tr><td>Zeit</td><td>ca. 6–7 Doppelstunden (E0–E5 je ~1, Finale ~1, Verhör ~20 Min.). Freies Tempo – Schnelle nutzen Bonus-Akten, Zeit-Challenge und „Nochmal üben“.</td></tr>
+  <tr><td>Lehrkraft</td><td>Passwort für den Lehrkraft-Modus (siehe Lösungs-PDF), <code>lehrkraft/einsatzzentrale.html</code> für Beamer und Auswertung, Lösungs-PDF für das Debriefing.</td></tr>
+  <tr><td>Kurzanleitung</td><td>Liegt als PDF im ZIP – in der ersten Stunde gemeinsam durchgehen (vor allem: Export!).</td></tr>
+</table>
+</body>
+</html>

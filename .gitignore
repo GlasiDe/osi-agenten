@@ -1,0 +1,13 @@
+# Werkzeug-Abhängigkeiten und Testausgaben
+werkzeuge/node_modules/
+werkzeuge/shots/
+
+# Build-Ergebnis (wird mit `npm run zip` erzeugt)
+verteilen/
+
+# Spielstände (personenbezogen) – nie ins Repo; test/ = optionale lokale Kompatibilitätsprüfung
+test/
+*.osiagent
+
+# Lokale Hinweise für Claude Code (persönliche Umgebung) – nicht im Repo
+CLAUDE.local.md

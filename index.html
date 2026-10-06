@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>OSI-Agenten · Operation Lohnzettel</title>
+<style>
+  :root { --bg: #0b1a1e; --panel: #14323a; --line: #2b5a64; --text: #e3eef0; --muted: #9dbac0; --orange: #ff8a2a;
+          --sans: "Segoe UI", system-ui, -apple-system, Roboto, "Helvetica Neue", Arial, sans-serif; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--text); font-family: var(--sans); line-height: 1.5; }
+  main { max-width: 760px; margin: 0 auto; padding: 32px 16px 48px; }
+  img { width: 100%; border-radius: 10px; border: 1px solid var(--line); display: block; }
+  h1 { margin: 24px 0 4px; font-size: 1.9rem; }
+  h1 span { color: var(--orange); }
+  .sub { color: var(--muted); margin: 0 0 24px; }
+  .start { display: block; text-align: center; background: var(--orange); color: #0b1a1e; font-weight: 700; font-size: 1.2rem;
+           padding: 14px; border-radius: 10px; text-decoration: none; }
+  .start:hover { filter: brightness(1.1); }
+  h2 { font-size: 1.1rem; margin: 32px 0 8px; color: var(--orange); }
+  ul { padding-left: 20px; margin: 0; }
+  li { margin: 4px 0; }
+  a { color: #7fd0e6; }
+  .box { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 12px 16px; margin-top: 16px; color: var(--muted); font-size: .95rem; }
+  footer { margin-top: 32px; color: var(--muted); font-size: .85rem; }
+</style>
+</head>
+<body>
+<main>
+  <img src="spiel/img/hq.jpg" alt="Einsatzzentrale der Agenten">
+  <h1>OSI-Agenten · <span>Operation Lohnzettel</span></h1>
+  <p class="sub">Ein Agenten-Krimi, in dem ihr euch das OSI-Modell Schicht für Schicht erarbeitet – allein oder zu zweit, direkt im Browser.</p>
+
+  <a class="start" href="spiel/index.html">▶ Einsatz starten</a>
+  <div class="box"><b>Wichtig:</b> Am Ende jeder Stunde den Spielstand <b>exportieren</b> (<code>.osiagent</code>-Datei). Der Browser speichert nur vorläufig – je nach Browser und Einstellung wird dieser Speicher gelöscht.</div>
+
+  <h2>Für Lehrkräfte</h2>
+  <ul>
+    <li><a href="lehrkraft/einsatzzentrale.html">Einsatzzentrale</a> – abgegebene Spielstände auswerten (Beamer, Spielstände, Aufgaben, CSV)</li>
+    <li><a href="lehrkraft/Kurzanleitung_SuS.pdf">Kurzanleitung für die Lernenden</a> (PDF)</li>
+    <li><a href="lehrkraft/Loesungen_und_Debriefing.pdf">Lösungen und Debriefing</a> (PDF)</li>
+    <li><a href="lehrkraft/Inhaltsuebersicht_Einsaetze.pdf">Inhaltsübersicht je Einsatz</a> (PDF)</li>
+    <li><a href="lehrkraft/Mindestanforderungen_Vorwissen.pdf">Mindestanforderungen und Vorab-Check</a> (PDF)</li>
+    <li><a href="https://github.com/GlasiDe/osi-agenten">Quelltext, Anleitung und Mitmachen auf GitHub</a></li>
+  </ul>
+
+  <footer>Inhalte: CC BY-SA 4.0 · Code: MIT · Illustrationen KI-generiert (FLUX.2 [klein] 9B). Alle Personen und Firmen sind frei erfunden. Das Spiel überträgt keine Daten.</footer>
+</main>
+</body>
+</html>

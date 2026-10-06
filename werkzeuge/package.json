@@ -1,0 +1,14 @@
+{
+  "name": "osi-agenten-werkzeuge",
+  "private": true,
+  "description": "Test- und Build-Werkzeuge für das OSI-Agentenspiel (nicht Teil der Auslieferung)",
+  "scripts": {
+    "test": "node test-durchlauf.js && node test-werkzeuge.js && node test-uebung.js && node test-challenge.js && node test-zentrale.js && node spielstaende-pruefen.js",
+    "pdf": "node pdf.js",
+    "zip": "pwsh -NoProfile -ExecutionPolicy Bypass -File zip.ps1",
+    "release": "npm test && npm run pdf && npm run zip"
+  },
+  "dependencies": {
+    "puppeteer-core": "^23"
+  }
+}

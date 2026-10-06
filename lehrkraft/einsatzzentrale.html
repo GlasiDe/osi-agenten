@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Einsatzzentrale · OSI-Agenten</title>
+<link rel="stylesheet" href="../spiel/css/style.css">
+<style>
+  #app { max-width: 1400px; }
+  .tabs { display: flex; gap: 8px; margin-bottom: 14px; flex-wrap: wrap; }
+  .tabs button { background: var(--bg2); color: var(--text); border: 1px solid var(--line); border-radius: 8px; padding: 8px 16px; cursor: pointer; }
+  .tabs button.on { border-color: var(--orange); color: var(--orange); }
+  #drop { border: 2px dashed var(--line); border-radius: 12px; padding: 22px; text-align: center; color: var(--muted); }
+  #drop.over { border-color: var(--orange); color: var(--orange); }
+  .classbar { height: 34px; background: #0a1c20; border-radius: 17px; overflow: hidden; border: 1px solid var(--line); margin: 10px 0 6px; }
+  .classbar i { display: block; height: 100%; background: linear-gradient(90deg, var(--orange-dim), var(--orange)); transition: width 1s ease; }
+  .podium { display: grid; grid-template-columns: 1fr 1.15fr 1fr; gap: 16px; align-items: end; margin: 20px 0; }
+  .pod { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; text-align: center; padding: 18px 10px; }
+  .pod .pl { font-size: 2.4rem; }
+  .pod .nm { font-size: 1.5rem; font-weight: 800; }
+  .pod .pt { font-family: var(--mono); color: var(--orange); font-size: 1.2rem; }
+  .pod.p1 { border-color: var(--orange); padding: 28px 10px; }
+  .cats { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 14px; }
+  .cat { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 16px; }
+  .cat .ct { color: var(--muted); font-size: .9rem; }
+  .cat .cw { font-size: 1.35rem; font-weight: 800; margin: 4px 0; }
+  .cat .cv { font-family: var(--mono); color: var(--orange); }
+  table.t td.num, table.t th.num { text-align: right; font-family: var(--mono); white-space: nowrap; }
+  .bar { display: inline-block; height: 8px; background: var(--orange); border-radius: 4px; vertical-align: middle; }
+  .bad { color: var(--bad); font-weight: 700; }
+  .filelist { font-size: .85rem; color: var(--muted); margin-top: 8px; }
+  .beamer .big { font-size: 3rem; font-weight: 800; color: var(--orange); font-family: var(--mono); }
+  th[data-sort] { cursor: pointer; }
+</style>
+</head>
+<body>
+<header id="topbar"><div class="logo">EINHEIT&nbsp;7 <span>· Einsatzzentrale (Lehrkraft)</span></div><div class="spacer"></div><span class="small muted" id="cnt"></span></header>
+<main id="app">
+  <div id="drop">
+    <b>Spielstand-Dateien (.osiagent) hierher ziehen</b> – beliebig viele auf einmal.<br>
+    <span class="small">Oder <a id="pick" style="cursor:pointer">Dateien auswählen</a>. Doppelte Spielstände desselben Duos werden erkannt – der neueste zählt.</span>
+    <input type="file" id="file" multiple accept=".osiagent" class="hidden">
+    <div class="filelist" id="filelist"></div>
+  </div>
+  <div class="tabs" style="margin-top:14px">
+    <button data-tab="beamer" class="on">📽️ Beamer-Ansicht</button>
+    <button data-tab="duos">👥 Duos (nur Lehrkraft)</button>
+    <button data-tab="aufgaben">📊 Aufgaben-Analyse (nur Lehrkraft)</button>
+    <button data-tab="verhoer">🕵️ Abschlussverhör (nur Lehrkraft)</button>
+    <span style="flex:1"></span>
+    <button id="csv">⬇ CSV exportieren</button>
+    <button id="reset">Liste leeren</button>
+  </div>
+  <div id="view"></div>
+</main>
+
+<script src="../spiel/content/meta.js"></script>
+<script src="../spiel/content/e0.js"></script>
+<script src="../spiel/content/e1.js"></script>
+<script src="../spiel/content/e2.js"></script>
+<script src="../spiel/content/e3.js"></script>
+<script src="../spiel/content/e4.js"></script>
+<script src="../spiel/content/e5.js"></script>
+<script src="../spiel/content/e6.js"></script>
+<script src="../spiel/content/verhoer.js"></script>
+<script src="../spiel/js/storage.js"></script>
+<script>
+(function () {
+  'use strict';
+  const S = window.OSIStore, OSI = window.OSI;
+  const $ = s => document.querySelector(s);
+  const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  const strip = s => String(s == null ? '' : s).replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').trim();
+  const pct = x => Math.round(x * 100) + ' %';
+  const duos = new Map();
+  let tab = 'beamer';
+
+  // ---------- Aufgaben-Katalog aus dem Spielinhalt
+  const katalog = [];
+  OSI.einsaetze.forEach(e => e.steps.forEach(st => {
+    const base = { einsatz: e, step: st, bonus: !!st.bonus };
+    (st.fragen || []).forEach(q => katalog.push(Object.assign({}, base, { id: q.id, titel: strip(q.ticket || q.frage), dekodiere: v => q.layer ? 'L' + v : q.pick ? 'Klick: ' + v : q.meldung ? 'Frame ' + v : q.eingabe ? '„' + v + '“' : q.multi ? String(v).split('+').map(i => strip(q.optionen[i])).join(' + ') : strip((q.optionen || [])[v] || v) })));
+    (st.items || []).forEach(it => katalog.push(Object.assign({}, base, { id: it.id, titel: st.titel + ': ' + it.text, dekodiere: v => { const b = (st.bins || []).find(b => String(b.id) === String(v)); return b ? (b.kurz || b.label) : v; } })));
+    (st.phasen || []).forEach(ph => katalog.push(Object.assign({}, base, { id: ph.id, titel: st.titel + ': ' + strip(ph.titel), dekodiere: v => { const o = ph.optionen.find(o => o.key === v); return o ? strip(o.label) + ' (zu früh)' : v; } })));
+  }));
+  const pflicht = katalog.filter(k => !k.bonus);
+
+  // ---------- Kennzahlen je Duo
+  function kennzahlen(s) {
+    const items = Object.entries(s.items || {});
+    const geloest = items.filter(([, it]) => it.ok);
+    const punkte = items.reduce((a, [, it]) => a + (it.p || 0), 0) + Object.values(s.bonus || {}).reduce((a, b) => a + (b || 0), 0);
+    let rang = OSI.raenge[0];
+    OSI.raenge.forEach(r => { if (punkte >= r.ab) rang = r; });
+    const erst = geloest.filter(([, it]) => it.f === 0).length;
+    const tipps = items.reduce((a, [, it]) => a + (it.h || 0), 0);
+    const woche = Date.now() - 7 * 864e5;
+    const sprung = geloest.filter(([, it]) => it.t && Date.parse(it.t) >= woche).reduce((a, [, it]) => a + (it.p || 0), 0);
+    const proEinsatz = OSI.einsaetze.map(e => {
+      const req = e.steps.filter(x => !x.bonus);
+      return req.length ? req.filter(x => s.steps && s.steps[x.id]).length / req.length : 0;
+    });
+    // Fall-Fortschritt ohne Diagnose-Akten (Abschlussverhör)
+    const fallIdx = OSI.einsaetze.map((e, i) => e.diagnose ? -1 : i).filter(i => i >= 0);
+    const fall = fallIdx.reduce((a, i) => a + proEinsatz[i], 0) / fallIdx.length;
+    let pos = '—';
+    if (s.pos) { const e = OSI.einsaetze.find(e => e.id === s.pos.e); const st = e && e.steps.find(x => x.id === s.pos.s); if (st) pos = `${e.nrText}: ${st.titel || st.id}`; }
+    else {
+      const offen = OSI.einsaetze.find(e => e.steps.length && e.steps.some(x => !x.bonus && !(s.steps || {})[x.id]));
+      if (offen) { const st = offen.steps.find(x => !x.bonus && !(s.steps || {})[x.id]); pos = `${offen.nrText}: ${st.titel || st.id}`; } else pos = 'alles Verfügbare erledigt';
+    }
+    const ueb = Object.values(s.uebung || {});
+    return { geuebt: ueb.filter(u => u.runs > 0).length, gemeistert: ueb.filter(u => u.gemeistert).length, punkte, rang: rang.name, geloest: geloest.length, erstQuote: geloest.length ? erst / geloest.length : 0, tipps, tippsProAufgabe: geloest.length ? tipps / geloest.length : 0, sprung, proEinsatz, fall, pos, challenge: (s.challenge || {}).best || 0, zuletzt: s.aktualisiert };
+  }
+
+  // ---------- Laden
+  async function laden(files) {
+    const log = [];
+    for (const f of files) {
+      const r = await S.readFile(f);
+      if (!r.ok) { log.push(`<span class="bad">✘ ${esc(f.name)}: ${esc(r.fehler)}</span>`); continue; }
+      const s = r.save, alt = duos.get(s.id);
+      if (!alt || Date.parse(s.aktualisiert) > Date.parse(alt.save.aktualisiert)) duos.set(s.id, { save: s, datei: f.name, k: kennzahlen(s) });
+      log.push(`✔ ${esc(f.name)} → Duo <b>${esc(s.duo.codename)}</b>${alt ? ' (Duplikat erkannt, neuester Stand zählt)' : ''}`);
+    }
+    $('#filelist').innerHTML = log.join('<br>');
+    render();
+  }
+
+  // ---------- Ansichten
+  function render() {
+    $('#cnt').textContent = duos.size ? `${duos.size} Duo${duos.size === 1 ? '' : 's'} geladen` : '';
+    document.querySelectorAll('.tabs [data-tab]').forEach(b => b.classList.toggle('on', b.dataset.tab === tab));
+    const L = [...duos.values()];
+    if (!L.length) { $('#view').innerHTML = '<div class="card muted">Noch keine Spielstände geladen.</div>'; return; }
+    ({ beamer, duos: duoTabelle, aufgaben, verhoer })[tab](L);
+  }
+
+  function sieger(L, fn, besser, min, fmt) {
+    const kand = L.filter(d => d.k.geloest >= (min || 0));
+    if (!kand.length) return null;
+    kand.sort((a, b) => besser === 'max' ? fn(b) - fn(a) : fn(a) - fn(b));
+    const top = fn(kand[0]);
+    const alle = kand.filter(d => fn(d) === top);
+    return { namen: alle.map(d => d.save.duo.codename).join(' & '), wert: fmt(top) };
+  }
+
+  function beamer(L) {
+    const fall = L.reduce((a, d) => a + d.k.fall, 0) / L.length;
+    const top = L.slice().sort((a, b) => b.k.punkte - a.k.punkte).slice(0, 3);
+    const pod = [top[1], top[0], top[2]].map((d, i) => d ? `<div class="pod ${i === 1 ? 'p1' : ''}"><div class="pl">${['🥈', '🥇', '🥉'][i]}</div><div class="nm">${esc(d.save.duo.codename)}</div><div class="pt">${d.k.punkte} P</div><div class="small muted">${esc(d.k.rang)}</div></div>` : '<div></div>').join('');
+    const minA = 10;
+    const cats = [
+      ['🏆 Meiste Punkte', sieger(L, d => d.k.punkte, 'max', 0, v => v + ' P')],
+      ['🧠 Wenigste Tipps', sieger(L, d => d.k.tippsProAufgabe, 'min', minA, v => v.toFixed(2).replace('.', ',') + ' pro Aufgabe')],
+      ['🎯 Beste Erstversuch-Quote', sieger(L, d => d.k.erstQuote, 'max', minA, pct)],
+      ['⚡ Zeit-Challenge-Rekord', sieger(L, d => d.k.challenge, 'max', 0, v => v + ' Richtige')],
+      ['🚀 Größter Sprung (7 Tage)', sieger(L, d => d.k.sprung, 'max', 0, v => '+' + v + ' P')]
+    ].filter(([, s]) => s).map(([t, s]) => `<div class="cat"><div class="ct">${t}</div><div class="cw">${esc(s.namen)}</div><div class="cv">${esc(s.wert)}</div></div>`).join('');
+    $('#view').innerHTML = `<div class="beamer">
+      <div class="card"><h2>Operation Lohnzettel – Stand der Ermittlungen</h2>
+        <div class="classbar"><i style="width:${Math.round(fall * 100)}%"></i></div>
+        <div style="display:flex;justify-content:space-between"><span class="muted">Die Einheit 7 hat gemeinsam</span><span class="big">${pct(fall)}</span></div>
+        <div class="muted">des Falls aufgeklärt (Durchschnitt aller ${L.length} Duos über alle Akten des Falls).</div></div>
+      <div class="podium">${pod}</div>
+      <div class="cats">${cats}</div>
+      <p class="small muted" style="margin-top:12px">„Wenigste Tipps“ und „Erstversuch-Quote“ zählen erst ab ${minA} gelösten Aufgaben.</p></div>`;
+  }
+
+  let sortKey = 'punkte', sortDir = -1;
+  function duoTabelle(L) {
+    const val = (d, k) => ({ codename: d.save.duo.codename.toLowerCase(), punkte: d.k.punkte, geloest: d.k.geloest, erst: d.k.erstQuote, tipps: d.k.tipps, challenge: d.k.challenge, geuebt: d.k.geuebt, zuletzt: Date.parse(d.k.zuletzt) || 0, fall: d.k.fall })[k];
+    L.sort((a, b) => (val(a, sortKey) > val(b, sortKey) ? 1 : val(a, sortKey) < val(b, sortKey) ? -1 : 0) * sortDir);
+    const eins = OSI.einsaetze.filter(e => e.steps.length);
+    const rows = L.map(d => `<tr>
+      <td><b>${esc(d.save.duo.codename)}</b><br><span class="small muted">${d.save.duo.agenten.map(esc).join(' & ')}</span></td>
+      <td class="num">${d.k.punkte}</td><td>${esc(d.k.rang)}</td>
+      ${eins.map(e => `<td class="num">${pct(d.k.proEinsatz[OSI.einsaetze.indexOf(e)])}</td>`).join('')}
+      <td class="small">${esc(d.k.pos)}</td>
+      <td class="num">${d.k.geloest}</td><td class="num">${pct(d.k.erstQuote)}</td><td class="num">${d.k.tipps}</td><td class="num">${d.k.geuebt} / ${d.k.gemeistert}</td><td class="num">${d.k.challenge}</td>
+      <td class="small">${d.k.zuletzt ? new Date(d.k.zuletzt).toLocaleString('de-DE') : '—'}<br><span class="muted">v${esc(d.save.version)} · ${esc(d.datei)}</span></td></tr>`).join('');
+    $('#view').innerHTML = `<div class="card" style="overflow-x:auto"><h2>Duos</h2>
+      <p class="small muted">Spaltenköpfe anklicken zum Sortieren. Die Zuordnung Codename ↔ Personen erfolgt über die Kürzel.</p>
+      <table class="t"><tr><th data-sort="codename">Duo</th><th data-sort="punkte" class="num">Punkte</th><th>Rang</th>
+      ${eins.map(e => `<th class="num">${esc(e.nrText.replace('EINSATZ', 'E'))}</th>`).join('')}
+      <th>steht bei</th><th data-sort="geloest" class="num">gelöst</th><th data-sort="erst" class="num">1. Versuch</th><th data-sort="tipps" class="num">Tipps</th><th data-sort="geuebt" class="num" title="Schritte freiwillig wiederholt / davon fehlerfrei gemeistert">geübt / ⭐</th><th data-sort="challenge" class="num">Challenge</th><th data-sort="zuletzt">zuletzt aktiv</th></tr>${rows}</table></div>`;
+    document.querySelectorAll('th[data-sort]').forEach(th => th.onclick = () => { if (sortKey === th.dataset.sort) sortDir *= -1; else { sortKey = th.dataset.sort; sortDir = -1; } render(); });
+  }
+
+  function aufgabenDaten(L) {
+    return katalog.map(k => {
+      const recs = L.map(d => d.save.items[k.id]).filter(Boolean);
+      const geloest = recs.filter(r => r.ok);
+      const mitFehler = geloest.filter(r => r.f > 0).length;
+      const falsch = {};
+      recs.forEach(r => (r.w || []).forEach(v => { falsch[v] = (falsch[v] || 0) + 1; }));
+      const haeufig = Object.entries(falsch).sort((a, b) => b[1] - a[1])[0];
+      return { k, n: geloest.length, quote: geloest.length ? mitFehler / geloest.length : 0, fehlSchnitt: geloest.length ? geloest.reduce((a, r) => a + r.f, 0) / geloest.length : 0, tipps: recs.reduce((a, r) => a + (r.h || 0), 0), haeufig: haeufig ? `${k.dekodiere(haeufig[0])} (${haeufig[1]}×)` : '' };
+    });
+  }
+
+  function aufgaben(L) {
+    const daten = aufgabenDaten(L).filter(a => a.n > 0).sort((a, b) => b.quote - a.quote || b.fehlSchnitt - a.fehlSchnitt);
+    const rows = daten.map(a => `<tr><td class="small">${esc(a.k.einsatz.nrText)}${a.k.bonus ? ' ★' : ''}</td><td class="small">${esc(a.k.titel).slice(0, 140)}</td>
+      <td class="num">${a.n}</td><td class="num"><span class="bar" style="width:${Math.round(a.quote * 60)}px"></span> ${pct(a.quote)}</td>
+      <td class="num">${a.fehlSchnitt.toFixed(1).replace('.', ',')}</td><td class="num">${a.tipps}</td><td class="small">${esc(a.haeufig)}</td></tr>`).join('');
+    $('#view').innerHTML = `<div class="card" style="overflow-x:auto"><h2>Aufgaben-Analyse</h2>
+      <p class="small muted">Sortiert nach Fehlerquote = Anteil der Duos, die die Aufgabe <i>nicht</i> beim ersten Versuch gelöst haben. Oben stehen die Kandidaten fürs Debriefing. „Häufigste falsche Antwort“ zeigt typische Fehlvorstellungen.</p>
+      <table class="t"><tr><th>Einsatz</th><th>Aufgabe</th><th class="num">gelöst von</th><th class="num">Fehlerquote</th><th class="num">Ø Fehlversuche</th><th class="num">Tipps gesamt</th><th>häufigste falsche Antwort</th></tr>${rows || '<tr><td colspan="7" class="muted">Noch keine gelösten Aufgaben.</td></tr>'}</table></div>`;
+  }
+
+
+  // ---------- Abschlussverhör: Diagnose pro Kürzel und Bereich (keine Punkte)
+  const vStep = (OSI.einsaetze.find(e => e.id === 'verhoer') || { steps: [] }).steps.find(x => x.verhoerFragen);
+  const vFragen = vStep ? vStep.verhoerFragen : [];
+  const BER = ['Modell', 'L1', 'L2', 'L3', 'L4', 'L5–7'];
+  const vBereiche = [...new Set(vFragen.map(q => q.bereich))].sort((a, b) => BER.indexOf(a) - BER.indexOf(b));
+  const vDekodiere = (q, v) => v === '?' ? 'Weiß ich nicht' : q.layer ? 'L' + v : q.eingabe ? '„' + v + '“' : q.multi ? String(v).split('+').map(i => strip(q.optionen[i])).join(' + ') : strip((q.optionen || [])[v] || v);
+  function verhoerPersonen(L) {
+    const out = [];
+    L.forEach(d => Object.entries(d.save.verhoer || {}).forEach(([k, r]) => {
+      if (!r || !r.start) return;
+      const proBereich = vBereiche.map(b => { const f = vFragen.filter(q => q.bereich === b); return { b, n: f.filter(q => r.a[q.id] && r.a[q.id].ok).length, von: f.filter(q => r.a[q.id]).length, max: f.length }; });
+      const richtig = vFragen.filter(q => r.a[q.id] && r.a[q.id].ok).length;
+      const dauer = r.ende ? Math.round((Date.parse(r.ende) - Date.parse(r.start)) / 6e4) : null;
+      out.push({ k, duo: d.save.duo.codename, r, proBereich, richtig, wn: Object.values(r.a).filter(x => x.wn).length, beantwortet: Object.keys(r.a).length, dauer });
+    }));
+    return out.sort((a, b) => a.k.localeCompare(b.k));
+  }
+  function zelle(x) {
+    if (!x.von) return '<td class="num muted">–</td>';
+    const q = x.n / x.max;
+    const bg = q >= 1 ? 'rgba(79,209,139,.25)' : q > 0 ? 'rgba(255,140,40,.25)' : 'rgba(255,93,93,.3)';
+    return `<td class="num" style="background:${bg}">${x.n} / ${x.max}</td>`;
+  }
+  function verhoer(L) {
+    const P = verhoerPersonen(L);
+    if (!P.length) { $('#view').innerHTML = '<div class="card muted">Noch niemand hat das Abschlussverhör begonnen.</div>'; return; }
+    const fertig = P.filter(p => p.r.ende);
+    const klasse = vBereiche.map(b => { const xs = fertig.map(p => p.proBereich.find(x => x.b === b)); const sum = xs.reduce((a, x) => a + x.n, 0), max = xs.reduce((a, x) => a + x.max, 0); return { b, q: max ? sum / max : 0 }; });
+    const rows = P.map(p => `<tr data-k="${esc(p.k)}"><td><b>${esc(p.k)}</b><br><span class="small muted">Duo ${esc(p.duo)}</span></td>${p.proBereich.map(zelle).join('')}
+      <td class="num"><b>${p.richtig}</b> / ${vFragen.length}</td><td class="num">${p.wn || '–'}</td><td class="small">${p.r.ende ? 'abgeschlossen' : `begonnen (${p.beantwortet}/${vFragen.length})`}</td>
+      <td class="num">${p.dauer != null ? p.dauer + ' min' : '—'}</td><td class="small">${new Date(p.r.start).toLocaleString('de-DE')}</td></tr>`).join('');
+    const auf = vFragen.map(q => {
+      const recs = P.map(p => p.r.a[q.id]).filter(Boolean);
+      const ok = recs.filter(x => x.ok).length;
+      const falsch = {}; recs.filter(x => !x.ok && !x.wn).forEach(x => { falsch[x.v] = (falsch[x.v] || 0) + 1; });
+      const h = Object.entries(falsch).sort((a, b) => b[1] - a[1])[0];
+      return { q, n: recs.length, wn: recs.filter(x => x.wn).length, quote: recs.length ? ok / recs.length : 0, haeufig: h ? `${vDekodiere(q, h[0])} (${h[1]}×)` : '' };
+    }).sort((a, b) => a.quote - b.quote);
+    $('#view').innerHTML = `<div class="card" style="overflow-x:auto"><h2>Abschlussverhör – Diagnose pro Person</h2>
+      <p class="small muted">Einzeln pro Kürzel beantwortet, ein Versuch, ohne Tipps und ohne Punkte. Grün = alles richtig, orange = teilweise, rot = keine richtig. 🤷 = Anzahl „Weiß ich nicht“ (zählt als nicht gelöst, ist aber keine falsche Vorstellung). Nicht gegen Wiederholung abgesichert (keine Note) – auffällig kurze Dauer oder mehrere Dateien desselben Duos im Blick behalten.</p>
+      <table class="t" id="vh-personen"><tr><th>Kürzel</th>${vBereiche.map(b => `<th class="num">${esc(b)}</th>`).join('')}<th class="num">gesamt</th><th class="num" title="Anzahl „Weiß ich nicht“">🤷</th><th>Status</th><th class="num">Dauer</th><th>begonnen</th></tr>${rows}
+      <tr><td class="muted">Klasse (abgeschlossene Verhöre)</td>${klasse.map(x => `<td class="num muted">${pct(x.q)}</td>`).join('')}<td colspan="5"></td></tr></table>
+      <div class="btnrow"><button class="btn sec" id="vh-csv">⬇ Verhör als CSV</button></div></div>
+      <div class="card" style="overflow-x:auto"><h2>Verhörfragen</h2>
+      <p class="small muted">Sortiert nach Anteil richtiger Antworten – oben stehen die Kandidaten fürs Nachschulen.</p>
+      <table class="t"><tr><th>Bereich</th><th>Frage</th><th class="num">beantwortet</th><th class="num">richtig</th><th class="num" title="Anzahl „Weiß ich nicht“">🤷</th><th>häufigste falsche Antwort</th></tr>
+      ${auf.map(a => `<tr><td>${esc(a.q.bereich)}</td><td class="small">${esc(strip(a.q.ticket ? a.q.ticket + ' ' + a.q.frage : a.q.frage)).slice(0, 160)}</td><td class="num">${a.n}</td><td class="num"><span class="bar" style="width:${Math.round(a.quote * 60)}px"></span> ${pct(a.quote)}</td><td class="num">${a.wn || '–'}</td><td class="small">${esc(a.haeufig)}</td></tr>`).join('')}</table></div>`;
+    $('#vh-csv').onclick = () => {
+      const head = ['Kuerzel', 'Duo', ...vBereiche, 'gesamt', 'von', 'weiss nicht', 'abgeschlossen', 'Dauer min', 'begonnen', ...vFragen.map(q => q.id)];
+      const lines = P.map(p => [p.k, p.duo, ...p.proBereich.map(x => x.n + '/' + x.max), p.richtig, vFragen.length, p.wn, p.r.ende ? 'ja' : 'nein', p.dauer != null ? p.dauer : '', new Date(p.r.start).toLocaleString('de-DE'), ...vFragen.map(q => p.r.a[q.id] ? (p.r.a[q.id].ok ? 1 : p.r.a[q.id].wn ? '?' : 0) : '')]);
+      speichereCsv([head, ...lines], 'Verhoer');
+    };
+  }
+
+  function speichereCsv(zeilen, name) {
+    const txt = '\ufeff' + zeilen.map(r => r.map(c => `"${String(c).replace(/"/g, '""')}"`).join(';')).join('\r\n');
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob([txt], { type: 'text/csv;charset=utf-8' }));
+    a.download = `OSI-Agenten_${name}_${new Date().toISOString().slice(0, 10)}.csv`;
+    document.body.appendChild(a); a.click(); a.remove();
+  }
+
+  function csv() {
+    const L = [...duos.values()];
+    if (!L.length) return;
+    const eins = OSI.einsaetze.filter(e => e.steps.length);
+    const head = ['Codename', 'Kuerzel', 'Punkte', 'Rang', ...eins.map(e => e.nrText + ' %'), 'steht bei', 'geloest', 'Erstversuch-Quote %', 'Tipps', 'geuebt', 'gemeistert', 'Challenge', 'zuletzt aktiv'];
+    const lines = L.map(d => [d.save.duo.codename, d.save.duo.agenten.join(' & '), d.k.punkte, d.k.rang, ...eins.map(e => Math.round(d.k.proEinsatz[OSI.einsaetze.indexOf(e)] * 100)), d.k.pos, d.k.geloest, Math.round(d.k.erstQuote * 100), d.k.tipps, d.k.geuebt, d.k.gemeistert, d.k.challenge, d.k.zuletzt ? new Date(d.k.zuletzt).toLocaleString('de-DE') : '']);
+    const txt = '﻿' + [head, ...lines].map(r => r.map(c => `"${String(c).replace(/"/g, '""')}"`).join(';')).join('\r\n');
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob([txt], { type: 'text/csv;charset=utf-8' }));
+    a.download = `OSI-Agenten_Auswertung_${new Date().toISOString().slice(0, 10)}.csv`;
+    document.body.appendChild(a); a.click(); a.remove();
+  }
+
+  // ---------- Events
+  const drop = $('#drop');
+  drop.ondragover = e => { e.preventDefault(); drop.classList.add('over'); };
+  drop.ondragleave = () => drop.classList.remove('over');
+  drop.ondrop = e => { e.preventDefault(); drop.classList.remove('over'); laden([...e.dataTransfer.files]); };
+  $('#pick').onclick = () => $('#file').click();
+  $('#file').onchange = e => laden([...e.target.files]);
+  document.querySelectorAll('.tabs [data-tab]').forEach(b => b.onclick = () => { tab = b.dataset.tab; render(); });
+  $('#csv').onclick = csv;
+  $('#reset').onclick = () => { if (confirm('Alle geladenen Spielstände aus der Ansicht entfernen?')) { duos.clear(); $('#filelist').innerHTML = ''; render(); } };
+  window.OSIZentrale = { laden, duos, render };
+  render();
+})();
+</script>
+</body>
+</html>

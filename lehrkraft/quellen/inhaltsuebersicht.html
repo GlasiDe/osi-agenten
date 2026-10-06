@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<title>OSI-Agenten – Inhaltsübersicht (Lehrkraft)</title>
+<style>
+  @page { size: A4; margin: 13mm 14mm 15mm; }
+  body { font: 9.6pt/1.36 "Segoe UI", Arial, sans-serif; color: #111; margin: 0; }
+  h1 { font-size: 16pt; margin: 0 0 1mm; }
+  h2 { font-size: 12pt; margin: 5mm 0 2mm; padding: 1.3mm 3mm; background: #10262b; color: #fff; border-radius: 2mm; break-after: avoid; }
+  table { border-collapse: collapse; width: 100%; margin: 1mm 0 2mm; }
+  td, th { border: 1px solid #ccc; padding: 1.3mm 2mm; vertical-align: top; text-align: left; }
+  th { background: #eee; font-size: 9pt; }
+  tr { break-inside: avoid; }
+  td.e { white-space: nowrap; }
+  td.e small { display: block; color: #666; font-size: 8pt; white-space: normal; margin-top: .5mm; }
+  .box { border: 1px solid #bbb; border-radius: 2mm; padding: 2.5mm 3.5mm; margin: 2mm 0; break-inside: avoid; }
+  .eintrag { border: 2px solid #ff8a2a; background: #fff3e6; font-size: 10.2pt; }
+  .muted { color: #666; font-size: 8.5pt; }
+  .stempel { font-weight: 700; color: #b35d16; }
+</style>
+</head>
+<body>
+<h1>OSI-Agenten · Inhaltsübersicht</h1>
+<div class="muted">Für die Lehrkraft · Stand 02.10.2026 · Spielversion 1.1.0 · Lernspiel „Operation Lohnzettel“, Einzelarbeit, bei Bedarf zu zweit, ca. 6–7 Doppelstunden</div>
+
+<h2>1 · Klassenbucheintrag</h2>
+<div class="box eintrag">OSI-Referenzmodell (Lernspiel „OSI-Agenten“, Partnerarbeit): Schichten L1–L7 und Zuordnung zu TCP/IP, Kapselung und PDUs (Bit, Frame, Paket, Segment), Übertragungsmedien, MAC-Adressen/OUI, Lernverhalten des Switches, ARP, IP-Routing über das Gateway, DHCP (DORA), Ports und Portbereiche, TCP-3-Wege-Handshake, Portscan/netstat, DNS, HTTP/HTTPS (Zertifikat), Kodierung (L6) und Sitzung (L5); Fehlersuche nach Schichten mit ping/ipconfig/tracert/nslookup und Wireshark-Filtern; Diagnose im Abschlussverhör.</div>
+
+<h2>2 · Die Einsätze: Fachinhalt und Handlung</h2>
+<p class="muted" style="margin-top:0">Fall: Bei der fiktiven Spedition Falkenrath &amp; Oltmanns Logistik GmbH (F&amp;O) geben Beschäftigte ihre Zugangsdaten auf einer gefälschten Lohnportal-Seite ein, obwohl sie die richtige Adresse getippt haben. Die Einheit 7 (Direktorin Albers, Techniker Kalle) ermittelt mit IT-Leiter Brandt Schicht für Schicht von unten nach oben. Verdächtige: Leon Berger (Azubi), Sabine Krüger (Buchhaltung), Yusuf Demir (Hausmeister), Marco Seidel (Drucker-Techniker, Täter).</p>
+<table>
+  <tr><th style="width:15%">Einsatz</th><th style="width:37%">Fachinhalt</th><th>Im Spiel</th></tr>
+  <tr><td class="e"><b>E0</b> Grundausbildung<small>Di 22.09., früh</small></td>
+    <td>OSI-Modell L1–L7, Kapselung (Speditions-Analogie), PDU-Begriffe, Zuordnung der Geräte zu den Schichten, Fehlersuche nach Schichten</td>
+    <td>Notruf von F&amp;O in der Zentrale: 37 Beschäftigte sind auf eine gefälschte Lohnportal-Seite hereingefallen. Kalle bildet die Agentinnen und Agenten aus. Danach die Akte: richtige Adresse, aber kein Schloss, nur Rechner im Firmennetz betroffen. Also hat jemand im Netz selbst manipuliert. Vier Verdächtige kommen ans Board, Vorgehen: bottom-up.</td></tr>
+  <tr><td class="e"><b>E1</b> L1 – Spuren am Kabel<small>Di, 06:40 Uhr</small></td>
+    <td>Bitübertragungsschicht: Übertragungsmedien (Kupfer, LWL, Funk), Hub/Repeater, Portstatus am Switch</td>
+    <td>Ankunft bei F&amp;O. Im Serverraum vergleichen die Agentinnen und Agenten den Switch SW-SERVER-01 mit dem Patchplan: An Port 23 hängt ein unbeschriftetes Kästchen (Cat-5e-Kabel, 100 Mbit/s). Es bleibt zur Beobachtung stecken. Zutrittsprotokoll und Besucherbuch zeigen, wer Gelegenheit hatte: Demir mit Seidel (Fr 14:10), Berger (Mo 08:03). <span class="stempel">Krüger: vorerst entlastet.</span></td></tr>
+  <tr><td class="e"><b>E2</b> L2 – Gestohlene Identität<small>Di, 09:10 Uhr</small></td>
+    <td>Sicherungsschicht: MAC-Adresse/OUI, Frame mit Header und Trailer, MAC-Adresstabelle des Switches, ARP, Auffälligkeiten im ARP-Verkehr erkennen (Wireshark)</td>
+    <td>Kalle schneidet per Port-Spiegelung mit. Über die OUI wird das Gerät als Raspberry Pi erkannt. ARP-Tabelle am Buchhaltungs-PC und Mitschnitt zeigen, dass es sich als Lohnportal (.20) ausgibt; selbst nutzt es die .66. Brandt erinnert sich, dass Leon einen Raspberry Pi gezeigt hat: Indiz, kein Beweis. <span class="stempel">Berger: verdächtig.</span></td></tr>
+  <tr><td class="e"><b>E3</b> L3 – Falsche Wegweiser<small>Mi, 07:30 Uhr</small></td>
+    <td>Vermittlungsschicht: Ziel im eigenen Netz oder über das Gateway, DHCP-Ablauf (DORA), Analyse mit ipconfig/tracert, Fremd-DHCP-Server erkennen</td>
+    <td>Nach nächtlichen Updates klagt der Versand über langsames Internet. ipconfig zeigt Gateway und DNS .66, tracert einen Extra-Hop, der Mitschnitt von 06:12 zwei DHCP-Server. Der Pi verteilt falsche Wegweiser. Die Leases vom Montag grenzen den Beginn auf 07:58–08:14 Uhr ein, kurz nachdem Berger im Serverraum war. Der Verdacht wächst, bleibt aber ein Indiz.</td></tr>
+  <tr><td class="e"><b>E4</b> L4 – Offene Türen<small>Do, 06:50 Uhr</small></td>
+    <td>Transportschicht: Ports und Portbereiche, TCP-3-Wege-Handshake, Portscan im Mitschnitt, netstat, ausgehende Verbindungen erkennen</td>
+    <td>Mit schriftlichem Auftrag von Brandt scannt Kalle den Pi. Gelesen werden Handshakes im Mitschnitt und wertet den Scan-Bericht aus: offen sind DHCP, DNS, eine Webseite ohne Verschlüsselung und SSH. netstat und das Router-Protokoll zeigen einen Tunnel ins Internet (198.51.100.23) seit Fr 14:12 Uhr, also zur Zeit von Demir und Seidel. <span class="stempel">Demir und Seidel: verdächtig.</span></td></tr>
+  <tr><td class="e"><b>E5</b> L5–L7 – Die Fälschung<small>Fr, 07:45 Uhr</small></td>
+    <td>DNS/nslookup, HTTP vs. HTTPS/Zertifikat, L6 Kodierung, L5 Sitzung; Synthese der Befunde über alle Schichten</td>
+    <td>Frau Lindner hat die richtige Adresse getippt und landet trotzdem beim Pi. nslookup entlarvt die DNS-Lüge, der Pi nennt sich „LEON-NB“. Zwei Bildschirmfotos und der Mitschnitt zeigen: Seite ohne Schloss, HTTP lesbar. Synthese: Der Pi ist ein Mittelsmann über mehrere Schichten. Brandt setzt DNS/DHCP und Passwörter zurück, der Pi kommt in die Beweismitteltüte.</td></tr>
+  <tr><td class="e"><b>E6</b> Finale – Die Anklage<small>Mo 28.09.</small></td>
+    <td>Wiederholung und Synthese: Beweisführung über alle Schichten (Indiz vs. Beweis); Ausblick auf Port-Security, VLAN, Firewall, TLS und WLAN</td>
+    <td>Neue Fundstücke werden geprüft: Leasetabelle (Leons echtes Notebook NB-IT-07 war gleichzeitig im Netz), DHCP-Protokoll, Forensik-Befund (Zeitsteuerung, angelegt Fr 14:24), Aussage Demir (ließ Seidel allein im Serverraum), Krügers Fund (sechs geänderte Bankverbindungen auf ein Konto), Anbieter-Auskunft (Handynummer führt zu Seidel). Die Agentinnen und Agenten schreiben die Anklageschrift mit Beweiskarten. Seidel wird festgenommen, Brandts Maßnahmenplan wird angeteasert, Epilog in der Kaffeeküche. <span class="stempel">Berger, Demir, Krüger: entlastet. Seidel: überführt.</span></td></tr>
+  <tr><td class="e"><b>Abschluss</b> Das Verhör</td>
+    <td>Einzeldiagnose mit 12 Transferfragen zu allen Schichten (ohne Bewertung, „Weiß ich nicht“ möglich)</td>
+    <td>Jede Person wird einzeln von der Direktorin „verhört“, ohne Kalle und ohne Punkte. Danach ein persönlicher Dank und eine druckbare Ernennungsurkunde.</td></tr>
+</table>
+<p class="muted">Jeder Einsatz endet mit einem versiegelten Außeneinsatz (Packet Tracer). Die Bauanleitungen sind noch offen, siehe <i>Offene_Aufgaben_Lehrkraft.pdf</i>. Lösungen und Debriefing-Impulse stehen in <i>Loesungen_und_Debriefing.pdf</i>.</p>
+</body>
+</html>

@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<title>OSI-Agenten – Lösungen & Debriefing (Lehrkraft)</title>
+<style>
+  @page { size: A4; margin: 14mm 14mm 16mm; }
+  body { font: 10pt/1.4 "Segoe UI", Arial, sans-serif; color: #111; margin: 0; }
+  h1 { font-size: 17pt; margin: 0 0 2mm; }
+  h2 { font-size: 13pt; margin: 6mm 0 2mm; padding: 1.5mm 3mm; background: #10262b; color: #fff; border-radius: 2mm; break-after: avoid; }
+  h3 { font-size: 10.5pt; margin: 3.5mm 0 1mm; color: #b35d16; break-after: avoid; }
+  .box { border: 1px solid #bbb; border-radius: 2mm; padding: 2.5mm 3.5mm; margin: 2mm 0; break-inside: avoid; }
+  .pw { font-family: Consolas, monospace; font-size: 12pt; background: #fff3e6; border: 1px dashed #b35d16; padding: 1mm 3mm; }
+  table { border-collapse: collapse; width: 100%; margin: 1mm 0 2mm; }
+  td, th { border: 1px solid #ccc; padding: 1mm 2mm; vertical-align: top; text-align: left; }
+  th { background: #eee; font-size: 9pt; }
+  td.a { width: 42%; font-weight: 600; color: #0a5c34; }
+  .q { break-inside: avoid; }
+  .muted { color: #666; font-size: 8.5pt; }
+  .lchip { display: inline-block; padding: 0 1.5mm; border-radius: 1mm; font-weight: 700; font-family: Consolas, monospace; background: #ddd; }
+  ul { margin: 1mm 0 2mm; padding-left: 5mm; }
+  .deb li { margin-bottom: 1mm; }
+</style>
+</head>
+<body>
+<h1>OSI-Agenten · Operation Lohnzettel – Lösungen &amp; Debriefing</h1>
+<div class="muted" id="ver"></div>
+
+<div class="box">
+  <b>Lehrkraft-Modus:</b> im Spiel unten auf „Lehrkraft“ klicken (Startseite oder Einsatzakten) oder <b>Strg + Alt + L</b> drücken. Standard-Passwort: <span class="pw">Einheit7-Zentrale</span> – öffentlich bekannt, da das Spiel Open Source ist. Es hält nur vom versehentlichen Öffnen ab und ist <b>kein Schutz</b>; ein eigenes Passwort lässt sich setzen (Anleitung in der README auf GitHub).<br>
+  Damit könnt ihr zu jedem Schritt springen (ohne ihn als erledigt zu markieren), alle Akten öffnen und Außeneinsätze freischalten. Der Modus gilt nur bis zum Neuladen der Seite.<br>
+  <b>Einsatzzentrale:</b> <code>lehrkraft/einsatzzentrale.html</code> öffnen, alle <code>.osiagent</code>-Dateien hineinziehen. Beamer-Ansicht zeigen, die beiden anderen Reiter nur für euch.
+</div>
+
+<div class="box">
+  <b>Ablauf pro Doppelstunde (Vorschlag):</b> 5 Min. Briefing (Ziel der Stunde, alle laden ihren Spielstand) · ca. 70 Min. Spielphase · 10 Min. Debriefing mit den Fragen unten und der Aufgaben-Analyse der Einsatzzentrale · 5 Min. <b>Export + Übergabe im Duo + Abgabe bei euch</b>.
+</div>
+
+<div class="box"><b>Profi-Tipps:</b> Kästen mit 🕵️ „Profi-Tipp“ (z. B. Promiscuous Mode in E2) und „Kleiner Zusatz für Profis“ sind freiwilliges Zusatzwissen für Interessierte – dazu gibt es im Spiel keine Aufgaben, und sie sind nicht für Lernstandskontrollen gedacht.</div>
+
+<div id="inhalt"></div>
+
+<h2>Debriefing-Impulse</h2>
+<h3>Nach Einsatz 0 (Grundausbildung)</h3>
+<ul class="deb">
+  <li>„Warum gibt es überhaupt Schichten?“ – Austauschbarkeit (Kabel ↔ WLAN, Browser merkt nichts) und Fehlereingrenzung.</li>
+  <li>An der Tafel Kapselung skizzieren lassen: Wer baut was um wen? Warum ist der Ethernet-Header <i>außen</i>?</li>
+  <li>Kernfrage: „Was ändert sich, wenn ein Paket über einen Router geht – MAC oder IP?“ (neuer Frame, gleiche IPs) – das ist für Einsatz 2/3 entscheidend.</li>
+  <li>Mini-Umfrage: Welches Ticket aus der Fehler-Triage war am schwierigsten? (siehe Aufgaben-Analyse)</li>
+</ul>
+<h3>Nach Einsatz 1 (L1)</h3>
+<ul class="deb">
+  <li>„Was konnten wir allein durch L1 herausfinden – und was nicht?“ (Ort, Medium, Geschwindigkeit ja; Adressen/Identität nein)</li>
+  <li>Kupfer vs. LWL vs. Funk: Wann nimmt man was? Beispiel aus der eigenen Schule/Praktikumsbetrieb sammeln.</li>
+  <li>Warum ist ein aktueller Patchplan im Fehlerfall Gold wert? (Port 7 vs. Port 23)</li>
+  <li>Ethik/Forensik: Warum hat die Direktorin das Gerät <i>nicht</i> abziehen lassen?</li>
+  <li>Ausblick: „Wie könnten wir herausfinden, <i>was</i> für ein Gerät das ist?“ → MAC-Adresse, Herstellerkennung (OUI) → Einsatz 2.</li>
+</ul>
+<h3>Nach Einsatz 2 (L2)</h3>
+<ul class="deb">
+  <li>An der Tafel: Frame mit <b>Header und Trailer</b> zeichnen lassen (Ziel-MAC, Quell-MAC, Typ | Nutzdaten | FCS). Warum steht die Ziel-MAC vorne?</li>
+  <li>„Lernen über die Quell-MAC, weiterleiten über die Ziel-MAC“ – mit drei SuS als PCs und einer Person als Switch nachspielen (MAC-Tabelle an der Tafel füllen).</li>
+  <li>Kernfrage: „In Frame 8 stimmt die Ziel-IP, aber die Ziel-MAC nicht. Warum merkt der PC das nicht?“ → ARP prüft nichts, L3 verlässt sich auf L2.</li>
+  <li>Erkennungsmerkmale von ARP-Spoofing sammeln (zwei IPs – eine MAC; Replies ohne Request; „duplicate use“). Bewusst <b>nicht</b>: wie man es macht. Rechtlicher Rahmen (§§ 202a ff. StGB) und IT-Richtlinie des Betriebs ansprechen.</li>
+  <li>Ermittlungsethik: „Reicht ‚Leon hat einen Raspberry Pi‘ für eine Anklage?“ – Indiz vs. Beweis.</li>
+  <li>Aufgaben-Analyse der Zentrale: Bei den Filter-Aufgaben häufige Fehler (<code>=</code> statt <code>==</code>, <code>eth.dst</code> statt <code>eth.src</code>) kurz besprechen.</li>
+</ul>
+<h3>Nach Einsatz 3 (L3)</h3>
+<ul class="deb">
+  <li>Entscheidung „direkt oder übers Gateway?“ an zwei, drei Beispielen mit Subnetzmaske durchrechnen – auch mit /25 oder /26, falls Subnetting frisch ist.</li>
+  <li>DORA an der Tafel: Wer sendet Broadcast, wer nicht – und warum? Warum gewinnt der schnellere Server?</li>
+  <li>Kernfrage: „Frame 8 → Frame 9: Was ändert sich, was bleibt?“ – Verbindung zur Spedition aus Einsatz 0 (neuer LKW, gleiche Palette) ausdrücklich herstellen.</li>
+  <li>„Warum sieht tracert die Täuschung aus Einsatz 2 nicht?“ → Jedes Werkzeug zeigt seine Schicht; deshalb Bottom-up ermitteln.</li>
+  <li>Ausblick ohne Details: Wie könnten Switches fremde DHCP-Antworten verhindern? (nur anteasern – DHCP Snooping gehört zu den gesperrten Akten)</li>
+  <li>Fall: Die Zeitspur zeigt auf Leon Berger (Mo 08:03). Meinungsbild in der Klasse einholen – und festhalten, was noch fehlt, um ihn zu überführen oder zu entlasten.</li>
+</ul>
+<h3>Nach Einsatz 4 (L4)</h3>
+<ul class="deb">
+  <li>Ports und Sockets festigen: IP-Adresse = welches Gerät, Port = welcher Dienst. Warum darf der Client-Port zufällig sein, der Server-Port aber nicht? Drei Browser-Tabs als Bild.</li>
+  <li>3-Wege-Handshake mit drei SuS nachspielen (SYN / SYN-ACK / ACK), dann „kein Dienst da“ → RST. Bewusst <b>ohne</b> Sequenznummern und Fenstergrößen – die führt ihr später selbst ein (klausurrelevant, im Spiel daher nicht als Profi-Tipp markiert).</li>
+  <li>Kernfrage: „Offener vs. geschlossener Port – woran im Mitschnitt?“ (SYN-ACK vs. RST). Und: Warum muss man UDP anders scannen als TCP? (kein Handshake → echte Anfrage nötig)</li>
+  <li>„Wer ruft wen an?“ – an den Ports ablesen, wer Client und wer Server ist. Übertragung auf den Reverse-Tunnel: Warum baut der Pi die Verbindung von <i>innen</i> nach außen auf? (eingehende Verbindungen blockt der Router)</li>
+  <li>Ermittlungsethik: Portscans nur mit Auftrag (§§ 202a ff. StGB, IT-Richtlinie). Bezug zu Leons „privaten Portscans“ herstellen: Warum war das ein Problem?</li>
+  <li>Fall/Zeitspur: Erste Tunnel-Verbindung Fr 14:12 – zwei Minuten nach Demir/Seidel. Was bedeutet das für den Verdacht gegen Leon (Mo 08:03)? Indiz vs. Beweis erneut schärfen.</li>
+</ul>
+<h3>Nach Einsatz 5 (L5–7)</h3>
+<ul class="deb">
+  <li>DNS-Ablauf an der Tafel: Name → DNS-Server → IP → Verbindung. Kernaussage: Der PC glaubt seinem DNS-Server; die Adresszeile zeigt weiter den Namen. „Wer den DNS kontrolliert, lenkt den Namen.“</li>
+  <li>HTTP vs. HTTPS: Was garantiert das Schloss – und was <b>nicht</b> (Inhalt/Seriosität)? Warum konnte der Täter kein glaubwürdiges HTTPS anbieten? (kein gültiges Zertifikat)</li>
+  <li>Gesamtbild „Man-in-the-Middle“: Die drei Fälschungen (L2 MAC, L3 Gateway/DHCP, L7 DNS) gemeinsam einordnen und das Diagramm aus der Lektion nachzeichnen lassen.</li>
+  <li>L6: Kodieren ≠ Verschlüsseln unbedingt trennen (typische Fehlvorstellung). ASCII/UTF-8, %XX, „fÃ¼r“-Effekt an eigenen Beispielen durchspielen.</li>
+  <li>L5: Wozu Sitzungs-IDs? Warum ist eine gültige Sitzungs-ID so viel wert wie das Passwort? Abwehr: Passwörter ändern, Sitzungen beenden, Gerät entfernen, DNS/DHCP wiederherstellen.</li>
+  <li>Hinweis zur Ermittlersicht: Das Spiel zeigt nur, <b>woran man die Fälschung erkennt</b> (fehlendes Schloss, widersprüchliche DNS-Antworten, HTTP im Mitschnitt), nicht, wie man sie durchführt. Praxis: bei fehlendem Schloss nichts eingeben, IT-Sicherheit melden.</li>
+  <li>Fall: LEON-NB als bewusst gelegte falsche Spur. Überleitung zum Finale: Wer hatte Gelegenheit (Fr 14:10), Fachwissen und einen Grund, Leon zu belasten?</li>
+</ul>
+
+<h3>Nach dem Finale (Die Anklage)</h3>
+<ul class="deb">
+  <li>Beweiskette an der Tafel: Für jede Schicht einen Beweis sammeln (L1 Pi an Port 23 · L2 MAC/OUI, zwei Geräte · L3 Rogue-DHCP, Quell-IP .66 · L4 Tunnel Port 22 · L5–7 Sitzung, Kodierung/TLS, DNS-Lüge, LEON-NB). Kernaussage: Bottom-up ermitteln, jede Schicht liefert eigene Spuren.</li>
+  <li>Indiz vs. Beweis: Was sprach gegen Leon (Pi in der Pause, LEON-NB, Mo 08:03)? Warum hat nichts davon getragen? Welche drei falschen Spuren hat der Täter selbst gelegt (Name im DNS, Zeitsteuerung, „L. Berger“ beim Server)?</li>
+  <li>Gelegenheit statt Technik: Begleitpflicht für Externe, hilfsbereite Fragen auf dem Flur („wann ist montags jemand im Serverraum?“). Social Engineering nur anteasern – viele Angriffe beginnen mit Hilfsbereitschaft, nicht mit Technik.</li>
+  <li>Forensik und Betriebsvorgaben: Warum untersucht man ein Beweisstück nicht selbst? (Veränderung, Kopie statt Original, Beweiskette). Was schreiben die IT-Sicherheitsvorgaben eures Ausbildungsbetriebs zu gefundenen Fremdgeräten vor?</li>
+  <li>Offener Punkt aus E5 auffangen: Der Rogue-DHCP (L3) lenkt allein nicht aufs Lohnportal – er trägt den Pi als DNS-Server und Gateway ein; erst die DNS-Lüge (L7) bzw. das ARP-Spoofing (L2) führen zum Pi.</li>
+  <li>Ausblick auf die gesperrten Akten (Port-Security/802.1X, VLAN, Firewall, TLS, WLAN): Welche Maßnahme hätte welchen Teil der Tat verhindert? Nur sammeln, nicht vertiefen.</li>
+</ul>
+<h3>Nach dem Abschlussverhör</h3>
+<ul class="deb">
+  <li>Einsatzzentrale → Reiter „Abschlussverhör“: Bereiche mit niedrigem Klassenschnitt gemeinsam wiederholen; Einzelne mit roten Feldern gezielt auf „Nochmal üben“ in den passenden Einsätzen hinweisen.</li>
+  <li>Die Verhörfragen sind Transferaufgaben (andere Firma, andere Adressen). Wer im Spiel gut war und im Verhör schwach, hat eher auswendig gelernt als verstanden – im Gespräch nachfragen.</li>
+  <li>Frage 3 (zwei DNS-Antworten) greift „belegt vs. vermutet“ wieder auf: Wer „Fälschung“ wählt, schließt zu schnell.</li>
+  <li>Das Verhör ist nicht gegen Wiederholung abgesichert (keine Note). Auffällig kurze Dauer oder mehrere Abgaben desselben Spielstands im Blick behalten.</li>
+</ul>
+<script src="../../spiel/content/meta.js"></script>
+<script src="../../spiel/content/e0.js"></script>
+<script src="../../spiel/content/e1.js"></script>
+<script src="../../spiel/content/e2.js"></script>
+<script src="../../spiel/content/e3.js"></script>
+<script src="../../spiel/content/e4.js"></script>
+<script src="../../spiel/content/e5.js"></script>
+<script src="../../spiel/content/e6.js"></script>
+<script src="../../spiel/content/verhoer.js"></script>
+<script>
+  const OSI = window.OSI;
+  const strip = s => String(s == null ? '' : s).replace(/<(?!\/?(b|i|code)\b)[^>]+>/g, '').replace(/\s+/g, ' ').trim();
+  document.getElementById('ver').textContent = 'Automatisch erzeugt aus Spielversion ' + OSI.version + ' · Stand ' + new Date().toLocaleDateString('de-DE');
+  let html = '';
+  OSI.einsaetze.filter(e => e.steps.length).forEach(e => {
+    html += `<h2>${e.nrText} – ${e.titel}</h2>`;
+    e.steps.forEach((st, i) => {
+      const nr = st.bonus ? '★' : (i + 1);
+      if (st.type === 'quiz' || st.type === 'anklage') {
+        html += `<h3>Schritt ${nr}: ${st.titel}${st.bonus ? ' (Bonus)' : ''}</h3><table>`;
+        st.fragen.forEach(q => {
+          let a;
+          if (q.layer) a = [].concat(q.richtig).map(n => `<span class="lchip">L${n}</span>`).join(' oder ');
+          else if (q.pick) a = 'Klick auf: ' + ({ eth: 'Zeile „Ethernet II“', ip: 'Zeile „Internet Protocol Version 4“' }[q.richtig] || 'Port ' + q.richtig);
+          else if (q.meldung) a = 'Frame ' + [].concat(q.richtig).join(' oder ') + ' markieren und melden';
+          else if (q.eingabe === 'filter') a = 'Filter: <code>' + q.richtig + '</code> (jeder gleichwertige Filter wird akzeptiert)';
+          else if (q.eingabe) a = 'Eingabe: <code>' + [].concat(q.richtig)[0] + '</code>';
+          else if (q.multi) a = q.richtig.map(i => strip(q.optionen[i])).join('<br>');
+          else a = strip(q.optionen[q.richtig]);
+          html += `<tr class="q"><td>${q.ticket ? strip(q.ticket) + '<br>' : ''}${strip(q.frage)}</td><td class="a">${a}</td></tr>`;
+        });
+        html += '</table>';
+      } else if (st.type === 'sort') {
+        html += `<h3>Schritt ${nr}: ${st.titel}</h3><table>`;
+        st.bins.forEach(b => {
+          const its = st.items.filter(it => [].concat(it.ziel).map(String).includes(String(b.id))).map(it => it.text + ([].concat(it.ziel).length > 1 ? ' (auch ' + [].concat(it.ziel).filter(z => String(z) !== String(b.id)).map(z => 'L' + z).join(', ') + ' richtig)' : ''));
+          if (its.length) html += `<tr class="q"><td style="width:28%"><b>${b.kurz || ''} ${b.label}</b></td><td>${its.join(' · ')}</td></tr>`;
+        });
+        html += '</table>';
+      } else if (st.type === 'verhoer') {
+        html += `<h3>${st.titel} (Diagnose, keine Punkte – einzeln pro Kürzel)</h3><table>`;
+        st.verhoerFragen.forEach((q, j) => {
+          let a;
+          if (q.layer) a = [].concat(q.richtig).map(n => `<span class="lchip">L${n}</span>`).join(' oder ');
+          else if (q.eingabe) a = 'Eingabe: <code>' + [].concat(q.richtig)[0] + '</code>';
+          else if (q.multi) a = q.richtig.map(i => strip(q.optionen[i])).join('<br>');
+          else a = strip(q.optionen[q.richtig]);
+          html += `<tr class="q"><td><b>${j + 1}. [${q.bereich}]</b> ${q.ticket ? strip(q.ticket) + '<br>' : ''}${strip(q.frage)}${q.kontext ? `<pre style="font-size:8pt;margin:4px 0 0">${q.kontext.replace(/<[^>]+>/g, '').trim()}</pre>` : ''}</td><td class="a">${a}</td></tr>`;
+        });
+        html += '</table>';
+      } else if (st.type === 'kapsel') {
+        html += `<h3>Schritt ${nr}: ${st.titel}</h3><table>`;
+        st.phasen.forEach(ph => { html += `<tr class="q"><td>${strip(ph.titel)}</td><td class="a">${ph.korrekt.map(k => strip(ph.optionen.find(o => o.key === k).label)).join(' → ')}</td></tr>`; });
+        html += '</table>';
+      }
+    });
+  });
+  html += `<h3>Zeit-Challenge</h3><p class="muted">${OSI.challenge.pool.map(p => p.t + ' = L' + p.l).join(' · ')}</p>`;
+  document.getElementById('inhalt').innerHTML = html;
+</script>
+</body>
+</html>

@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<title>OSI-Agenten – Offene Aufgaben (Lehrkraft)</title>
+<style>
+  @page { size: A4; margin: 13mm 14mm 15mm; }
+  body { font: 9.5pt/1.34 "Segoe UI", Arial, sans-serif; color: #111; margin: 0; }
+  h1 { font-size: 16pt; margin: 0 0 1mm; }
+  h2 { font-size: 12pt; margin: 5mm 0 2mm; padding: 1.3mm 3mm; background: #10262b; color: #fff; border-radius: 2mm; break-after: avoid; }
+  h3 { font-size: 10.3pt; margin: 3mm 0 1mm; color: #b35d16; break-after: avoid; }
+  table { border-collapse: collapse; width: 100%; margin: 1mm 0 2mm; }
+  td, th { border: 1px solid #ccc; padding: 1mm 2mm; vertical-align: top; text-align: left; }
+  th { background: #eee; font-size: 9pt; }
+  tr { break-inside: avoid; }
+  .box { border: 1px solid #bbb; border-radius: 2mm; padding: 2.5mm 3.5mm; margin: 2mm 0; break-inside: avoid; }
+  .warn { border: 2px solid #ff8a2a; background: #fff3e6; }
+  .pt { border-left: 4px solid #4aa3df; padding: 1mm 0 1mm 3mm; margin: 2mm 0 3mm; break-inside: avoid; }
+  .muted { color: #666; font-size: 8.5pt; }
+  ol, ul { margin: 1mm 0 2mm; padding-left: 5.5mm; }
+  li { margin-bottom: .6mm; }
+  code { background: #eee; padding: 0 1mm; border-radius: 1mm; }
+  .check li { list-style: none; margin-left: -5mm; }
+  .check li::before { content: "☐ "; font-size: 11pt; }
+</style>
+</head>
+<body>
+<h1>OSI-Agenten · Was noch offen ist – Schritt für Schritt</h1>
+<div class="muted">Für die Lehrkraft · Stand 01.10.2026 · Spielversion 1.1.0</div>
+
+<div class="box warn"><b>Für den Start wird nichts davon gebraucht.</b> Einsatz 0 bis Finale und das Abschlussverhör sind vollständig spielbar. Die offenen Teile sind <b>freiwillige Bonus-Akten</b> („Außeneinsätze“, im Spiel versiegelt) und Begleitmaterial. Versiegelte Akten werden einfach übersprungen – sie bringen keine Punkte und blockieren nichts.</div>
+
+<h2>A · Checkliste vor dem ersten Einsatz</h2>
+<ol class="check">
+  <li>Die aktuelle ZIP aus <code>verteilen/</code> verteilen (z. B. über die Lernplattform) und ältere Kopien ersetzen – oder den Online-Link weitergeben (siehe README).</li>
+  <li>Bei Bedarf Zweiergruppen bilden (wenn Geräte fehlen), Kurzanleitung gemeinsam durchgehen – vor allem <b>Export am Stundenende</b>.</li>
+  <li><code>lehrkraft/einsatzzentrale.html</code> am Lehrkraft-PC öffnen, Beamer-Ansicht vorbereiten.</li>
+  <li>Lösungs-PDF bereitlegen (Debriefing-Impulse je Einsatz, Passwort Lehrkraft-Modus).</li>
+  <li>Stundenende: alle <code>.osiagent</code>-Dateien einsammeln (z. B. als Abgabe auf der Lernplattform) und in die Einsatzzentrale ziehen.</li>
+</ol>
+
+<h2>B · Außeneinsätze in Packet Tracer (5 Dateien – von dir zu erstellen)</h2>
+<p>Pro Einsatz gibt es am Ende einen versiegelten Bonus-Schritt mit einem Teaser. Für jeden brauchst du <b>eine .pkt-Datei</b> und <b>einen kurzen Arbeitsauftrag</b> (½ Seite). So gehst du vor:</p>
+<ol>
+  <li>Netz in Packet Tracer aufbauen (Vorschläge unten) und im <b>Simulationsmodus</b> selbst durchspielen.</li>
+  <li>Datei speichern als <code>Aussen_E1_Wer-hoert-mit.pkt</code> usw. Tipp: einen Zustand <i>vor</i> der Beobachtung speichern (PCs ohne Konfiguration bzw. leere Tabellen), damit die SuS selbst auslösen.</li>
+  <li>Arbeitsauftrag schreiben: Was sollen sie auslösen, was beobachten, welche 2–3 Fragen beantworten? (Wenn du mir den Text gibst, mache ich daraus ein druckfertiges A4-PDF im Spiel-Design.)</li>
+  <li>Freischalten: Im jeweiligen Spielstand Lehrkraft-Modus (Strg + Alt + L) → <b>„Außeneinsätze in diesem Spielstand freischalten“</b>. Das schaltet <b>alle fünf</b> auf einmal frei; die Akte zeigt dann „Die Unterlagen bekommt ihr von eurer Lehrkraft“.</li>
+  <li>Datei + Auftrag verteilen (z. B. über die Lernplattform). Optional: Wenn alle fünf fertig sind, kann ich den Text der Akten so ändern, dass sie direkt auf die Dateinamen verweisen.</li>
+</ol>
+
+<div class="pt"><h3>E1 · „Wer hört mit?“ – Switch gegen Hub (L1/L2)</h3>
+<b>Aufbau:</b> 3–4 PCs an einem <b>Switch</b>, daneben dasselbe Netz noch einmal mit einem <b>Hub</b> (z. B. Buchhaltung 192.168.50.0/24, feste IPs).<br>
+<b>Beobachtung:</b> Im Simulationsmodus ein ping von PC-A an PC-B. Am Hub erhalten alle PCs den Frame (und verwerfen ihn), am Switch nach dem Lernen nur PC-B.<br>
+<b>Fragen-Ideen:</b> Wer bekommt den Frame zu sehen? Warum ist der Hub ein Sicherheitsrisiko? Auf welcher Schicht arbeiten die beiden Geräte?</div>
+
+<div class="pt"><h3>E2 · „Der lernende Switch“ – MAC-Tabelle und ARP (L2)</h3>
+<b>Aufbau:</b> Ein Switch, 3 PCs, ein Server. Switch frisch (Tabelle leer; im CLI <code>show mac address-table</code>).<br>
+<b>Beobachtung:</b> Erster ping → ARP-Request als Broadcast an alle Ports, ARP-Reply gezielt zurück; danach MAC-Tabelle und <code>arp -a</code> am PC ansehen. Filter im Simulationsmodus auf ARP und ICMP.<br>
+<b>Fragen-Ideen:</b> Welche Einträge stehen nach dem ersten ping in der MAC-Tabelle? Warum ist der Request ein Broadcast, der Reply nicht? Was passiert beim Umstecken eines PCs?</div>
+
+<div class="pt"><h3>E3 · „Zwei Server, ein Discover“ – DHCP und Gateway (L3)</h3>
+<b>Aufbau:</b> Ein LAN mit zwei DHCP-Servern, die <b>unterschiedliche Standardgateways</b> verteilen (Server 1 → Router .1, Server 2 → ein zweiter Router). Für den sichtbaren Extra-Hop in tracert muss das zweite Gateway ein Router sein, der weiterleitet. Dahinter ein „Internet“-Server.<br>
+<b>Beobachtung:</b> PCs auf DHCP stellen (bzw. neu anfordern lassen), im Simulationsmodus DHCP filtern: ein Discover, zwei Offers. Danach <code>ipconfig /all</code> und <code>tracert</code> zum Internet-Server vergleichen.<br>
+<b>Fragen-Ideen:</b> Welches Offer hat der PC genommen und woran seht ihr das? Wie unterscheidet sich die tracert-Ausgabe? Woran erkennt man einen zweiten DHCP-Server?<br>
+<span class="muted">Bitte vorab testen, welches Angebot Packet Tracer bei dir annimmt. Das hängt vom Ablauf in der Simulation ab. Wenn es immer derselbe Server ist, im Arbeitsauftrag auf „Beobachtet, welches Angebot gewinnt“ ausweichen.</span></div>
+
+<div class="pt"><h3>E4 · „Wer hebt ab?“ – 3-Wege-Handshake (L4)</h3>
+<b>Aufbau:</b> PC und Server-PT mit HTTP-Dienst, ein Switch genügt.<br>
+<b>Beobachtung:</b> Im Webbrowser des PCs die Seite aufrufen, Simulationsmodus mit Filter TCP/HTTP: SYN – SYN, ACK – ACK, dann die HTTP-Anfrage. Danach den HTTP-Dienst am Server ausschalten und erneut aufrufen.<br>
+<b>Fragen-Ideen:</b> In welcher Reihenfolge kommen die Flags? Was kommt zurück, wenn kein Dienst lauscht?<br>
+<span class="muted">Bitte vorab prüfen, was Packet Tracer bei abgeschaltetem Dienst zurückschickt. Ich bin nicht sicher, ob PT dann wie ein echtes Betriebssystem RST, ACK sendet. Falls nicht, die zweite Frage weglassen oder als „Was zeigt der Browser?“ stellen.</span></div>
+
+<div class="pt"><h3>E5 · „Name gegen Adresse“ – DNS (L7)</h3>
+<b>Aufbau:</b> PC, DNS-Server (Server-PT, Dienst DNS mit A-Eintrag, z. B. <code>lohn.firma.intern → 192.168.50.20</code>), Webserver .20. Für den zweiten Teil einen zweiten DNS-Server mit <b>anderem</b> A-Eintrag für denselben Namen.<br>
+<b>Beobachtung:</b> <code>nslookup</code> und Browser am PC; im Simulationsmodus DNS filtern. Dann am PC den zweiten DNS-Server eintragen und vergleichen.<br>
+<b>Fragen-Ideen:</b> Welche Adresse liefert welcher Server? Woran seht ihr in der nslookup-Ausgabe, welcher Server geantwortet hat? Was zeigt die Adresszeile des Browsers?</div>
+
+<h2>C · Weitere offene Punkte aus dem Etappenplan</h2>
+<table>
+  <tr><th style="width:26%">Punkt</th><th>Was zu tun ist</th><th style="width:16%">Wer</th></tr>
+  <tr><td>Arbeitsaufträge zu B</td><td>Je ½ Seite, als PDF im Spiel-Design</td><td>Text von dir, PDF von mir</td></tr>
+  <tr><td><code>.pcapng</code>-Boni</td><td>Echte Mitschnitte zum Öffnen im echten Wireshark (z. B. DORA, Handshake, DNS, HTTP-Seitenaufruf). Am einfachsten im eigenen Testnetz oder in einer VM aufnehmen. Wichtig: nur eigener, harmloser Verkehr ohne Zugangsdaten oder personenbezogene Daten.</td><td>Aufnahme von dir, Aufgaben dazu von mir</td></tr>
+  <tr><td>Agenten-Handbuch (PDF)</td><td>Das 📘 Handbuch aus dem Spiel als Spickzettel zum Ausdrucken (Schichten, PDUs, Ports, Befehle, Filter)</td><td>ich, auf Zuruf</td></tr>
+  <tr><td>Lehrkraft-Handbuch (PDF)</td><td>Ablauf, Einsatzzentrale, Freischalten, Updates verteilen. Größtenteils schon im Lösungs-PDF und in diesem Blatt enthalten.</td><td>ich, auf Zuruf</td></tr>
+  <tr><td>Eigenes Lehrkraft-Passwort</td><td>Das Standard-Passwort ist öffentlich. Wer den Lehrkraft-Modus vor der eigenen Lerngruppe verbergen möchte, setzt ein eigenes (Anleitung in der README).</td><td>du</td></tr>
+</table>
+
+<h2>D · Wenn während des Einsatzes Fehler auftauchen</h2>
+<ul>
+  <li>Melde mir Einsatz + Schritt (Titel reicht) und am besten die <code>.osiagent</code>-Datei. Texte korrigiere ich, ohne Spielstände zu gefährden (IDs bleiben).</li>
+  <li>Neue Version: Ich zähle die Version hoch und baue die ZIP. Die SuS entpacken sie in denselben Ordner; fehlt der Stand, laden sie ihre letzte <code>.osiagent</code>-Datei.</li>
+</ul>
+</body>
+</html>
