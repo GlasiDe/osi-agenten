@@ -5,7 +5,7 @@ Ein Agenten-Krimi als Lernspiel, in dem sich Lernende das **OSI-Modell** selbst 
 ![Einsatzzentrale der Agenten](spiel/img/hq.jpg)
 
 **▶ Online spielen:** <https://glaside.github.io/osi-agenten/spiel/>
-**▶ Offline spielen:** Repo als ZIP herunterladen (*Code → Download ZIP*), entpacken, `spiel/index.html` doppelklicken. Es wird kein Internet, kein Server und keine Installation gebraucht.
+**▶ Offline spielen:** Unter [Releases](https://github.com/GlasiDe/osi-agenten/releases/latest) die ZIP der aktuellen Version herunterladen (`OSI-Agenten_v….zip`, enthält nur das Spiel und die Kurzanleitung), entpacken und `spiel/index.html` doppelklicken. Es wird kein Internet, kein Server und keine Installation gebraucht.
 
 ## Zielgruppe und Einordnung
 - Informationstechnische Assistentinnen und Assistenten (NRW, Profilfach Betriebssysteme/Netzwerke)
@@ -14,6 +14,7 @@ Ein Agenten-Krimi als Lernspiel, in dem sich Lernende das **OSI-Modell** selbst 
 Das Spiel setzt Grundlagen voraus, z. B. IPv4 und Subnetting, MAC-Adressen, DHCP und ARP. Was genau vorausgesetzt wird, steht in [`lehrkraft/Mindestanforderungen_Vorwissen.pdf`](lehrkraft/Mindestanforderungen_Vorwissen.pdf), zusammen mit einem zehnminütigen Vorab-Check. Wo das Spiel im eigenen Bildungsgang hingehört, legt ihr in eurer **Didaktischen Jahresplanung** fest. Bezüge zu Bildungsplan und Lernfeldern stehen in [`DESIGN.md`](DESIGN.md#lehrplanbezug). Wer andere Lerngruppen hat, darf das Spiel gern anpassen.
 
 ## Ablauf im Unterricht
+- **Verteilen:** die ZIP aus dem [aktuellen Release](https://github.com/GlasiDe/osi-agenten/releases/latest) an die Lernenden geben (z. B. über die Lernplattform) oder den Online-Link weitergeben. Das übrige Repo wird dafür nicht gebraucht.
 - 7 Einsätze (E0–E6) und ein Abschlussverhör, etwa 6 Doppelstunden bei freiem Tempo
 - Gespielt wird **grundsätzlich allein**. Fehlen Geräte oder spricht didaktisch etwas dafür, geht es auch zu zweit an einem Gerät mit gemeinsamem Spielstand (im Spiel „Duo“ genannt).
 - Am Stundenende wird der Spielstand als `.osiagent`-Datei exportiert und abgegeben.

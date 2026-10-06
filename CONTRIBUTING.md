@@ -62,10 +62,18 @@ npm run release      # Tests + PDFs + ZIP – vor jedem Commit
 
   Screenshots landen in `werkzeuge/shots/`. Bei Änderungen an der Oberfläche bitte ansehen.
 - `npm run pdf` erzeugt die PDFs neu. Das ist nach jeder Inhaltsänderung nötig, weil das Lösungs-PDF aus den Spielinhalten entsteht.
-- `npm run zip` baut `verteilen/OSI-Agenten_v<version>.zip` (Spiel + Kurzanleitung) zum Verteilen.
+- `npm run zip` baut `verteilen/OSI-Agenten_v<version>.zip` (Spiel + Kurzanleitung). Der Ordner `verteilen/` ist nur lokal, veröffentlicht wird die ZIP über ein GitHub-Release (siehe unten).
 - Optional: Eigene `.osiagent`-Dateien in einen Ordner `test/` im Projekt legen. Er wird von Git ignoriert. `npm test` prüft dann, ob diese Spielstände noch laden.
-- Die Version in `meta.js` nur erhöhen, wenn eine neue Fassung verteilt wird.
 - Commit-Nachrichten auf Deutsch, kurz: was und warum.
+
+## Neue Version veröffentlichen (Maintainer)
+Nicht zu verwechseln: `npm run release` baut lokal Tests, PDFs und ZIP. Ein **GitHub-Release** stellt die ZIP öffentlich zum Download bereit.
+1. `version` in `spiel/content/meta.js` erhöhen. Das nur, wenn eine neue Fassung an Lernende verteilt werden soll, nicht für jede Kleinigkeit.
+2. `npm run release` ausführen, dann committen und pushen.
+3. GitHub-Release `vX.Y.Z` auf diesem Commit anlegen und `verteilen/OSI-Agenten_vX.Y.Z.zip` anhängen:
+   `gh release create vX.Y.Z verteilen/OSI-Agenten_vX.Y.Z.zip --target main --title "vX.Y.Z – …" --notes "…"`
+
+In den Release-Notizen steht, was sich für Lernende und Lehrkräfte ändert. Ältere Spielstände laden weiter (siehe Grundregeln).
 
 ## Neuen Einsatz ergänzen
 1. `spiel/content/eN.js` anlegen (Muster: `e1.js`) und in `meta.js` mit `status: 'offen'` eintragen.
