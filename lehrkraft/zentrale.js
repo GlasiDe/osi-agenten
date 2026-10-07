@@ -60,6 +60,20 @@
     render(true);
   }
 
+  // Online (Live-Einsatzzentrale): Spielstände kommen vom Server statt aus Dateien. Neu gezeichnet wird nur bei Änderungen.
+  let onlineStempel = '';
+  function uebernehmen(liste, quelle) {
+    const stempel = liste.map(x => x.id + x.aktualisiert).join('|');
+    if (stempel === onlineStempel) return false;
+    const erstes = !onlineStempel;
+    onlineStempel = stempel;
+    duos.clear();
+    liste.forEach(x => { const s = S.migrate(x); duos.set(s.id, { save: s, datei: quelle || 'online', k: kennzahlen(s) }); });
+    $('#drop').classList.toggle('kompakt', duos.size > 0);
+    render(erstes);
+    return true;
+  }
+
   // ---------------------------------------------------------------- Ansichten
   function render(neuGeladen) {
     $('#cnt').textContent = duos.size ? `${duos.size} Duo${duos.size === 1 ? '' : 's'} geladen` : '';
@@ -296,6 +310,6 @@
   $('#reset').onclick = () => { if (confirm('Alle geladenen Spielstände aus der Ansicht entfernen?')) { duos.clear(); $('#filelist').innerHTML = ''; $('#drop').classList.remove('kompakt'); render(); } };
   $('#tb-theme').onclick = () => { Kit.theme.umschalten(); $('#tb-theme').textContent = Kit.theme.aktuell() === 'dark' ? '☀️' : '🌙'; };
   $('#tb-theme').textContent = Kit.theme.aktuell() === 'dark' ? '☀️' : '🌙';
-  window.OSIZentrale = { laden, duos, render };
+  window.OSIZentrale = { laden, uebernehmen, duos, render };
   render();
 })();

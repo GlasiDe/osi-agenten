@@ -6,6 +6,16 @@
   const { esc, $, $$ } = Kit.util;
   const app = () => $('#app');
 
+  const heroHtml = () => {
+    const parade = ['a02', 'a07', 'a01', 'a10', 'a06'].map((id, i) => `<span class="parade-figur" style="--i:${i}">${AV.svg(id, { titel: false })}</span>`).join('');
+    return `<div class="start-hero">
+          <img class="start-bild" src="img/hq.jpg" alt="Einsatzzentrale der Einheit 7">
+          <div class="start-parade" aria-hidden="true">${parade}</div>
+          <div class="start-text"><div class="eyebrow">Einheit 7 · Abteilung für Netzwerkforensik</div>
+            <h1>Operation <b>Lohnzettel</b></h1><p>Ein Fall in sieben Schichten. Klettert Schicht für Schicht nach oben – von L1 bis L7.</p></div>
+        </div>`;
+  };
+
   // ---------------------------------------------------------------- Start
   function renderStart(forceNeu) {
     G.view = 'start';
@@ -13,7 +23,6 @@
     const lokal = !forceNeu && S.loadLocal();
     let avatar = AV.zufall();
     const lsWarn = S.localAvailable() ? '' : `<div class="warnbar">⚠ Euer Browser erlaubt hier kein automatisches Speichern. Das Spiel funktioniert trotzdem – <b>exportiert euren Spielstand aber am Ende unbedingt!</b></div>`;
-    const parade = ['a02', 'a07', 'a01', 'a10', 'a06'].map((id, i) => `<span class="parade-figur" style="--i:${i}">${AV.svg(id, { titel: false })}</span>`).join('');
     const weiter = lokal ? (() => {
       const rg = P.rang(P.punkte(lokal));
       return `<div class="card start-weiter">
@@ -24,12 +33,7 @@
     })() : '';
     app().innerHTML = `
       <section class="start">
-        <div class="start-hero">
-          <img class="start-bild" src="img/hq.jpg" alt="Einsatzzentrale der Einheit 7">
-          <div class="start-parade" aria-hidden="true">${parade}</div>
-          <div class="start-text"><div class="eyebrow">Einheit 7 · Abteilung für Netzwerkforensik</div>
-            <h1>Operation <b>Lohnzettel</b></h1><p>Ein Fall in sieben Schichten. Klettert Schicht für Schicht nach oben – von L1 bis L7.</p></div>
-        </div>
+        ${heroHtml()}
         ${lsWarn}
         ${weiter}
         <div class="start-grid">
@@ -59,7 +63,7 @@
       if (!code || !k1) { alert('Bitte mindestens Codename und ein Kürzel eintragen.'); return; }
       if (lokal && !confirm(`Es gibt schon einen Spielstand von Duo „${lokal.duo.codename}“. Wirklich überschreiben? (Vorher exportieren, wenn ihr ihn noch braucht!)`)) return;
       G.save = G.neuerSpielstand(code, k1, k2, avatar);
-      G.lokalOk = S.saveLocal(G.save);
+      G.sichern();
       A.play('funk');
       G.gotoStep(OSI.einsaetze[0].id, OSI.einsaetze[0].steps[0].id);
     };
@@ -74,6 +78,47 @@
     };
   }
 
+  // ---------------------------------------------------------------- Online-Start (nur Online-Fassung, noch kein Spielstand im Konto)
+  function renderOnlineStart() {
+    G.view = 'start';
+    G.renderTopbar();
+    const O = G.online;
+    let avatar = AV.zufall();
+    app().innerHTML = `
+      <section class="start">
+        ${heroHtml()}
+        <div class="start-grid">
+          <div class="card">
+            <div class="eyebrow">Angemeldet als ${esc(O.benutzer.name)}${O.benutzer.klasse ? ` · Klasse ${esc(O.benutzer.klasse)}` : ''}</div>
+            <h2>Euer Agenten-Ausweis</h2>
+            <label for="st-code">Codename</label><input type="text" id="st-code" maxlength="24" placeholder="z. B. Nachtfalke">
+            <p class="small muted">Der Codename erscheint bei eurer Klasse und in der Einsatzzentrale – also kein echter Name.</p>
+            <label>Eure Figur <span class="muted small" id="st-av-name">· ${esc(AV.name(avatar))}</span></label>
+            <div id="st-avatar"></div>
+            <div class="btnrow"><button class="btn gross" id="st-neu">Einsatz beginnen</button></div>
+          </div>
+          <div class="card">
+            <h2>Schon mit der Lite-Version gespielt?</h2>
+            <p>Ladet eure <code>.osiagent</code>-Datei hoch – dann geht es online genau dort weiter.</p>
+            <div class="btnrow"><button class="btn sec" id="st-load">⬆ Datei auswählen</button><input type="file" id="st-file" accept=".osiagent" class="hidden"></div>
+            <div id="st-drop" class="dropzone">… oder Datei hierher ziehen</div>
+          </div>
+        </div>
+      </section>`;
+    AV.picker($('#st-avatar'), avatar, id => { avatar = id; $('#st-av-name').textContent = '· ' + AV.name(id); A.play('plopp'); });
+    $('#st-neu').onclick = () => {
+      const code = $('#st-code').value.trim();
+      if (!code) { Kit.fx.anstoss($('#st-code'), 'shake'); $('#st-code').focus(); return; }
+      G.save = G.neuerSpielstand(code, O.benutzer.name, '', avatar);
+      G.persist();
+      A.play('funk');
+      G.gotoStep(OSI.einsaetze[0].id, OSI.einsaetze[0].steps[0].id);
+    };
+    $('#st-load').onclick = () => $('#st-file').click();
+    $('#st-file').onchange = ev => { const f = ev.target.files[0]; if (f) G.importieren(f); };
+    dropzone($('#st-drop'), f => G.importieren(f));
+  }
+
   function dropzone(el, onFile) {
     el.ondragover = e => { e.preventDefault(); el.classList.add('over'); };
     el.ondragleave = () => el.classList.remove('over');
@@ -81,7 +126,7 @@
   }
 
   // ---------------------------------------------------------------- Karte (Übersicht)
-  const HUB_TABS = [['karte', '🗺️', 'Karte'], ['board', '🗂️', 'Board'], ['abzeichen', '🎖️', 'Abzeichen'], ['challenge', '⏱️', 'Challenge']];
+  const HUB_TABS = [['karte', '🗺️', 'Karte'], ['klasse', '👥', 'Klasse'], ['board', '🗂️', 'Board'], ['abzeichen', '🎖️', 'Abzeichen'], ['challenge', '⏱️', 'Challenge']];
   G.hubTab = 'karte';
 
   function renderHub() {
@@ -91,7 +136,9 @@
     const s = G.save, front = P.front(s), rg = P.rang(P.punkte(s));
     const boardDa = Object.keys(s.board).length || s.steps[OSI.boardAb];
     if (G.hubTab === 'board' && !boardDa) G.hubTab = 'karte';
-    const nav = HUB_TABS.filter(([k]) => k !== 'board' || boardDa).map(([k, ic, t]) => `<button class="hub-tab ${G.hubTab === k ? 'on' : ''}" data-tab="${k}"><span class="hub-tab-ic">${ic}</span><span>${t}</span></button>`).join('');
+    const klasseDa = !!(G.online && G.online.benutzer.klasse);
+    if (G.hubTab === 'klasse' && !klasseDa) G.hubTab = 'karte';
+    const nav = HUB_TABS.filter(([k]) => (k !== 'board' || boardDa) && (k !== 'klasse' || klasseDa)).map(([k, ic, t]) => `<button class="hub-tab ${G.hubTab === k ? 'on' : ''}" data-tab="${k}"><span class="hub-tab-ic">${ic}</span><span>${t}</span></button>`).join('');
     const weiterText = front ? `${front.e.icon || ''} ${esc(front.st.titel || front.st.id)}` : 'Alles erledigt – stark!';
     app().innerHTML = `<div class="hub">
       <nav class="hub-nav" aria-label="Bereiche">${nav}</nav>
@@ -113,7 +160,7 @@
     $('#hub-lk').onclick = ev => { ev.preventDefault(); G.lehrkraft(); };
     if (front) $('#hub-weiter').onclick = () => G.gotoStep(front.e.id, front.st.id);
     const main = $('#hub-main');
-    ({ karte: hubKarte, board: hubBoard, abzeichen: hubAbzeichen, challenge: hubChallenge })[G.hubTab](main, front);
+    ({ karte: hubKarte, klasse: hubKlasse, board: hubBoard, abzeichen: hubAbzeichen, challenge: hubChallenge })[G.hubTab](main, front);
   }
 
   // ---------- Karte: Weltkarte (Stationen je Einsatz) oder Pfad eines Einsatzes
@@ -223,6 +270,28 @@
     if (fokus) fokus.scrollIntoView({ block: 'center' });
   }
 
+  // ---------- Klasse (nur online): Weltkarte mit allen Figuren der Klasse und Rangliste – nur Codenamen und Figuren
+  async function hubKlasse(main) {
+    main.innerHTML = `<div class="card"><h2>👥 Eure Klasse</h2><p class="small muted">Wo stehen die anderen Agentinnen und Agenten? Zu sehen sind nur Codenamen und Figuren.</p>
+      <div class="karte-wrap" id="karte"><p class="karte-leer">Lade Klasse …</p></div><div id="kl-liste"></div></div>`;
+    let liste;
+    try { liste = await G.online.klasse(); } catch (e) { $('#karte').innerHTML = '<p class="karte-leer">Die Klasse konnte gerade nicht geladen werden. Später nochmal versuchen.</p>'; return; }
+    if (G.view !== 'hub' || G.hubTab !== 'klasse' || !main.isConnected) return;
+    const s = G.save, front = P.front(s);
+    const lay = MAP.layout(P.sichtbar(false), 'welt');
+    const karte = MAP.render($('#karte'), lay, {
+      status: n => G.einsatzFertig(n.e) ? 'done' : front && front.e === n.e ? 'cur' : G.einsatzOffen(n.e) ? 'open' : 'locked',
+      fortschritt: e => P.einsatzFortschritt(s, e)
+    });
+    const zielVon = x => { const e = x.front && P.einsatzVonStep(x.front); return e ? e.id : 'ziel'; };
+    MAP.pinne(karte, liste.map(x => ({ ziel: zielVon(x), avatar: x.avatar, name: x.ich ? 'Ihr' : x.codename, ich: x.ich, titel: x.codename })), { lauf: true, von: 0, staffel: 90, max: 8, proReihe: 4, versatz: 46, reihenAbstand: 40 });
+    const rang = liste.slice().sort((a, b) => b.punkte - a.punkte);
+    $('#kl-liste').innerHTML = `<table class="t rangliste"><tr><th>#</th><th>Duo</th><th class="num">XP</th><th>Einsatz</th></tr>${rang.map((x, i) => {
+      const e = x.front && P.einsatzVonStep(x.front);
+      return `<tr class="${x.ich ? 'ich' : ''}"><td>${i + 1}</td><td><span class="rl-figur">${AV.svg(x.avatar, { titel: false })}</span>${esc(x.codename)}${x.ich ? ' <span class="muted small">(ihr)</span>' : ''}</td><td class="num">${x.punkte}</td><td>${e ? esc(e.icon + ' ' + e.nrText) : '🏆 fertig'}</td></tr>`;
+    }).join('')}</table>`;
+  }
+
   function hubBoard(main) {
     main.innerHTML = `<div class="card"><h2>🗂️ Verdächtigen-Board</h2><p class="small muted">Wer war es? Die Stempel setzt ihr mit euren Ermittlungen.</p>${boardHtml()}</div>`;
   }
@@ -303,5 +372,5 @@
     });
   }
 
-  Object.assign(G, { renderStart, renderHub, renderStepView, boardHtml, dropzone });
+  Object.assign(G, { renderStart, renderOnlineStart, renderHub, renderStepView, boardHtml, dropzone });
 })();

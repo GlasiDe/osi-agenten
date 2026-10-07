@@ -359,3 +359,7 @@ svg .svg-on { fill: var(--on-color); }
 .ch-btns button { min-height: 64px; font-size: 1.15rem; }
 .ch-btns button:disabled { cursor: default; }
 .ch-btns button.daneben { opacity: .3; }
+
+/* Klassen-Rangliste (nur online) */
+.rangliste .rl-figur { display: inline-block; width: 26px; vertical-align: middle; margin-right: 6px; }
+.rangliste tr.ich td { background: var(--blue-soft); font-weight: 900; }

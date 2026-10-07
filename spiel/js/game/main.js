@@ -24,6 +24,7 @@
 
   window.addEventListener('DOMContentLoaded', () => {
     G.lokalOk = S.localAvailable();
-    G.renderStart();
+    if (G.online) G.online.start(); // Online-Fassung: Konto und Spielstand kommen vom Server
+    else G.renderStart();
   });
 })();

@@ -67,5 +67,12 @@
     return Object.values(save.steps || {}).filter(iso => new Date(iso).toDateString() === t).length;
   }
 
-  Kit.progress = { einsatz, freigegeben, sichtbar, pflicht, stepDone, einsatzFertig, einsatzFortschritt, einsatzOffen, stepOffen, fallFortschritt, front, punkte, rang, geloest, heute };
+  // Einsatz zu einer Schritt-ID (z. B. die „Front“ aus der Online-Rangliste)
+  let schrittIndex = null;
+  function einsatzVonStep(id) {
+    if (!schrittIndex) { schrittIndex = {}; OSI.einsaetze.forEach(e => e.steps.forEach(st => { schrittIndex[st.id] = e; })); }
+    return schrittIndex[id] || null;
+  }
+
+  Kit.progress = { einsatzVonStep, einsatz, freigegeben, sichtbar, pflicht, stepDone, einsatzFertig, einsatzFortschritt, einsatzOffen, stepOffen, fallFortschritt, front, punkte, rang, geloest, heute };
 })();

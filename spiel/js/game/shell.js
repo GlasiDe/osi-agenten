@@ -12,7 +12,8 @@
     if (!G.save) { tb.innerHTML = `${logo}<span class="spacer"></span>${themeBtn()}${tonBtn()}`; binden(); return; }
     const p = G.punkte(), rg = P.rang(p), heute = P.heute(G.save), n = G.save.aenderungenSeitExport || 0;
     let st;
-    if (G.lokalOk === false) st = `<span class="savestate warn" title="Der Browser erlaubt kein automatisches Speichern – nur der Export sichert!">⚠<span class="tb-label"> Nur Export sichert!</span></span>`;
+    if (G.online) st = onlineStatus();
+    else if (G.lokalOk === false) st = `<span class="savestate warn" title="Der Browser erlaubt kein automatisches Speichern – nur der Export sichert!">⚠<span class="tb-label"> Nur Export sichert!</span></span>`;
     else if (n >= 10) st = `<span class="savestate warn" title="Bitte bald über „Sichern / Laden“ exportieren">●<span class="tb-label"> ${n} seit Export</span></span>`;
     else st = `<span class="savestate" title="Automatisch im Browser gespeichert – die echte Sicherung ist trotzdem der Export">✓<span class="tb-label"> gespeichert</span></span>`;
     tb.innerHTML = `${logo}
@@ -29,9 +30,20 @@
         <button class="tb-btn tb-save" id="tb-save" title="Spielstand sichern oder laden">💾<span class="tb-label-save"> Sichern / Laden</span></button>
         ${themeBtn()}${tonBtn()}
         ${G.teacher ? '<button class="tb-btn tb-teacher" id="tb-teacher" title="Lehrkraft-Modus">🔑</button>' : ''}
+        ${G.online ? kontoBtns() : ''}
       </span>`;
     binden();
   }
+  // Online: Sync-Status, Konto und Abmelden
+  function onlineStatus() {
+    const z = G.online.status;
+    if (z === 'fehler') return `<span class="savestate warn" title="Keine Verbindung – der Stand liegt sicher im Browser und wird automatisch nachgeholt">⚠<span class="tb-label"> offline – wird nachgeholt</span></span>`;
+    if (z === 'laeuft') return `<span class="savestate" title="Wird in eurem Konto gespeichert">☁<span class="tb-label"> speichert …</span></span>`;
+    return `<span class="savestate" title="In eurem Konto gespeichert">☁<span class="tb-label"> gespeichert</span></span>`;
+  }
+  const kontoBtns = () => `<a class="tb-btn" href="${G.online.kontoUrl}" title="Konto von ${esc(G.online.benutzer.name)}">👤<span class="tb-label"> ${esc(G.online.benutzer.name)}</span></a>
+    ${G.online.istLehrkraft ? `<a class="tb-btn" href="${G.online.lehrkraftUrl}" title="Lehrkraft-Bereich">🏫</a>` : ''}
+    <button class="tb-btn" id="tb-abmelden" title="Abmelden">🚪</button>`;
   const tonBtn = () => `<button class="tb-btn" id="tb-ton" title="Soundeffekte ${A.an ? 'aus' : 'an'}schalten">${A.an ? '🔊' : '🔇'}</button>`;
   const themeBtn = () => `<button class="tb-btn" id="tb-theme" title="Hell/Dunkel umschalten">${Kit.theme.aktuell() === 'dark' ? '☀️' : '🌙'}</button>`;
   function binden() {
@@ -44,6 +56,7 @@
     on('#tb-handbuch', handbuch);
     on('#tb-inhalt', inhaltsverzeichnis);
     on('#tb-teacher', lehrkraftDialog);
+    on('#tb-abmelden', () => { if (confirm('Wirklich abmelden?')) G.online.abmelden(); });
   }
 
   // ---------------------------------------------------------------- Dialoge
@@ -52,20 +65,21 @@
     const letzter = s.exportiert ? new Date(s.exportiert).toLocaleString('de-DE') : 'noch nie';
     G.modal(`
       <h2>💾 Spielstand sichern & übergeben</h2>
-      <p>Das Spiel speichert automatisch im Browser. <b>Die eigentliche Sicherung ist aber die Export-Datei</b> – nur die könnt ihr an die andere Person eures Duos weitergeben und bei der Lehrkraft abgeben.</p>
+      ${G.online ? '<p><b>Online wird euer Spielstand automatisch in eurem Konto gespeichert.</b> Die Export-Datei braucht ihr nur, um ohne Internet in der Lite-Version weiterzuspielen – oder als zusätzliche Sicherung.</p>'
+        : '<p>Das Spiel speichert automatisch im Browser. <b>Die eigentliche Sicherung ist aber die Export-Datei</b> – nur die könnt ihr an die andere Person eures Duos weitergeben und bei der Lehrkraft abgeben.</p>'}
       <p class="small muted">Letzter Export: ${esc(letzter)}</p>
       <div class="btnrow">
         <button class="btn" id="m-exp">⬇ Spielstand exportieren</button>
         <button class="btn sec" id="m-imp">⬆ Spielstand-Datei laden</button>
         <input type="file" id="m-file" accept=".osiagent" class="hidden">
       </div>
-      <div class="merk"><b>Übergabe innerhalb des Duos:</b> Exportieren → Datei (z. B. über Teams) schicken → die andere Person klickt „Spielstand-Datei laden“.</div>
+      ${G.online ? '' : '<div class="merk"><b>Übergabe innerhalb des Duos:</b> Exportieren → Datei (z. B. über Teams) schicken → die andere Person klickt „Spielstand-Datei laden“.</div>'}
       <div class="btnrow"><button class="btn sec" data-close>Schließen</button>
-      <span class="spacer"></span><button class="btn ghost klein" id="m-new">Neues Duo anlegen …</button></div>`, (m, zu) => {
+      <span class="spacer"></span>${G.online ? '' : '<button class="btn ghost klein" id="m-new">Neues Duo anlegen …</button>'}</div>`, (m, zu) => {
       $('#m-exp', m).onclick = G.exportieren;
       $('#m-imp', m).onclick = () => $('#m-file', m).click();
       $('#m-file', m).onchange = ev => { const f = ev.target.files[0]; if (f) G.importieren(f, zu); };
-      $('#m-new', m).onclick = () => {
+      if ($('#m-new', m)) $('#m-new', m).onclick = () => {
         if (confirm('Wirklich ein neues Duo anlegen? Der aktuelle Spielstand wird im Browser überschrieben. Exportiert ihn vorher, wenn ihr ihn behalten wollt!')) {
           zu(); G.save = null; G.renderStart(true);
         }
@@ -82,7 +96,7 @@
       AV.picker($('#fig-wahl', m), wahl, id => { wahl = id; A.play('plopp'); });
       $('#fig-ok', m).onclick = () => {
         G.save.duo.avatar = wahl;
-        G.lokalOk = S.saveLocal(G.save);
+        G.sichern();
         zu(); A.play('abzeichen');
         G.toast(`<b>${esc(AV.name(wahl))}</b> ist jetzt eure Figur.`, 2600, 'ok');
         G.render();
@@ -125,6 +139,8 @@
 
   // ---------------------------------------------------------------- Lehrkraft-Modus
   function lehrkraftLogin() {
+    // Online: freigeschaltete Lehrkraft-Konten brauchen kein Passwort – das Konto ist die Berechtigung
+    if (G.online && G.online.istLehrkraft) { G.teacher = true; G.toast('🔑 <b>Lehrkraft-Modus aktiv.</b> Alle Akten sind offen.', 3200, 'ok'); G.render(); return; }
     G.modal(`<h2>🔑 Lehrkraft-Modus</h2><p>Nur für die Lehrkraft.</p>
       <label for="lk-pw">Passwort</label><input type="password" id="lk-pw" autocomplete="off">
       <div class="btnrow"><button class="btn" id="lk-ok">Anmelden</button><button class="btn sec" data-close>Abbrechen</button></div>`, (m, zu) => {

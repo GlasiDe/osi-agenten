@@ -6,7 +6,8 @@
   const P = Kit.progress, fx = Kit.fx;
   const { esc, $ } = Kit.util;
 
-  const G = window.OSIGame = { save: null, teacher: false, view: null, uebung: null, kombo: 0, renderer: {}, util: Kit.util };
+  // online: wird nur in der Online-Fassung gesetzt (js/online/sync.js) – in der Lite-Version bleibt es null
+  const G = window.OSIGame = { save: null, teacher: false, view: null, uebung: null, kombo: 0, renderer: {}, util: Kit.util, online: null };
   const now = () => new Date().toISOString();
   const uid = () => Math.random().toString(36).slice(2, 10) + Date.now().toString(36);
 
@@ -51,11 +52,18 @@
     });
   }
 
+  // Spielstand ablegen: Lite im Browser-Speicher, online zusätzlich (entprellt) auf dem Server
+  function sichern() {
+    if (!G.save) return;
+    if (G.online) { G.lokalOk = G.online.puffer(G.save); G.online.speichern(G.save); }
+    else G.lokalOk = S.saveLocal(G.save);
+  }
+
   function persist() {
     const s = G.save; if (!s) return;
     s.aktualisiert = now();
     s.version = OSI.version;
-    G.lokalOk = S.saveLocal(s);
+    sichern();
     if (G.renderTopbar) G.renderTopbar();
   }
 
@@ -63,7 +71,7 @@
     S.download(G.save);
     G.save.exportiert = now();
     G.save.aenderungenSeitExport = 0;
-    S.saveLocal(G.save);
+    sichern();
     G.renderTopbar();
     toast('💾 <b>Spielstand exportiert.</b><br>Die Datei liegt in eurem Download-Ordner.', 3600, 'ok');
   }
@@ -76,8 +84,9 @@
       const alt = P.geloest(G.save), nn = P.geloest(neu);
       if (nn < alt && !confirm(`Achtung: Die Datei enthält WENIGER Fortschritt (${nn} gelöste Aufgaben) als der aktuelle Stand (${alt}). Trotzdem laden?`)) return;
     } else if (G.save && !confirm(`Spielstand von Duo „${neu.duo.codename}“ laden? Der aktuelle Stand von „${G.save.duo.codename}“ wird im Browser ersetzt.`)) return;
+    if (G.online) neu.duo.agenten = [G.online.benutzer.name]; // online gehört der Stand immer zum angemeldeten Konto
     G.save = neu;
-    G.lokalOk = S.saveLocal(G.save);
+    persist();
     if (danach) danach();
     toast(`👋 <b>Spielstand geladen.</b><br>Willkommen zurück, Duo ${esc(neu.duo.codename)}!`, 3600, 'ok');
     G.render();
@@ -187,7 +196,7 @@
 
   function gotoStep(eid, sid) {
     G.save.pos = { e: eid, s: sid };
-    S.saveLocal(G.save);
+    sichern();
     G.render();
     window.scrollTo(0, 0);
   }
@@ -197,7 +206,7 @@
     G.hubTab = 'karte';
     G.uebung = null;
     G.save.pos = null;
-    S.saveLocal(G.save);
+    sichern();
     G.render();
   }
   function naechsterStep(e, st) {
@@ -258,7 +267,7 @@
 
   Object.assign(G, {
     toast, modal, zeige, figur,
-    neuerSpielstand, persist, exportieren, importieren,
+    neuerSpielstand, persist, sichern, exportieren, importieren,
     itemState, punkte, rang, richtig, falsch, hinweisNutzen, bonusPunkte, abzeichen,
     einsatz, stepDone, einsatzFertig, einsatzOffen, stepOffen, einsatzVon, stepAbschliessen,
     gotoStep, zurKarte, naechsterStep, aktuellePosition,
