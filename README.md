@@ -4,8 +4,16 @@ Ein Agenten-Krimi als Lernspiel, in dem sich Lernende das **OSI-Modell** selbst 
 
 ![Einsatzzentrale der Agenten](spiel/img/hq.jpg)
 
-**▶ Online spielen:** <https://glaside.github.io/osi-agenten/spiel/>
-**▶ Offline spielen:** Unter [Releases](https://github.com/GlasiDe/osi-agenten/releases/latest) die ZIP der aktuellen Version herunterladen (`OSI-Agenten_v….zip`, enthält nur das Spiel und die Kurzanleitung), entpacken und `spiel/index.html` doppelklicken. Es wird kein Internet, kein Server und keine Installation gebraucht.
+Das Spiel gibt es in zwei Fassungen mit demselben Spielcode:
+- **Online mit Konto** (Ordner [`web/`](web/), Vercel + Postgres): Anmeldung mit Benutzername und Passwort, Lernende treten mit einem **Klassencode** bei.
+  - Der Fortschritt wird automatisch gespeichert.
+  - Lernende sehen ihre Klasse auf der Karte.
+  - Lehrkräfte sehen alles live in der Einsatzzentrale.
+  - Einrichtung: [`web/README.md`](web/README.md).
+- **Lite ohne Konto** (Ordner `spiel/`): im Browser oder als ZIP, auch ganz ohne Internet. Gesichert wird über die Export-Datei.
+
+**▶ Lite online spielen:** <https://glaside.github.io/osi-agenten/spiel/>
+**▶ Lite offline spielen:** Unter [Releases](https://github.com/GlasiDe/osi-agenten/releases/latest) die ZIP der aktuellen Version herunterladen (`OSI-Agenten_v….zip`, enthält nur das Spiel und die Kurzanleitung), entpacken und `spiel/index.html` doppelklicken. Es wird kein Internet, kein Server und keine Installation gebraucht.
 
 ## Zielgruppe und Einordnung
 - Informationstechnische Assistentinnen und Assistenten (NRW, Profilfach Betriebssysteme/Netzwerke)
@@ -17,7 +25,8 @@ Das Spiel setzt Grundlagen voraus, z. B. IPv4 und Subnetting, MAC-Adressen, DHCP
 - **Verteilen:** die ZIP aus dem [aktuellen Release](https://github.com/GlasiDe/osi-agenten/releases/latest) an die Lernenden geben (z. B. über die Lernplattform) oder den Online-Link weitergeben. Das übrige Repo wird dafür nicht gebraucht.
 - 7 Einsätze (E0–E6) und ein Abschlussverhör, etwa 6 Doppelstunden bei freiem Tempo
 - Gespielt wird **grundsätzlich allein**. Fehlen Geräte oder spricht didaktisch etwas dafür, geht es auch zu zweit an einem Gerät mit gemeinsamem Spielstand (im Spiel „Duo“ genannt).
-- Am Stundenende wird der Spielstand als `.osiagent`-Datei exportiert und abgegeben.
+- Lite-Version: Am Stundenende wird der Spielstand als `.osiagent`-Datei exportiert und abgegeben. In der Online-Fassung entfällt das, weil alles im Konto gespeichert wird.
+- Die Karte hat zwei Ebenen: Die **Weltkarte** zeigt die Einsätze als Stationen, ein Klick öffnet den **Pfad des Einsatzes** mit allen Schritten.
 - Die **Einsatzzentrale** ([`lehrkraft/einsatzzentrale.html`](lehrkraft/einsatzzentrale.html)) liest die abgegebenen Dateien ein und zeigt alle Spielstände als Figuren mit Namensschild auf der Kletterkarte, dazu Beamer-Ansicht, Fortschritt je Spielstand, Aufgaben-Analyse und CSV-Export.
 - Das Abschlussverhör beantwortet jede Person allein. Es dient der Diagnose und ist keine Note.
 
@@ -40,7 +49,8 @@ Im Spiel unten auf „Lehrkraft“ klicken oder **Strg + Alt + L** drücken. Das
 > **Hinweis: Das Spiel ist nicht schummelsicher.** Lösungen, Passwort-Hash und Prüfsumme der Spielstände stecken im Quelltext, der im Browser läuft. Das ist Absicht: Punkte und Ränge sollen motivieren und sind nicht zur Leistungsbewertung gedacht. Es lohnt sich, das der Lerngruppe offen zu sagen.
 
 ## Spielstände, Datenschutz, Geräte
-- Das Spiel überträgt **keine Daten**. Es gibt keinen Server, keine Cookies, kein Tracking und keine externen Schriften. Der Spielstand liegt im Browser (`localStorage`) und in der exportierten `.osiagent`-Datei.
+- **Lite-Version:** überträgt **keine Daten**. Es gibt keinen Server, keine Cookies, kein Tracking und keine externen Schriften. Der Spielstand liegt im Browser (`localStorage`) und in der exportierten `.osiagent`-Datei.
+- **Online-Fassung:** speichert Benutzername, Passwort-Hash, Klassenzuordnung und Spielstand in einer Postgres-Datenbank (Neon, EU-Region empfohlen). Es werden keine E-Mail-Adressen gespeichert, ein Konto lässt sich jederzeit vollständig löschen. Vor dem Einsatz mit der Schule klären und Datenschutzerklärung und Impressum ergänzen (`web/app/datenschutz`, `web/app/impressum`).
 - Bei der Online-Version protokolliert GitHub Pages wie jeder Webserver die IP-Adressen der Aufrufe (siehe [GitHub-Datenschutzerklärung](https://docs.github.com/de/site-policy/privacy-policies/github-general-privacy-statement)). Gegebenenfalls mit der Datenschutzbeauftragten oder dem Datenschutzbeauftragten der Schule abstimmen.
 - **Browser-Speicher ist nur vorläufig:** Je nach Browser und Einstellung wird er gelöscht, z. B. beim Beenden oder nach längerer Zeit ohne Besuch. Deshalb nach **jeder** Stunde exportieren.
 - **Tablets (z. B. iPad):** Lokale HTML-Dateien lassen sich dort meist nicht starten, dann die Online-Version nutzen.

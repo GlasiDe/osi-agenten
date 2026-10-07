@@ -10,7 +10,8 @@ Diese Datei ist die verbindliche Grundlage für alle Beiträge, von Menschen wie
 - Jede Änderung muss bestehende Spielstände weiter laden können.
 
 **Technik**
-- Das Spiel muss offline per Doppelklick (`file://`) in jedem Browser laufen: kein `fetch`, keine CDNs, keine Frameworks. Inhalte werden per `<script src>` geladen.
+- Das Spiel (`spiel/`) muss offline per Doppelklick (`file://`) in jedem Browser laufen: kein `fetch`, keine CDNs, keine Frameworks. Inhalte werden per `<script src>` geladen. Einzige Ausnahme ist `spiel/js/online/sync.js`: Es wird nur in der Online-Fassung geladen und nie von `spiel/index.html`.
+- Die Online-Fassung (`web/`) ist eine Next.js-App und darf npm-Pakete nutzen. Sie verändert das Spiel nicht, sondern kopiert es beim Build (`web/scripts/spiel-kopieren.mjs`). Spiellogik gehört deshalb immer nach `spiel/`.
 
 **Sprache**
 - Keine Gendersternchen (`*in`), stattdessen neutrale Form oder Paarform („Agentinnen und Agenten“, „Lernende“).
@@ -39,7 +40,7 @@ Diese Datei ist die verbindliche Grundlage für alle Beiträge, von Menschen wie
     - `util.js`, `theme.js` (Hell/Dunkel), `audio.js`, `fx.js` (Animationen, beachtet „Bewegung reduzieren“)
     - `progress.js`: Fortschritt, Punkte, Ränge und die „Front“ (nächster offener Schritt) als reine Funktionen
     - `avatars.js`: die 15 Spielfiguren als selbst gezeichnetes SVG
-    - `map.js`: Kletterkarte – `pfad` (Spiel) und `spalten` (Einsatzzentrale), Figuren mit Lauf-Animation
+    - `map.js`: Kletterkarten – `welt` (Station je Einsatz, im Spiel senkrecht, in der Zentrale waagerecht), `pfad` (Schritte eines Einsatzes) und `spalten` (alle Schritte als Türme), Figuren mit Lauf-Animation
   - `js/game/` – das Spiel (`window.OSIGame`): `core.js` (Zustand, Punkte, Übungsmodus, Navigation), `shell.js` (Kopfleiste, Dialoge, Lehrkraft-Modus), `screens.js` (Start, Karte, Schritt-Rahmen), `main.js` (Router, Tastatur)
   - `js/steps/` – Renderer der Schritt-Typen: `common.js` (gemeinsame Bausteine), `story.js` (story, lesson, sealed), `quiz.js` (quiz mit mc/layer/pick/multi/eingabe/meldung, anklage), `sort.js` (sort, kapsel), `verhoer.js`, `ende.js` (ende, urkunde)
   - `js/tools/` – `terminal.js` (simuliertes Terminal), `wireshark.js` (Ansicht und Filter-Parser), `challenge.js` (Zeit-Challenge)
@@ -48,7 +49,10 @@ Diese Datei ist die verbindliche Grundlage für alle Beiträge, von Menschen wie
 - `lehrkraft/quellen/*.html` – Quellen der PDFs in `lehrkraft/`. `loesungen.html` erzeugt die Lösungen **automatisch aus den Spielinhalten**.
 - `werkzeuge/` – Tests, PDF- und ZIP-Erzeugung, optionales Bildskript.
 - `quellbilder/` – Original-PNGs. `spiel/img/` – verkleinerte JPGs (640 px, Qualität 82).
-- `index.html` – Startseite der Online-Version (GitHub Pages veröffentlicht `main` ab Root, `.nojekyll` daneben).
+- `index.html` – Startseite der Lite-Version auf GitHub Pages (Pages veröffentlicht `main` ab Root, `.nojekyll` daneben).
+- `web/` – Online-Fassung für Vercel: Next.js, Postgres (Neon), Better Auth mit Benutzername + Passwort, Klassen mit Klassencode, Live-Einsatzzentrale. Einrichtung und Aufbau in [`web/README.md`](web/README.md).
+  - Das Spiel spricht mit dem Server nur über `OSIGame.online` (gesetzt von `spiel/js/online/sync.js`). In der Lite-Version ist es `null`.
+  - Speichern läuft immer über `OSIGame.sichern()`.
 
 **Design**
 - Farben nur als Tokens in `spiel/css/tokens.css` (hell und dunkel). Inhalte nutzen inline nur `var(--L1)` … `var(--L7)` und Klassen wie `.merk`, `.profi`, `.lchip`, `table.t`, `.evidence` – deren Namen bleiben stabil.
@@ -72,6 +76,7 @@ npm run release      # Tests + PDFs + ZIP – vor jedem Commit
   - Kletterkarte und Figuren (Spiel und Einsatzzentrale)
   - die Antwortlängen (die richtige Antwort darf nicht auffällig länger sein)
   - Übungsmodus, Zeit-Challenge und Einsatzzentrale
+- `npm run test:online` prüft die Online-Fassung von Anmeldung bis Live-Zentrale gegen eine **Test-Datenbank**. Es braucht `TEST_DATABASE_URL` (Datenbankname mit „test“, wird geleert) und vorher `npm run build` in `web/`. Ohne die Variable wird der Test übersprungen.
 
   Screenshots landen in `werkzeuge/shots/`. Bei Änderungen an der Oberfläche bitte ansehen.
 - `npm run pdf` erzeugt die PDFs neu. Das ist nach jeder Inhaltsänderung nötig, weil das Lösungs-PDF aus den Spielinhalten entsteht.

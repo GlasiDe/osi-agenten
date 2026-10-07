@@ -118,13 +118,18 @@ Das Spiel erarbeitet das OSI-Modell an einem durchgehenden Fall. Es deckt keine 
   - Fehlerfrei und ohne Tipp = ⭐ „gemeistert“, 5× ⭐ = Abzeichen „Trainingsfleißig“.
   - Gespeichert in `save.uebung`.
 - Ränge als neutrale „Freigabestufen“, Abzeichen (auch geheime), Verdächtigen-Board mit Stempeln, Codenamen.
-- **Kletterkarte** statt Aktenliste: Jeder Schritt ist ein Knoten. Die Karte läuft von unten (E0) nach oben bis zum Verhör, also bottom-up wie die Ermittlung. Jedes Kapitel (Einsatz) hat ein Banner in seiner Schichtfarbe (`farbe`/`icon` in `meta.js`). Die eigene Figur steht an der „Front“, dem ersten offenen Pflicht-Schritt, und hüpft beim Öffnen der Karte vom zuletzt gesehenen Knoten dorthin. Bonus-Akten liegen neben dem Pfad.
+- **Kletterkarten** statt Aktenliste, immer von unten nach oben (bottom-up wie die Ermittlung):
+  - **Weltkarte:** eine Station je Einsatz in seiner Schichtfarbe (`farbe`/`icon` in `meta.js`) mit goldenem Fortschrittsring. Die Figur steht an der Station des aktuellen Einsatzes.
+  - **Pfad je Einsatz:** jeder Schritt ein Knoten, Bonus-Akten neben dem Pfad. Die Figur steht an der „Front“, dem ersten offenen Pflicht-Schritt.
+  - Die Figur hüpft beim Öffnen einer Karte vom zuletzt gesehenen Platz zur Front. ✕ im Schritt führt zum Einsatz-Pfad, das Kapitel-Ende zur Weltkarte.
 - **Figuren:** 15 selbst gezeichnete SVG-Figuren (`a01`–`a15`), normal gemischt besetzt, alle mit E7-Abzeichen.
   - Wahl beim Anlegen des Duos (eine ist vorausgewählt), später über die Figur in der Kopfleiste änderbar. Der Wechsel zählt nicht als Änderung für den Export-Hinweis.
   - Spielstände ohne Figur (vor 2.0) bekommen eine feste Figur aus der Spielstand-ID, damit Spiel und Einsatzzentrale dieselbe zeigen.
 - Kombo-Hinweis (3, 5, 10 … richtige Antworten in Folge im ersten Versuch ohne Tipp) und Tages-Flamme (heute erledigte Schritte) sind **nur Anzeige**: keine Punkte, keine Serie über mehrere Tage, kein Druck.
+- **Online-Fassung:** ein Konto je Person (kein Duo), Kürzel = Benutzername. Reiter **Klasse**: die Figuren der eigenen Klasse auf der Weltkarte und eine Rangliste – nur Codenamen und Figuren, keine Benutzernamen.
 - Einsatzzentrale:
-  - Reiter **Karte**: alle Duos als Figuren mit Codename-Schild an ihrer Front, ein Turm je Kapitel, mit Lauf-Animation und Vollbild für den Beamer.
+  - Reiter **Karte** mit Umschalter: Weltkarte (Figuren an ihren Stationen), ein einzelner Einsatz (Figuren an ihren Schritten) oder alle Schritte als Türme. Mit Lauf-Animation und Vollbild für den Beamer.
+  - Online gibt es sie **live** je Klasse (aktualisiert alle 20 Sekunden).
   - Beamer (Klassenbalken, Top 3, Kategorien) und Lehrkraft-Ansicht (Spielstände, Fehlerquote je Aufgabe, häufigste falsche Antwort, CSV).
 - Lehrkraft-Modus: Strg+Alt+L oder Link „Lehrkraft“ (Passwort siehe README).
 - Ton: nur Web-Audio-Effekte, standardmäßig aus.
