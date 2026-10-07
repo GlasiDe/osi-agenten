@@ -242,7 +242,27 @@
     },
     {
       id: 'e1-aussen', type: 'sealed', bonus: true, titel: 'Außeneinsatz: Wer hört mit?',
-      teaser: 'In Packet Tracer baut ihr das Netz der Buchhaltung nach – einmal mit Switch, einmal mit Hub – und beobachtet im Simulationsmodus, wer welche Frames zu sehen bekommt.'
+      teaser: 'In Packet Tracer vergleicht ihr zwei Labornetze – eins mit Switch, eins mit Hub – und beobachtet im Simulationsmodus, wer welche Frames zu sehen bekommt.',
+      inhalt: `<p>Kalle will wissen, was ein fremdes Gerät im Netz alles mitbekommt. Dafür hat er im Labor zwei kleine Netze aufgebaut: <b>links</b> PC-1 bis PC-4 (192.168.0.11 bis .14) an einem <b>Switch</b>, <b>rechts</b> PC-5 bis PC-8 (192.168.0.15 bis .18) an einem <b>Hub</b>.</p>
+        <div class="btnrow" style="margin-bottom:10px"><a class="btn" href="aussen/E1_Wer-hoert-mit.pkt" download>⬇ Labornetz herunterladen (Packet Tracer)</a></div>
+        <h3>Euer Auftrag</h3>
+        <ol>
+          <li>Öffnet die Datei in <b>Cisco Packet Tracer</b>.</li>
+          <li>Spult die Zeit vor (unten links <b>Fast Forward Time</b>), bis alle Leitungen grün angezeigt werden.</li>
+          <li>Schaltet unten rechts von <b>Realtime</b> auf <b>Simulation</b> um.</li>
+          <li>Stellt im Simulationsfenster unter <b>Event List Filters</b> über <b>Edit Filters</b> ein, dass nur <b>ICMP</b> angezeigt wird. Ein Ping ist ICMP – alles andere blendet ihr so aus.</li>
+          <li><b>Switch-Netz:</b> Klickt auf PC-1, öffnet im Reiter <b>Desktop</b> die <b>Command Prompt</b> und pingt PC-2: <code>ping 192.168.0.12</code></li>
+          <li><b>Hub-Netz:</b> Genauso bei PC-5, hier pingt ihr PC-6: <code>ping 192.168.0.16</code>. Jetzt laufen beide Pings gleichzeitig.</li>
+          <li>Schaltet mit <b>Capture/Forward</b> Schritt für Schritt weiter. Beobachtet genau, wohin die Umschläge in beiden Netzen laufen und wo sie mit einem <b>roten X</b> liegen bleiben.</li>
+          <li>Haltet fest, wer in welchem Netz den Frame zu sehen bekommt. Dann beantwortet die Fragen unten.</li>
+        </ol>`,
+      fragen: [
+        { id: 'e1-pt-hub', frage: '<b>Hub-Netz:</b> PC-5 pingt PC-6. Bei welchen PCs kommt der Frame mit der Anfrage an?', optionen: ['Bei PC-6, PC-7 und PC-8', 'Nur bei PC-6', 'Bei PC-6 und PC-7', 'Bei keinem – der Hub antwortet selbst'], richtig: 0, erklaerung: 'Der Hub schickt alles, was an einem Port reinkommt, an <b>alle</b> anderen Ports. Er liest keine Adressen – er arbeitet auf L1.', hinweise: ['Zählt in der Simulation alle Umschläge, die vom Hub weglaufen.'] },
+        { id: 'e1-pt-switch', frage: '<b>Switch-Netz:</b> PC-1 pingt PC-2. Bei welchen PCs kommt der Frame mit der Anfrage an?', optionen: ['Nur bei PC-2', 'Bei PC-2, PC-3 und PC-4', 'Bei PC-2 und PC-3', 'Bei keinem – der Switch antwortet selbst'], richtig: 0, erklaerung: 'Der Switch schickt den Frame nur an den Port, an dem PC-2 hängt. PC-3 und PC-4 bekommen ihn gar nicht erst zu sehen.', hinweise: ['Wie viele Umschläge laufen vom Switch weg?'] },
+        { id: 'e1-pt-x', frage: 'Im Hub-Netz bleibt der Frame bei PC-7 und PC-8 mit einem roten X liegen. Was bedeutet das?', optionen: ['Sie verwerfen ihn, er ist nicht für sie bestimmt.', 'Sie antworten PC-5 ebenfalls auf den Ping.', 'Das Kabel zu ihnen ist defekt.', 'Sie leiten den Frame an PC-6 weiter.'], richtig: 0, erklaerung: 'Die Netzwerkkarte merkt, dass der Frame nicht an sie adressiert ist, und wirft ihn weg. <b>Angekommen ist er trotzdem.</b> Ein manipuliertes Gerät könnte ihn einfach behalten und lesen.', hinweise: ['Die Kabel funktionieren – die Anfrage an PC-6 kommt ja auch durch.'] },
+        { id: 'e1-pt-mithoeren', frage: 'Ein fremdes Gerät steckt an einem freien Port. In welchem Netz hätte es im Versuch den Ping mitlesen können?', optionen: ['Nur im Hub-Netz', 'Nur im Switch-Netz', 'In beiden Netzen', 'In keinem der beiden'], richtig: 0, erklaerung: 'Am Hub kommt jeder Frame überall an – Mithören ist kinderleicht. Am Switch kam der Ping nur bei PC-2 an. <b>Port 23 hängt aber an einem Switch.</b> Wenn das Kästchen dort trotzdem etwas mitbekommen will, braucht es einen Trick. Dem geht ihr auf L2 nach.', hinweise: ['Vergleicht eure Beobachtungen: Wo kamen Frames bei Unbeteiligten an?'] },
+        { id: 'e1-pt-vermutung', frage: 'Der Hub liest keine Adressen und verteilt deshalb an alle. Was vermutet ihr: Wie schafft es der Switch, den Frame nur an PC-2 zu schicken?', optionen: ['Er liest die Zieladresse im Frame und kennt den Port dazu.', 'PC-1 schickt die Nummer des Ports mit, an dem PC-2 hängt.', 'Er fragt vorher an allen Ports die IP-Adressen ab.', 'Alle PCs erhalten den Ping, Packet Tracer zeigt es nur nicht an.'], richtig: 0, falsch: { 1: 'PC-1 kennt nur die Adresse von PC-2 – wie das Netz verkabelt ist, weiß er gar nicht.', 2: 'Kein Abfragen vorab: Im Versuch tauchte keine solche Nachricht auf. Und mit welchen Adressen arbeitet ein Switch überhaupt?', 3: 'Packet Tracer zeigt den Weg der Frames korrekt. Beim Hub hat er die Umschläge an alle PCs ja auch angezeigt.' }, erklaerung: 'Gut vermutet: Der Switch arbeitet auf <b>L2</b> und liest die <b>MAC-Adresse</b> des Ziels. Woher er weiß, an welchem Port welche MAC-Adresse hängt, findet ihr im Außeneinsatz von Einsatz 2 heraus – direkt am Switch.', hinweise: ['In Einsatz 0 habt ihr den Switch einer Schicht zugeordnet. Mit welchen Adressen arbeitet diese Schicht?', 'Euer Versuch zeigt: Bei PC-3 und PC-4 kam beim Switch gar nichts an.'] }
+      ]
     },
     {
       id: 'e1-ende', type: 'ende', titel: 'Spurensicherung L1 abgeschlossen!', abzeichen: 'e1-fertig', abzeichenOhneTipp: 'e1-ohne-tipp',

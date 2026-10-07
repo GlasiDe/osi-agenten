@@ -25,6 +25,8 @@ const { browser, seite, klick, sleep, shot } = require('./lib');
     while (guard++ < 1000) {
       const st = await page.evaluate(() => { const p = OSIGame.save.pos; if (!p) return null; const E = OSI.einsaetze.find(x => x.id === p.e); const s = E.steps.find(s => s.id === p.s); return { e: p.e, id: s.id, type: s.type }; });
       if (!st || st.e !== e) break;
+      // Außeneinsatz mit Fragen: freigeben und wie ein Quiz durchspielen
+      if (st.type === 'sealed' && await page.evaluate(id => { const p = OSIGame.save.pos; const s = OSI.einsaetze.find(x => x.id === p.e).steps.find(s => s.id === id); if (!s.fragen) return false; OSIGame.save.unlocked[id] = Date.now(); OSIGame.gotoStep(p.e, id); return true; }, st.id)) { st.type = 'quiz'; await sleep(100); }
       if (shots.has(st.id) || shots.has('all')) await page.screenshot({ path: shot(st.id), fullPage: true });
       try {
         if (st.type === 'story') {

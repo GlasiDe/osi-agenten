@@ -798,13 +798,16 @@
   };
 
   // ---------------------------------------------------------------- Außeneinsatz (versiegelt)
+  // Blockiert den Fortschritt nicht (bonus: true). Mit `fragen` wird der freigegebene Außeneinsatz zum Quiz mit dem Auftrag als Intro.
+  const AUSSEN_TAG = '<div class="tag mono hl">★ AUSSENEINSATZ</div><p class="small muted">Der Einsatz blockiert den Fortschritt nicht, er kann daher später nachgeholt werden.</p>';
   R.sealed = (box, st, e, ctx) => {
     const frei = G.save.unlocked.alle || G.save.unlocked[st.id];
+    if (frei && st.fragen) return R.quiz(box, Object.assign({}, st, { intro: AUSSEN_TAG + (st.inhalt || '') }), e, ctx);
     box.innerHTML = `<div class="card ${frei ? '' : 'sealed'}">
-      <div class="tag mono hl">★ BONUS · AUSSENEINSATZ</div>
+      ${AUSSEN_TAG}
       <h2>${esc(st.titel)}</h2>
       ${frei ? (st.inhalt || '<p>Die Unterlagen für diesen Außeneinsatz bekommt ihr von eurer Lehrkraft.</p>') : `<p>${st.teaser}</p>
-      <div class="merk"><b>🔒 Versiegelt.</b> Diese Akte wird von der Zentrale freigegeben, sobald die Einsatzunterlagen bereitliegen. Ihr müsst sie nicht lösen, um weiterzukommen.</div>`}
+      <div class="merk"><b>🔒 Versiegelt.</b> Diese Akte wird von der Zentrale freigegeben, sobald die Einsatzunterlagen bereitliegen.</div>`}
       <div class="btnrow"><button class="btn" id="st-weiter">Weiter ▸</button></div></div>`;
     $('#st-weiter', box).onclick = () => G.naechsterStep(e, st);
   };
