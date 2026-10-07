@@ -105,3 +105,42 @@
 .map--spalten .map-tag { font-size: .62rem; max-width: 84px; padding: 0 5px; border-width: 1.5px; }
 .map-pin:hover { z-index: 999 !important; }
 .map-pin:hover .map-tag { max-width: none; border-color: var(--blue); }
+
+/* ---------- Weltkarte: Stationen je Einsatz */
+.map--welt .map-weg { stroke-width: 12; stroke-dasharray: .5 22; opacity: .55; }
+.map-station { box-shadow: 0 8px 0 var(--edge); }
+.map-station .map-knoten-icon { font-size: calc(var(--g) * .42); }
+.map-ring {
+  position: absolute; inset: -14px; border-radius: 50%; pointer-events: none;
+  background: conic-gradient(var(--gold) calc(var(--f) * 1%), var(--locked) 0);
+  -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 8px), #000 calc(100% - 7px));
+          mask: radial-gradient(farthest-side, transparent calc(100% - 8px), #000 calc(100% - 7px));
+}
+.map-station.is-locked .map-ring { display: none; }
+.map-station .map-haken { width: 30px; height: 30px; font-size: .95rem; right: -8px; bottom: -6px; }
+.map-station-name {
+  position: absolute; top: calc(100% + 18px); left: 50%; translate: -50% 0; width: max-content; max-width: 190px;
+  padding: 4px 12px; border-radius: 12px; background: var(--surface); border: 2px solid var(--line); box-shadow: 0 3px 0 var(--line);
+  color: var(--text); font-size: .86rem; font-weight: 900; line-height: 1.2; text-align: center;
+}
+.map-station-name small { display: block; font-size: .64rem; letter-spacing: .1em; color: var(--muted); }
+.map-station.is-locked .map-station-name { color: var(--muted); }
+.map-station.is-cur .map-station-name { border-color: var(--k); box-shadow: 0 3px 0 var(--k); }
+.map--welt .map-pin { width: 64px; margin: -74px 0 0 -32px; }
+.map--welt .map-pin .av { width: 64px; height: 74px; }
+.map--quer .map-pin { width: 44px; margin: -50px 0 0 -22px; }
+.map--quer .map-pin .av { width: 44px; height: 50px; }
+.map--quer .map-tag { font-size: .6rem; max-width: 62px; padding: 0 4px; border-width: 1.5px; }
+.map-ziel { z-index: 3; }
+.map--quer .map-ziel { font-size: 3.4rem; }
+
+/* Kopf über dem Einsatz-Pfad */
+.karte-kopf { display: flex; align-items: center; gap: 12px; position: sticky; top: 70px; z-index: 25; margin: 0 auto 6px; max-width: 520px; padding: 10px 14px; border-radius: var(--r-l); background: var(--k); color: var(--on-color); box-shadow: 0 5px 0 rgba(0, 0, 0, .18); box-shadow: 0 5px 0 color-mix(in srgb, var(--k) 72%, #000); }
+.karte-kopf .karte-zurueck { flex: none; padding: 6px 12px; border: 0; border-radius: 12px; background: rgba(255, 255, 255, .35); color: inherit; font-weight: 900; cursor: pointer; }
+.karte-kopf .karte-zurueck:hover { background: rgba(255, 255, 255, .5); }
+.karte-kopf-icon { font-size: 1.6rem; }
+.karte-kopf-text { flex: 1; min-width: 0; line-height: 1.15; }
+.karte-kopf-text small { display: block; font-size: .7rem; font-weight: 900; letter-spacing: .1em; opacity: .8; }
+.karte-kopf-text b { display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.karte-kopf-pct { font-weight: 900; }
+.karte-leer { text-align: center; color: var(--muted); font-weight: 800; margin: 10px 0; }

@@ -116,21 +116,90 @@
     ({ karte: hubKarte, board: hubBoard, abzeichen: hubAbzeichen, challenge: hubChallenge })[G.hubTab](main, front);
   }
 
+  // ---------- Karte: Weltkarte (Stationen je Einsatz) oder Pfad eines Einsatzes
+  G.kartenEinsatz = null;
   function hubKarte(main, front) {
-    main.innerHTML = `<div class="karte-wrap" id="karte"></div>`;
+    const e = G.kartenEinsatz && P.einsatz(G.kartenEinsatz);
+    if (e && G.einsatzOffen(e)) einsatzKarte(main, e, front);
+    else { G.kartenEinsatz = null; weltKarte(main, front); }
+  }
+
+  // Merkt sich je Karte, wo die Figur zuletzt stand – von dort hüpft sie zur neuen Front
+  function zuletzt(karte, zielIdx) {
+    const key = `osiagenten.karte.${G.save.id}.${karte}`;
+    let von = null;
+    try { von = localStorage.getItem(key); localStorage.setItem(key, String(zielIdx)); } catch (e) { /* egal */ }
+    return von == null ? null : +von;
+  }
+  function eigeneFigur(karte, lay, ziel, zielIdx, schluessel) {
+    const von = zuletzt(schluessel, zielIdx);
+    MAP.pinne(karte, [{ ziel, avatar: G.save.duo.avatar, ich: true, titel: 'Euer Duo' }], { lauf: von != null && von < zielIdx, von, onHop: () => A.play('hupf') });
+  }
+  const gemeistert = e => {
+    const ueb = e.steps.filter(st => G.UEBBAR.includes(st.type));
+    return ueb.length > 0 && ueb.every(st => G.save.uebung[st.id] && G.save.uebung[st.id].gemeistert);
+  };
+
+  function weltKarte(main, front) {
+    main.innerHTML = '<div class="karte-wrap" id="karte"></div>';
     const s = G.save;
-    const kapitel = P.sichtbar(G.teacher);
-    const lay = MAP.layout(kapitel, 'pfad');
+    const lay = MAP.layout(P.sichtbar(G.teacher), 'welt');
+    const status = n => G.einsatzFertig(n.e) ? 'done' : front && front.e === n.e ? 'cur' : G.einsatzOffen(n.e) ? 'open' : 'locked';
+    const karte = MAP.render($('#karte'), lay, {
+      status,
+      fortschritt: e => P.einsatzFortschritt(s, e),
+      stern: n => gemeistert(n.e),
+      onKnoten: (n, btn) => {
+        if (status(n) === 'locked') {
+          A.play('falsch'); Kit.fx.anstoss(btn, 'shake');
+          MAP.pop(karte.root, n, `<div class="map-pop-titel">🔒 ${esc(n.e.titel)}</div><div class="small">Schließt zuerst den Einsatz davor ab.</div>`);
+          return;
+        }
+        A.play('plopp');
+        const req = P.pflicht(n.e), fertig = req.filter(G.stepDone).length;
+        const naechster = req.find(st => !G.stepDone(st));
+        MAP.pop(karte.root, n, `<div class="map-pop-kap">${esc(n.e.nrText)} · ${fertig} von ${req.length} Schritten</div>
+          <div class="map-pop-titel">${esc(n.e.titel)}</div>
+          <div class="btnrow" style="margin-top:0">${naechster ? '<button class="btn voll" id="map-weiter">▶ Weiter</button>' : ''}<button class="btn voll sec" id="map-open">🗺️ Pfad öffnen</button></div>`);
+        $('#map-open').onclick = () => zeigeEinsatz(n.e.id);
+        if (naechster) $('#map-weiter').onclick = () => G.gotoStep(n.e.id, naechster.id);
+      }
+    });
+    const ziel = front ? front.e.id : 'ziel';
+    eigeneFigur(karte, lay, ziel, front ? lay.index[ziel] : lay.strecke.length, 'welt');
+    const fokus = karte.root.querySelector('.map-station.is-cur') || karte.root.querySelector('.map-ziel');
+    if (fokus) fokus.scrollIntoView({ block: 'center' });
+  }
+
+  function zeigeEinsatz(eid) {
+    G.kartenEinsatz = eid;
+    A.play('klick');
+    renderHub();
+    window.scrollTo(0, 0);
+    const cur = $('.map-knoten.is-cur');
+    if (cur) cur.scrollIntoView({ block: 'center' });
+  }
+  G.zeigeEinsatz = zeigeEinsatz;
+
+  function einsatzKarte(main, e, front) {
+    const s = G.save, f = P.einsatzFortschritt(s, e);
+    main.innerHTML = `<div class="karte-kopf" style="--k:${MAP.farbe(e)}">
+        <button class="karte-zurueck" id="karte-welt" title="Zur Weltkarte">◂ Weltkarte</button>
+        <span class="karte-kopf-icon">${e.icon || ''}</span>
+        <span class="karte-kopf-text"><small>${esc(e.nrText)}</small><b>${esc(e.titel)}</b></span>
+        <span class="karte-kopf-pct">${Math.round(f * 100)} %</span></div>
+      <div class="karte-wrap" id="karte"></div>`;
+    $('#karte-welt').onclick = () => { G.kartenEinsatz = null; A.play('klick'); renderHub(); };
+    const lay = MAP.layout([e], 'pfad', { ziel: false });
     const status = n => {
       if (G.stepDone(n.st)) return 'done';
       if (front && front.st === n.st) return 'cur';
-      return G.einsatzOffen(n.e) && G.stepOffen(n.e, n.idx) ? 'open' : 'locked';
+      return G.stepOffen(n.e, n.idx) ? 'open' : 'locked';
     };
     const karte = MAP.render($('#karte'), lay, {
       status,
       stern: n => !!(s.uebung[n.st.id] && s.uebung[n.st.id].gemeistert),
-      fortschritt: e => P.einsatzFortschritt(s, e),
-      kapitelZu: e => !G.einsatzOffen(e),
+      fortschritt: x => P.einsatzFortschritt(s, x),
       onKnoten: (n, btn) => {
         const st = status(n);
         if (st === 'locked') {
@@ -146,15 +215,11 @@
         $('#map-go').onclick = () => G.gotoStep(n.e.id, n.st.id);
       }
     });
-    // Die eigene Figur hüpft vom zuletzt gesehenen Knoten zur aktuellen Front
-    const ziel = front ? front.st.id : 'ziel';
-    const key = 'osiagenten.karte.' + s.id;
-    let von = null;
-    try { von = localStorage.getItem(key); } catch (e) { /* egal */ }
-    const zielIdx = front ? lay.index[ziel] : lay.strecke.length;
-    MAP.pinne(karte, [{ ziel, avatar: s.duo.avatar, ich: true, titel: 'Euer Duo' }], { lauf: von != null && +von < zielIdx, von: von != null ? +von : null, onHop: () => A.play('hupf') });
-    try { localStorage.setItem(key, String(zielIdx)); } catch (e) { /* egal */ }
-    const fokus = karte.root.querySelector('.map-knoten.is-cur') || karte.root.querySelector('.map-ziel');
+    // Figur: an der Front, wenn sie in diesem Einsatz liegt – sonst am Ende (fertig) oder unten (noch nicht dran)
+    const hier = front && front.e === e;
+    const ziel = hier ? front.st.id : G.einsatzFertig(e) ? lay.strecke[lay.strecke.length - 1].st.id : lay.strecke[0].st.id;
+    eigeneFigur(karte, lay, ziel, lay.index[ziel], e.id);
+    const fokus = karte.root.querySelector('.map-knoten.is-cur');
     if (fokus) fokus.scrollIntoView({ block: 'center' });
   }
 
@@ -203,7 +268,7 @@
     const idx = e.steps.indexOf(st);
     const anteil = P.einsatzFortschritt(G.save, e);
     app().innerHTML = `<div class="step-kopf" style="--k:${MAP.farbe(e)}">
-        <button class="step-zu" id="cr-hub" title="Zur Karte" aria-label="Zur Karte">✕</button>
+        <button class="step-zu" id="cr-hub" title="Zum Pfad dieses Einsatzes" aria-label="Zum Pfad dieses Einsatzes">✕</button>
         <div class="step-bar" title="${Math.round(anteil * 100)} % von ${esc(e.nrText)}"><i style="width:${Math.max(4, Math.round(anteil * 100))}%"></i></div>
         <span class="step-kap" title="${esc(e.titel)}">${e.icon || ''} <span>${esc(e.nrText)} · ${st.bonus ? '★' : idx + 1}/${e.steps.length}</span></span>
       </div>
@@ -213,7 +278,7 @@
         <button class="step-pfeil" id="sn-vor" ${idx < e.steps.length - 1 && G.stepOffen(e, idx + 1) ? '' : 'disabled'} title="Nächster Schritt">›</button>
       </div>
       <div id="uebbar"></div><div id="stepbox" class="stepbox"></div>`;
-    $('#cr-hub').onclick = G.zurKarte;
+    $('#cr-hub').onclick = () => G.zurKarte(e.id);
     $('#sn-zurueck').onclick = () => G.gotoStep(e.id, e.steps[idx - 1].id);
     $('#sn-vor').onclick = () => G.gotoStep(e.id, e.steps[idx + 1].id);
     const box = $('#stepbox');

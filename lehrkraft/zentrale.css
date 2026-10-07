@@ -68,3 +68,8 @@ th[data-sort]:hover { color: var(--blue-ink); }
 td.ampel.gruen { background: var(--green-soft); }
 td.ampel.gelb { background: var(--gold-soft); }
 td.ampel.rot { background: var(--red-soft); }
+
+.zk-ansicht { display: flex; gap: 6px; flex-wrap: wrap; }
+.zk-ansicht button, .zk-ansicht select { padding: 6px 12px; border: 2px solid var(--line); border-radius: var(--r); background: var(--surface); color: var(--text); font-weight: 900; cursor: pointer; box-shadow: 0 3px 0 var(--line); }
+.zk-ansicht .on { border-color: var(--blue); background: var(--blue-soft); color: var(--blue-ink); box-shadow: 0 3px 0 var(--blue-edge); }
+#zk-info { margin: 4px 0 8px; }

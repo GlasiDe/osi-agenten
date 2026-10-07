@@ -18,48 +18,73 @@ const { browser, seite, klick, sleep, shot } = require('./lib');
   await klick(p, '#st-neu'); await sleep(300);
   if ((await p.evaluate(() => OSIGame.save.duo.avatar)) !== 'a07') fehler.push('Gewählte Figur wird nicht gespeichert');
 
-  // ---- Karte
+  // ---- Weltkarte: eine Station je Einsatz, Figur an der Station der Front
   await p.evaluate(() => OSIGame.zurKarte()); await sleep(600);
+  const w = await p.evaluate(() => ({
+    stationen: document.querySelectorAll('.map-station').length,
+    einsaetze: OSIKit.progress.sichtbar(false).length,
+    cur: [...document.querySelectorAll('.map-station.is-cur')].map(x => x.dataset.e),
+    gesperrt: document.querySelectorAll('.map-station.is-locked').length,
+    front: OSIKit.progress.front(OSIGame.save)
+  }));
+  if (w.stationen !== w.einsaetze) fehler.push(`Weltkarte hat ${w.stationen} Stationen für ${w.einsaetze} Einsätze`);
+  if (w.cur.length !== 1 || w.cur[0] !== w.front.e.id) fehler.push(`Aktuelle Station ${w.cur} statt ${w.front.e.id}`);
+  if (!w.gesperrt) fehler.push('Keine gesperrten Stationen auf einer neuen Weltkarte');
+  const figurAn = async sel => p.evaluate(s => {
+    const pin = document.querySelector('.map-pin.is-ich'), n = document.querySelector(s);
+    if (!pin || !n) return false;
+    const a = pin.getBoundingClientRect(), c = n.getBoundingClientRect();
+    return Math.abs((a.left + a.width / 2) - (c.left + c.width / 2)) < 12 && a.bottom >= c.top - 4 && a.bottom <= c.bottom;
+  }, sel);
+  if (!(await figurAn(`.map-station[data-e="${w.front.e.id}"]`))) fehler.push('Eigene Figur steht nicht an der aktuellen Station');
+  if ((await p.$eval('.map-pin.is-ich [data-av]', el => el.dataset.av)) !== 'a07') fehler.push('Auf der Karte steht die falsche Figur');
+  await p.screenshot({ path: shot('karte_welt'), fullPage: false });
+  await klick(p, '.map-station.is-locked'); await sleep(150);
+  if (!(await p.$('.map-pop:not(.hidden)'))) fehler.push('Gesperrte Station zeigt keinen Hinweis');
+  if (await p.evaluate(() => OSIGame.kartenEinsatz)) fehler.push('Gesperrte Station öffnet einen Einsatz');
+
+  // ---- Station öffnen → Pfad des Einsatzes
+  await klick(p, '.map-station.is-cur'); await sleep(150);
+  await klick(p, '#map-open'); await sleep(500);
   const k = await p.evaluate(() => ({
+    e: OSIGame.kartenEinsatz,
     knoten: document.querySelectorAll('.map-knoten').length,
-    schritte: OSIKit.progress.sichtbar(false).reduce((a, e) => a + e.steps.length, 0),
+    schritte: OSI.einsaetze.find(x => x.id === OSIGame.kartenEinsatz).steps.length,
     cur: [...document.querySelectorAll('.map-knoten.is-cur')].map(x => x.dataset.step),
     gesperrt: document.querySelectorAll('.map-knoten.is-locked').length,
     front: OSIKit.progress.front(OSIGame.save).st.id
   }));
-  if (k.knoten !== k.schritte) fehler.push(`Karte hat ${k.knoten} Knoten für ${k.schritte} Schritte`);
+  if (k.e !== w.front.e.id) fehler.push(`„Pfad öffnen“ zeigt ${k.e} statt ${w.front.e.id}`);
+  if (k.knoten !== k.schritte) fehler.push(`Einsatz-Pfad hat ${k.knoten} Knoten für ${k.schritte} Schritte`);
   if (k.cur.length !== 1 || k.cur[0] !== k.front) fehler.push(`Aktueller Knoten ${k.cur} statt ${k.front}`);
-  if (!k.gesperrt) fehler.push('Keine gesperrten Knoten auf einer neuen Karte');
-  const figurAn = async id => p.evaluate(sid => {
-    const pin = document.querySelector('.map-pin.is-ich'), n = document.querySelector(`.map-knoten[data-step="${sid}"]`);
-    if (!pin || !n) return false;
-    const a = pin.getBoundingClientRect(), c = n.getBoundingClientRect();
-    return Math.abs((a.left + a.width / 2) - (c.left + c.width / 2)) < 12 && a.bottom >= c.top - 4 && a.bottom <= c.bottom;
-  }, id);
-  if (!(await figurAn(k.front))) fehler.push('Eigene Figur steht nicht am aktuellen Knoten');
-  if ((await p.$eval('.map-pin.is-ich [data-av]', el => el.dataset.av)) !== 'a07') fehler.push('Auf der Karte steht die falsche Figur');
-  await p.screenshot({ path: shot('karte_neu'), fullPage: false });
+  if (!k.gesperrt) fehler.push('Keine gesperrten Knoten im neuen Einsatz-Pfad');
+  if (!(await figurAn(`.map-knoten[data-step="${k.front}"]`))) fehler.push('Eigene Figur steht nicht am aktuellen Knoten');
+  await p.screenshot({ path: shot('karte_einsatz'), fullPage: false });
 
   // gesperrter Knoten: nur Hinweis, keine Navigation
   await klick(p, '.map-knoten.is-locked'); await sleep(150);
   if (await p.evaluate(() => OSIGame.save.pos)) fehler.push('Gesperrter Knoten öffnet einen Schritt');
   if (!(await p.$('.map-pop:not(.hidden)'))) fehler.push('Gesperrter Knoten zeigt keinen Hinweis');
-  // aktueller Knoten: Sprechblase → Start
+  // aktueller Knoten: Sprechblase → Start → ✕ führt zurück auf den Einsatz-Pfad
   await klick(p, '.map-knoten.is-cur'); await sleep(150);
   await klick(p, '#map-go'); await sleep(200);
   if ((await p.evaluate(() => OSIGame.save.pos && OSIGame.save.pos.s)) !== k.front) fehler.push('Start in der Sprechblase öffnet nicht den aktuellen Schritt');
+  await klick(p, '#cr-hub'); await sleep(300);
+  if ((await p.evaluate(() => OSIGame.kartenEinsatz)) !== k.e || !(await p.$('.karte-kopf'))) fehler.push('✕ im Schritt führt nicht zurück auf den Einsatz-Pfad');
+  await klick(p, '#karte-welt'); await sleep(300);
+  if (!(await p.$('.map-station'))) fehler.push('„◂ Weltkarte“ führt nicht zur Weltkarte');
 
-  // ---- Fortschritt: E0 erledigt → Front und Figur wandern weiter (mit Lauf-Animation)
+  // ---- Fortschritt: E0 erledigt → Figur läuft auf der Weltkarte zur nächsten Station
   await p.evaluate(() => {
     const G = OSIGame, now = new Date().toISOString();
     OSI.einsaetze[0].steps.forEach(st => { G.save.steps[st.id] = now; [...(st.fragen || []), ...(st.items || []), ...(st.phasen || [])].forEach(q => { G.save.items[q.id] = { ok: true, f: 0, h: 0, p: 10, w: [] }; }); });
     G.persist(); G.zurKarte();
   });
-  await sleep(3500);
-  const neu = await p.evaluate(() => ({ front: OSIKit.progress.front(OSIGame.save).st.id, cur: document.querySelector('.map-knoten.is-cur').dataset.step, fertig: document.querySelectorAll('.map-knoten.is-done').length, e0: OSI.einsaetze[0].steps.length }));
-  if (neu.cur !== neu.front || !neu.front.startsWith('e1')) fehler.push(`Nach E0 steht die Front auf ${neu.front}, Knoten ${neu.cur}`);
-  if (neu.fertig !== neu.e0) fehler.push(`${neu.fertig} erledigte Knoten statt ${neu.e0}`);
-  if (!(await figurAn(neu.front))) fehler.push('Figur ist nicht zur neuen Front gelaufen');
+  await sleep(2200);
+  const neu = await p.evaluate(() => ({ front: OSIKit.progress.front(OSIGame.save), cur: document.querySelector('.map-station.is-cur').dataset.e, fertig: [...document.querySelectorAll('.map-station.is-done')].map(x => x.dataset.e) }));
+  if (neu.cur !== 'e1' || neu.front.e.id !== 'e1') fehler.push(`Nach E0 steht die Front auf ${neu.front.e.id}, Station ${neu.cur}`);
+  if (neu.fertig.join() !== 'e0') fehler.push(`Erledigte Stationen: ${neu.fertig}`);
+  if (!(await figurAn('.map-station[data-e="e1"]'))) fehler.push('Figur ist nicht zur nächsten Station gelaufen');
   await p.screenshot({ path: shot('karte_e1'), fullPage: false });
 
   // ---- Figur ändern: gespeichert, kein Export-Hinweis, bleibt bei Export/Import erhalten
@@ -92,5 +117,5 @@ const { browser, seite, klick, sleep, shot } = require('./lib');
   fehler.push(...p.fehler);
   await b.close();
   if (fehler.length) { console.log('❌ KARTE FEHLGESCHLAGEN:\n  ' + fehler.join('\n  ')); process.exit(1); }
-  console.log(`✅ Karte und Figuren bestanden (${k.knoten} Knoten)`);
+  console.log(`✅ Karte und Figuren bestanden (${w.stationen} Stationen, ${k.knoten} Knoten im Einsatz-Pfad)`);
 })().catch(e => { console.error('❌ TESTFEHLER', e); process.exit(1); });

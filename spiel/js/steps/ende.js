@@ -33,7 +33,7 @@
     box.querySelectorAll('[data-zahl]').forEach(el => fx.zaehlen(el, +el.dataset.zahl));
     if (ersterBesuch) { A.play('kapitel'); fx.konfetti(); }
     $('#en-exp', box).onclick = G.exportieren;
-    $('#en-hub', box).onclick = G.zurKarte;
+    $('#en-hub', box).onclick = () => G.zurKarte();
   };
 
   // ---------------------------------------------------------------- Abschluss mit Ernennungsurkunde (letzter Schritt des Spiels)
@@ -100,6 +100,6 @@
       urkundeDruckblatt({ codename: d.codename, agenten: d.agenten, avatar: d.avatar, rang: r.name, punkte: p, akten: `${aufgeklaert} / ${fall.length}`, datum, abzeichen: abz });
       window.print();
     };
-    $('#en-hub', box).onclick = G.zurKarte;
+    $('#en-hub', box).onclick = () => G.zurKarte();
   };
 })();

@@ -191,7 +191,10 @@
     G.render();
     window.scrollTo(0, 0);
   }
-  function zurKarte() {
+  // Zur Karte: mit Einsatz-ID auf dessen Pfad, ohne auf die Weltkarte
+  function zurKarte(eid) {
+    G.kartenEinsatz = typeof eid === 'string' ? eid : null;
+    G.hubTab = 'karte';
     G.uebung = null;
     G.save.pos = null;
     S.saveLocal(G.save);

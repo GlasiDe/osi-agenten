@@ -79,39 +79,76 @@
         <div class="card zk-top">${top.map((d, i) => `<div class="zk-top-duo"><span class="zk-platz">${['🥇', '🥈', '🥉'][i]}</span>${AV.svg(d.save.duo.avatar, { titel: false })}<div><b>${esc(d.save.duo.codename)}</b><small>${d.k.punkte} XP</small></div></div>`).join('')}</div>
       </div>
       <div class="card zk-karte-card">
-        <div class="zk-karte-leiste"><span class="small muted">Jede Figur steht am nächsten offenen Schritt ihres Duos.</span><span class="spacer"></span>
+        <div class="zk-karte-leiste">
+          <div class="zk-ansicht" role="tablist">
+            <button data-ansicht="welt" class="${ansicht === 'welt' ? 'on' : ''}">🌍 Weltkarte</button>
+            <select id="zk-einsatz" class="${ansicht.startsWith('e:') ? 'on' : ''}" aria-label="Einsatz-Pfad zeigen"><option value="">🗺️ Einsatz …</option>${P.sichtbar(false).map(e => `<option value="${e.id}" ${ansicht === 'e:' + e.id ? 'selected' : ''}>${esc(e.icon + ' ' + e.nrText + ' · ' + e.titel)}</option>`).join('')}</select>
+            <button data-ansicht="alle" class="${ansicht === 'alle' ? 'on' : ''}">🏔️ Alle Schritte</button>
+          </div>
+          <span class="spacer"></span>
           <button class="btn sec klein" id="zk-lauf">▶ Nochmal hochlaufen</button><button class="btn sec klein" id="zk-voll">⛶ Vollbild</button></div>
+        <div class="small muted" id="zk-info"></div>
         <div class="zk-karte" id="zk-karte"><div id="zk-map"></div></div>
         <div id="zk-mehr" class="small"></div></div>`;
-    const kapitel = P.sichtbar(false);
-    const lay = MAP.layout(kapitel, 'spalten');
-    const besetzt = new Set(L.map(d => d.k.front && d.k.front.st.id));
-    const k = MAP.render($('#zk-map'), lay, {
-      // erledigt = alle Duos, farbig = mindestens ein Duo war schon dort, grau = noch niemand
-      status: n => { const f = L.filter(d => P.stepDone(d.save, n.st)).length; return f === L.length ? 'done' : f || besetzt.has(n.st.id) ? 'open' : 'locked'; },
-      start: false,
-      fortschritt: e => L.reduce((a, d) => a + P.einsatzFortschritt(d.save, e), 0) / L.length
-    });
+    $$('[data-ansicht]').forEach(b => b.onclick = () => { ansicht = b.dataset.ansicht; karte(L, true); });
+    $('#zk-einsatz').onchange = ev => { if (ev.target.value) { ansicht = 'e:' + ev.target.value; karte(L, true); } };
+    const { lay, k, pins, info } = kartenAnsicht(L);
+    $('#zk-info').textContent = info;
     const skalieren = () => {
       const huelle = $('#zk-karte');
       if (!huelle) return;
-      // im Vollbild (Beamer) passt die ganze Karte auf den Schirm, sonst nach Breite
-      const voll = document.fullscreenElement;
-      const f = Math.min(1, huelle.clientWidth / lay.breite, voll ? (window.innerHeight - 90) / lay.hoehe : Infinity);
+      // im Vollbild (Beamer) passt die ganze Karte auf den Schirm, sonst nach Breite (schmale Karten dürfen wachsen)
+      const voll = document.fullscreenElement, max = lay.modus === 'spalten' ? 1 : 1.5;
+      const f = Math.min(max, huelle.clientWidth / lay.breite, voll ? (window.innerHeight - 110) / lay.hoehe : Infinity);
       k.root.style.transform = `scale(${f})`;
+      k.root.style.marginLeft = Math.max(0, (huelle.clientWidth - lay.breite * f) / 2) + 'px';
       huelle.style.height = Math.ceil(lay.hoehe * f) + 'px';
     };
     skalieren();
     window.onresize = skalieren;
-    const pins = L.map(d => ({ ziel: d.k.front ? d.k.front.st.id : 'ziel', avatar: d.save.duo.avatar, name: d.save.duo.codename, titel: `${d.save.duo.codename} (${d.save.duo.agenten.join(' & ')}) · ${d.k.punkte} XP · ${d.k.pos}` }));
     const laufen = lauf => MAP.pinne(k, pins, {
-      lauf, von: 0, staffel: 140, maxDauer: 3200,
-      onMehr: ps => { $('#zk-mehr').innerHTML = `<div class="merk"><b>An diesem Schritt:</b> ${ps.map(p => esc(p.name)).join(', ')}</div>`; }
+      lauf, von: 0, staffel: 140, maxDauer: 3200, ...(lay.modus === 'welt' ? { max: 12, proReihe: 4, versatz: 50, reihenAbstand: 40 } : {}),
+      onMehr: ps => { $('#zk-mehr').innerHTML = `<div class="merk"><b>Hier stehen:</b> ${ps.map(p => esc(p.name)).join(', ')}</div>`; }
     });
     laufen(!!neuGeladen);
     $('#zk-lauf').onclick = () => { $('.map-pins', k.root).innerHTML = ''; laufen(true); };
     $('#zk-voll').onclick = () => { const el = $('.zk-karte-card'); if (document.fullscreenElement) document.exitFullscreen(); else if (el.requestFullscreen) el.requestFullscreen().then(() => setTimeout(skalieren, 100)); };
     document.onfullscreenchange = () => setTimeout(skalieren, 100);
+  }
+
+  // Die drei Kartenansichten: Weltkarte (Station je Einsatz), Pfad eines Einsatzes, alle Schritte als Türme
+  let ansicht = 'welt';
+  function kartenAnsicht(L) {
+    const kapitel = P.sichtbar(false);
+    const pin = (d, ziel) => ({ ziel, avatar: d.save.duo.avatar, name: d.save.duo.codename, titel: `${d.save.duo.codename} (${d.save.duo.agenten.join(' & ')}) · ${d.k.punkte} XP · ${d.k.pos}` });
+    const mittel = e => L.reduce((a, d) => a + P.einsatzFortschritt(d.save, e), 0) / L.length;
+    if (ansicht === 'welt') {
+      const lay = MAP.layout(kapitel, 'welt', { quer: true });
+      const k = MAP.render($('#zk-map'), lay, {
+        status: n => L.every(d => P.einsatzFertig(d.save, n.e)) ? 'done' : L.some(d => P.einsatzFortschritt(d.save, n.e) > 0 || (d.k.front && d.k.front.e === n.e)) ? 'open' : 'locked',
+        fortschritt: mittel
+      });
+      return { lay, k, pins: L.map(d => pin(d, d.k.front ? d.k.front.e.id : 'ziel')), info: 'Jede Figur steht am Einsatz, an dem ihr Duo gerade arbeitet. Der goldene Ring zeigt, wie weit die Klasse im Mittel ist.' };
+    }
+    if (ansicht.startsWith('e:')) {
+      const e = P.einsatz(ansicht.slice(2));
+      const lay = MAP.layout([e], 'pfad', { ziel: false });
+      const hier = L.filter(d => d.k.front && d.k.front.e === e);
+      const weiter = L.filter(d => P.einsatzFertig(d.save, e)).length, davor = L.length - hier.length - weiter;
+      const k = MAP.render($('#zk-map'), lay, {
+        status: n => { const f = L.filter(d => P.stepDone(d.save, n.st)).length; return f === L.length ? 'done' : f || hier.some(d => d.k.front.st === n.st) ? 'open' : 'locked'; },
+        start: false, fortschritt: mittel
+      });
+      return { lay, k, pins: hier.map(d => pin(d, d.k.front.st.id)), info: `${hier.length} Duo${hier.length === 1 ? '' : 's'} in diesem Einsatz · ${weiter} schon weiter · ${davor} noch davor.` };
+    }
+    const lay = MAP.layout(kapitel, 'spalten');
+    const besetzt = new Set(L.map(d => d.k.front && d.k.front.st.id));
+    const k = MAP.render($('#zk-map'), lay, {
+      // erledigt = alle Duos, farbig = mindestens ein Duo war schon dort, grau = noch niemand
+      status: n => { const f = L.filter(d => P.stepDone(d.save, n.st)).length; return f === L.length ? 'done' : f || besetzt.has(n.st.id) ? 'open' : 'locked'; },
+      start: false, fortschritt: mittel
+    });
+    return { lay, k, pins: L.map(d => pin(d, d.k.front ? d.k.front.st.id : 'ziel')), info: 'Jede Figur steht am nächsten offenen Schritt ihres Duos.' };
   }
 
   // ---------- Beamer: Podium und Kategorien

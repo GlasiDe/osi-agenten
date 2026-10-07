@@ -1,7 +1,9 @@
-/* OSI-Agenten – Kletterkarte: alle Schritte als Knoten auf einem Pfad von unten nach oben (E0 → L1 … L7 → Finale → Verhör).
-   Zwei Anordnungen aus denselben Daten:
-     'pfad'    – ein langer Duolingo-Pfad (Spiel)
-     'spalten' – ein Turm je Kapitel nebeneinander (Einsatzzentrale/Beamer)
+/* OSI-Agenten – Kletterkarten. Es geht immer von unten nach oben (E0 → L1 … L7 → Finale → Verhör).
+   Anordnungen aus denselben Daten:
+     'welt'    – Weltkarte: eine Station je Einsatz (Spiel senkrecht, Einsatzzentrale mit { quer: true } waagerecht)
+     'pfad'    – Duolingo-Pfad mit allen Schritten der übergebenen Einsätze (Spiel: ein Einsatz je Karte)
+     'spalten' – ein Turm je Einsatz nebeneinander mit allen Schritten (Einsatzzentrale/Beamer)
+   Ein Knoten ist { st, e, idx, x, y, groesse }; auf der Weltkarte steht st für den Einsatz selbst (typ 'station').
    Rein darstellend: Status, Klicks und Figuren kommen vom Aufrufer. */
 (function () {
   'use strict';
@@ -13,12 +15,17 @@
   const farbe = e => `var(--${e.farbe || 'brand'})`;
 
   const MASSE = {
+    welt: { breite: 360, abstand: 236, ausschlag: 70, rand: 110, knoten: 100 },
+    weltQuer: { schritt: 176, steigung: 46, rand: 90, hoehe: 520, knoten: 84 },
     pfad: { breite: 340, abstand: 92, ausschlag: 74, banner: 128, rand: 70, knoten: 66, bonus: 48 },
     spalten: { spalte: 168, abstand: 58, ausschlag: 34, banner: 82, rand: 96, knoten: 40, bonus: 30 }
   };
+  const station = e => ({ id: e.id, type: 'station', titel: e.titel });
 
   // ---------- Anordnung
-  function layout(kapitelListe, modus = 'pfad') {
+  // opt.ziel: Pokal über dem letzten Knoten (Standard: ja), opt.quer: Weltkarte waagerecht
+  function layout(kapitelListe, modus = 'pfad', opt = {}) {
+    if (modus === 'welt') return opt.quer ? weltQuer(kapitelListe) : welt(kapitelListe);
     const M = MASSE[modus];
     const knoten = [], kapitel = [], pfade = [];
     const welle = k => Math.round(Math.sin(k * Math.PI / 4) * M.ausschlag);
@@ -38,13 +45,17 @@
           const n = { st, e, idx, x: M.breite / 2 + welle(k), yb, groesse: M.knoten };
           roh.push(n); seg.push(n); k++; yb += M.abstand;
         });
-        pfade.push(seg);
+        pfade.push({ e, seg });
         yb += 26; // Luft für die Figur auf dem letzten Knoten unter dem nächsten Banner
       });
       hoehe = yb + M.rand;
       roh.forEach(n => { n.y = hoehe - n.yb; knoten.push(n); });
       kapitel.forEach(c => { c.x = 0; c.w = M.breite; c.y = hoehe - c.yb - c.h; });
-      return mitBonus({ modus, M, breite: M.breite, hoehe, knoten, kapitel, pfade: pfade.map(s => s.map(n => [n.x, n.y])), ziel: { x: M.breite / 2, y: 26 } }, kapitelListe);
+      return mitBonus({
+        modus, M, breite: M.breite, hoehe, knoten, kapitel,
+        pfade: pfade.map(p => ({ k: farbe(p.e), p: p.seg.map(n => [n.x, n.y]) })),
+        ziel: opt.ziel === false ? null : { x: M.breite / 2, y: 26 }
+      }, kapitelListe);
     }
 
     // Spalten: Kapitel nebeneinander, in jeder Spalte geht es nach oben
@@ -60,13 +71,44 @@
         const n = { st, e, idx, x: cx + welle(k), y: hoehe - M.banner - 44 - k * M.abstand, groesse: M.knoten };
         knoten.push(n); seg.push([n.x, n.y]); k++;
       });
-      pfade.push(seg);
+      pfade.push({ k: farbe(e), p: seg });
     });
     const breite = kapitelListe.length * M.spalte;
     // Ziel (Pokal) über dem letzten Turm – dort stehen Duos, die alles erledigt haben
     const oben = knoten[knoten.length - 1];
     const ziel = { x: breite - M.spalte / 2, y: Math.max(34, oben.y - 84) };
     return mitBonus({ modus, M, breite, hoehe, knoten, kapitel, pfade, ziel }, kapitelListe);
+  }
+
+  // Weltkarte senkrecht: eine Station je Einsatz, Schlangenlinie nach oben, Pokal oben
+  function welt(kapitelListe) {
+    const M = MASSE.welt;
+    const hoehe = M.rand * 2 + 60 + (kapitelListe.length - 1) * M.abstand + 40;
+    const knoten = kapitelListe.map((e, k) => ({
+      st: station(e), e, idx: k, station: true, groesse: M.knoten,
+      x: M.breite / 2 + Math.round(Math.sin(k * Math.PI / 2.5) * M.ausschlag), y: hoehe - M.rand - 40 - k * M.abstand
+    }));
+    return weltFertig({ modus: 'welt', M, breite: M.breite, hoehe, knoten, ziel: { x: M.breite / 2, y: 44 } });
+  }
+  // Weltkarte waagerecht (Beamer): von links unten nach rechts oben
+  function weltQuer(kapitelListe) {
+    const M = MASSE.weltQuer;
+    const breite = M.rand * 2 + kapitelListe.length * M.schritt;
+    const knoten = kapitelListe.map((e, k) => ({
+      st: station(e), e, idx: k, station: true, groesse: M.knoten,
+      x: M.rand + k * M.schritt + M.schritt / 2, y: M.hoehe - 120 - k * M.steigung + (k % 2 ? -18 : 18)
+    }));
+    const letzte = knoten[knoten.length - 1];
+    return weltFertig({ modus: 'welt', quer: true, M, breite: breite + 60, hoehe: M.hoehe, knoten, ziel: { x: letzte.x + 120, y: letzte.y - 70 } });
+  }
+  function weltFertig(lay) {
+    // je Abschnitt in der Farbe des oberen Einsatzes
+    lay.pfade = lay.knoten.slice(1).map((n, i) => ({ k: farbe(n.e), p: [[lay.knoten[i].x, lay.knoten[i].y], [n.x, n.y]] }));
+    lay.kapitel = [];
+    lay.strecke = lay.knoten;
+    lay.index = Object.fromEntries(lay.knoten.map((n, i) => [n.st.id, i]));
+    lay.byId = Object.fromEntries(lay.knoten.map(n => [n.st.id, n]));
+    return lay;
   }
 
   // Bonus-Akten liegen neben dem Pfad, zwischen ihren Nachbarn – sie gehören nicht zur Pflicht-Strecke
@@ -105,11 +147,11 @@
   function render(el, lay, opt = {}) {
     const status = opt.status || (() => 'open');
     const verbinder = lay.modus === 'spalten'
-      ? lay.pfade.slice(0, -1).map((s, i) => { const a = s[s.length - 1], b = lay.pfade[i + 1][0]; return a && b ? `<path class="map-seil" d="M${a[0]},${a[1]} C${a[0] + 60},${a[1] - 80} ${b[0] - 60},${b[1] + 60} ${b[0]},${b[1]}"/>` : ''; }).join('')
+      ? lay.pfade.slice(0, -1).map((s, i) => { const a = s.p[s.p.length - 1], b = lay.pfade[i + 1].p[0]; return a && b ? `<path class="map-seil" d="M${a[0]},${a[1]} C${a[0] + 60},${a[1] - 80} ${b[0] - 60},${b[1] + 60} ${b[0]},${b[1]}"/>` : ''; }).join('')
       : '';
-    el.innerHTML = `<div class="map map--${lay.modus}" style="width:${lay.breite}px;height:${lay.hoehe}px">
+    el.innerHTML = `<div class="map map--${lay.modus} ${lay.quer ? 'map--quer' : ''}" style="width:${lay.breite}px;height:${lay.hoehe}px">
       <svg class="map-wege" width="${lay.breite}" height="${lay.hoehe}" viewBox="0 0 ${lay.breite} ${lay.hoehe}" aria-hidden="true">
-        ${lay.pfade.map((s, i) => `<path class="map-weg" style="--k:${farbe(lay.kapitel[i].e)}" d="${kurve(s)}"/>`).join('')}${verbinder}
+        ${lay.pfade.map(s => `<path class="map-weg" style="--k:${s.k}" d="${s.p.length === 2 ? bogen(s.p) : kurve(s.p)}"/>`).join('')}${verbinder}
       </svg>
       ${lay.kapitel.map(c => {
         const f = opt.fortschritt ? opt.fortschritt(c.e) : null;
@@ -123,6 +165,7 @@
       ${lay.ziel ? `<div class="map-ziel" style="left:${lay.ziel.x}px;top:${lay.ziel.y}px" title="Fall abgeschlossen">🏆</div>` : ''}
       ${lay.knoten.map((n, i) => {
         const s = status(n);
+        if (n.station) return stationHtml(n, i, s, opt);
         const icon = s === 'locked' ? '🔒' : TYP_ICON[n.st.type] || '•';
         const stern = opt.stern && opt.stern(n);
         return `<button type="button" class="map-knoten is-${s} ${n.bonus ? 'is-bonus' : ''} typ-${n.st.type}" data-step="${esc(n.st.id)}" data-e="${esc(n.e.id)}"
@@ -142,13 +185,30 @@
     return { root, lay };
   }
 
+  // Station der Weltkarte: großer Knoten mit Fortschrittsring und Namensschild
+  function stationHtml(n, i, s, opt) {
+    const f = opt.fortschritt ? opt.fortschritt(n.e) : 0;
+    const voll = opt.stern && opt.stern(n);
+    return `<button type="button" class="map-knoten map-station is-${s}" data-step="${esc(n.e.id)}" data-e="${esc(n.e.id)}"
+      style="left:${n.x}px;top:${n.y}px;--k:${farbe(n.e)};--g:${n.groesse}px;--i:${i};--f:${Math.round(f * 100)}"
+      aria-label="${esc(n.e.nrText + ' – ' + n.e.titel + ', ' + Math.round(f * 100) + ' %' + (s === 'locked' ? ', gesperrt' : ''))}">
+      <span class="map-ring" aria-hidden="true"></span><span class="map-knoten-icon">${s === 'locked' ? '🔒' : n.e.icon || '📁'}</span>
+      ${s === 'done' ? '<span class="map-haken">✓</span>' : ''}${voll ? '<span class="map-stern" title="alle Übungen gemeistert">⭐</span>' : ''}
+      <span class="map-station-name"><small>${esc(n.e.nrText)}</small>${esc(n.e.titel)}</span></button>`;
+  }
+  // Abschnitt der Weltkarte als sanfter Bogen
+  function bogen([[ax, ay], [bx, by]]) {
+    const mx = (ax + bx) / 2, my = (ay + by) / 2, dx = bx - ax, dy = by - ay;
+    return `M${ax},${ay} Q${mx - dy * .25},${my + dx * .25} ${bx},${by}`;
+  }
+
   // Sprechblase an einem Knoten (Titel, Status, Knöpfe). html = null schließt sie.
   function pop(root, n, html) {
     const p = root.querySelector('.map-pop');
     if (!n) { p.classList.add('hidden'); return; }
     p.innerHTML = html;
     p.style.left = n.x + 'px';
-    p.style.top = (n.y + n.groesse / 2 + 14) + 'px';
+    p.style.top = (n.y + n.groesse / 2 + (n.station ? 64 : 14)) + 'px';
     p.style.setProperty('--k', farbe(n.e));
     p.classList.remove('hidden', 'rein'); void p.offsetWidth; p.classList.add('rein');
   }
@@ -161,21 +221,24 @@
     const zielPos = z => z === 'ziel' && lay.ziel ? { x: lay.ziel.x, y: lay.ziel.y + 30, i: lay.strecke.length } : (() => { const n = lay.byId[z]; return n ? { x: n.x, y: n.y - n.groesse / 2 + 6, i: lay.index[z] } : null; })();
     const gruppen = {};
     pins.forEach(p => { (gruppen[p.ziel] = gruppen[p.ziel] || []).push(p); });
-    const MAX = 4, versatz = lay.modus === 'spalten' ? 28 : 34;
+    const MAX = opt.max || 4, proReihe = opt.proReihe || 4, versatz = opt.versatz || (lay.modus === 'spalten' ? 28 : 34);
     const els = [];
     Object.entries(gruppen).forEach(([z, ps]) => {
       const pos = zielPos(z);
       if (!pos) return;
       const sichtbar = ps.slice(0, MAX), rest = ps.slice(MAX);
       sichtbar.forEach((p, j) => {
-        const dx = (j - (sichtbar.length - 1) / 2) * versatz;
+        // in Reihen aufstellen: erste Reihe vorn, weitere dahinter (etwas höher)
+        const reihe = Math.floor(j / proReihe), inReihe = Math.min(proReihe, sichtbar.length - reihe * proReihe);
+        const dx = ((j % proReihe) - (inReihe - 1) / 2) * versatz + (reihe % 2 ? versatz / 2 : 0);
+        const dy = -reihe * (opt.reihenAbstand || 26);
         const d = document.createElement('div');
         d.className = `map-pin ${p.ich ? 'is-ich' : ''}`;
         d.title = p.titel || p.name || '';
         d.innerHTML = `${p.name ? `<span class="map-tag">${esc(p.name)}</span>` : ''}${Kit.avatars.svg(p.avatar, { titel: false })}`;
-        d.style.zIndex = String(10 + Math.round(pos.y)); // weiter unten = weiter vorn
+        d.style.zIndex = String(10 + Math.round(pos.y + dy) * 2); // weiter unten = weiter vorn
         ebene.appendChild(d);
-        els.push({ d, ziel: { x: pos.x + dx, y: pos.y, i: pos.i }, dx });
+        els.push({ d, ziel: { x: pos.x + dx, y: pos.y + dy, i: pos.i }, dx, dy });
       });
       if (rest.length) {
         const d = document.createElement('button');
@@ -183,7 +246,7 @@
         d.className = 'map-mehr';
         d.textContent = '+' + rest.length;
         d.title = rest.map(p => p.name).join(', ');
-        d.style.transform = `translate(${pos.x + (sichtbar.length / 2) * versatz + 10}px, ${pos.y - 20}px)`;
+        d.style.transform = `translate(${pos.x + (Math.min(proReihe, sichtbar.length) / 2) * versatz + 10}px, ${pos.y - 20}px)`;
         d.onclick = () => { if (opt.onMehr) opt.onMehr(ps); };
         ebene.appendChild(d);
       }
@@ -200,10 +263,10 @@
       const von = Math.max(0, Math.min(opt.von != null ? opt.von : 0, o.ziel.i));
       const hops = o.ziel.i - von;
       if (hops <= 0) { setze(o, o.ziel.x, o.ziel.y); return fertig(); }
-      const dauer = Math.min(opt.maxDauer || 2600, 260 * hops);
+      const dauer = Math.min(opt.maxDauer || 2600, (lay.modus === 'welt' ? 650 : 260) * hops);
       const start = performance.now() + j * (opt.staffel || 0);
       const [sx, sy] = punkt(von);
-      setze(o, sx + o.dx, sy);
+      setze(o, sx + o.dx, sy + o.dy);
       o.d.classList.add('is-lauf');
       let letzterHop = -1;
       const schritt = now => {
@@ -211,8 +274,8 @@
         const e = t < .5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
         const f = von + e * hops, i = Math.floor(f), r = f - i;
         const [ax, ay] = punkt(i), [bx, by] = punkt(Math.min(i + 1, o.ziel.i));
-        const sprung = Math.sin(r * Math.PI) * (lay.modus === 'spalten' ? 10 : 18);
-        setze(o, ax + (bx - ax) * r + o.dx, ay + (by - ay) * r - sprung);
+        const sprung = Math.sin(r * Math.PI) * (lay.modus === 'spalten' ? 10 : lay.modus === 'welt' ? 40 : 18);
+        setze(o, ax + (bx - ax) * r + o.dx, ay + (by - ay) * r - sprung + o.dy);
         if (i !== letzterHop) { letzterHop = i; if (opt.onHop) opt.onHop(i); }
         if (t < 1) requestAnimationFrame(schritt);
         else { setze(o, o.ziel.x, o.ziel.y); o.d.classList.remove('is-lauf'); o.d.classList.add('is-angekommen'); fertig(); }
