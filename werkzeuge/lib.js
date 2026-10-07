@@ -22,7 +22,9 @@ const sleep = ms => new Promise(r => setTimeout(r, ms));
 async function browser() {
   const puppeteer = require('puppeteer-core');
   if (!EDGE) throw new Error('Kein Edge/Chrome gefunden – Pfad in CHROME_PATH angeben.');
-  return puppeteer.launch({ executablePath: EDGE, headless: 'new' });
+  // Als root (z. B. im Container) startet Chromium nur ohne Sandbox
+  const args = process.getuid && process.getuid() === 0 ? ['--no-sandbox'] : [];
+  return puppeteer.launch({ executablePath: EDGE, headless: 'new', args });
 }
 
 // Seite mit Fehlerprotokoll öffnen

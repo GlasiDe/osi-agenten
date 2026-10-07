@@ -271,7 +271,7 @@ Physische Adresse   Transportname
     {
       id: 'e2-filter', type: 'lesson', tag: 'TRAINING 4 · WIRESHARK-FILTER', titel: 'Die Nadel im Heuhaufen',
       html: `
-        <p>Ein Mitschnitt enthält schnell Tausende Frames. Mit einem <b>Anzeigefilter</b> blendet Wireshark alles aus, was nicht passt. Die Filterzeile wird <b style="color:#4fd18b">grün</b>, wenn Wireshark den Filter versteht, und <b style="color:#ff5d5d">rot</b>, wenn nicht.</p>
+        <p>Ein Mitschnitt enthält schnell Tausende Frames. Mit einem <b>Anzeigefilter</b> blendet Wireshark alles aus, was nicht passt. Die Filterzeile wird <b style="color:var(--green-ink)">grün</b>, wenn Wireshark den Filter versteht, und <b style="color:var(--red-ink)">rot</b>, wenn nicht.</p>
         <table class="t">
           <tr><th>Filter</th><th>zeigt …</th></tr>
           <tr><td><code>arp</code> · <code>dns</code> · <code>icmp</code> · <code>tcp</code> · <code>udp</code></td><td>nur Frames mit diesem Protokoll</td></tr>

@@ -3,15 +3,24 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>OSI-Agenten · Einheit 7</title>
-  <link rel="stylesheet" href="css/style.css">
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%23ff8a2a'/%3E%3Ctext x='16' y='23' font-size='18' font-family='Arial' font-weight='bold' text-anchor='middle' fill='%23081418'%3E7%3C/text%3E%3C/svg%3E">
+  <meta name="color-scheme" content="light dark">
+  <title>OSI-Agenten · Operation Lohnzettel</title>
+  <link rel="stylesheet" href="css/tokens.css">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/map.css">
+  <link rel="stylesheet" href="css/steps.css">
+  <link rel="stylesheet" href="css/tools.css">
+  <link rel="stylesheet" href="css/print.css">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%23ff9600'/%3E%3Ctext x='16' y='22' font-size='15' font-family='Arial' font-weight='900' text-anchor='middle' fill='%23fff'%3EE7%3C/text%3E%3C/svg%3E">
+  <script src="js/kit/theme.js"></script>
 </head>
 <body>
   <header id="topbar"></header>
   <main id="app"><div class="card">Das Spiel wird geladen … Falls diese Meldung stehen bleibt, ist JavaScript im Browser deaktiviert.</div></main>
-  <div id="toasts"></div>
+  <div id="toasts" aria-live="polite"></div>
 
+  <!-- Inhalte -->
   <script src="content/meta.js"></script>
   <script src="content/e0.js"></script>
   <script src="content/e1.js"></script>
@@ -21,9 +30,27 @@
   <script src="content/e5.js"></script>
   <script src="content/e6.js"></script>
   <script src="content/verhoer.js"></script>
-  <script src="js/storage.js"></script>
-  <script src="js/audio.js"></script>
-  <script src="js/engine.js"></script>
-  <script src="js/steps.js"></script>
+  <!-- Baukasten (auch von der Einsatzzentrale genutzt) -->
+  <script src="js/kit/storage.js"></script>
+  <script src="js/kit/util.js"></script>
+  <script src="js/kit/progress.js"></script>
+  <script src="js/kit/audio.js"></script>
+  <script src="js/kit/fx.js"></script>
+  <script src="js/kit/avatars.js"></script>
+  <script src="js/kit/map.js"></script>
+  <!-- Spiel -->
+  <script src="js/game/core.js"></script>
+  <script src="js/game/shell.js"></script>
+  <script src="js/game/screens.js"></script>
+  <script src="js/steps/common.js"></script>
+  <script src="js/steps/story.js"></script>
+  <script src="js/steps/quiz.js"></script>
+  <script src="js/steps/sort.js"></script>
+  <script src="js/steps/verhoer.js"></script>
+  <script src="js/steps/ende.js"></script>
+  <script src="js/tools/terminal.js"></script>
+  <script src="js/tools/wireshark.js"></script>
+  <script src="js/tools/challenge.js"></script>
+  <script src="js/game/main.js"></script>
 </body>
 </html>

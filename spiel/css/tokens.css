@@ -1,0 +1,88 @@
+/* OSI-Agenten – Design-Tokens. Hell (Standard, Duolingo-Stil) und Dunkel (Noir, passend zu den Bildern).
+   Umschaltung über <html data-theme="light|dark"> (js/kit/theme.js). Nur hier stehen Farbwerte. */
+:root {
+  /* Schrift: Systemschriften, offline – runde Schnitte, wo vorhanden */
+  --sans: "Nunito", "Varela Round", ui-rounded, "SF Pro Rounded", "Segoe UI Variable Display", "Segoe UI", system-ui, -apple-system, Roboto, "Helvetica Neue", Arial, sans-serif;
+  --mono: "Cascadia Mono", Consolas, "SF Mono", Menlo, "Courier New", monospace;
+
+  /* Formen */
+  --r-s: 10px;
+  --r: 16px;
+  --r-l: 22px;
+  --r-pill: 999px;
+  --kante: 4px;          /* Höhe der „3D-Kante“ unter Knöpfen und Kacheln */
+  --spalte: 760px;       /* Lesespalte in Schritten */
+
+  /* Bewegung */
+  --schnell: .14s;
+  --mittel: .28s;
+  --feder: cubic-bezier(.34, 1.56, .64, 1);
+  --sanft: cubic-bezier(.2, .8, .2, 1);
+
+  /* Akzente (in beiden Themes gleich) */
+  --green: #58cc02;   --green-edge: #46a302;
+  --blue: #1cb0f6;    --blue-edge: #1899d6;
+  --red: #ff4b4b;     --red-edge: #ea2b2b;
+  --gold: #ffc800;    --gold-edge: #e0a800;
+  --purple: #ce82ff;  --purple-edge: #a568e0;
+  --brand: #ff9600;   --brand-edge: #e07800;   /* Einheit 7 */
+  --on-color: #14212b; /* Text auf farbigen Flächen (Schichtfarben, Gold) */
+  --on-strong: #ffffff; /* Text auf Grün/Blau/Rot-Knöpfen */
+
+  /* Hell */
+  --bg: #ffffff;
+  --surface: #ffffff;
+  --surface-2: #f7f7f7;
+  --surface-3: #eef3f5;
+  --line: #e5e5e5;
+  --line-2: #d6d6d6;
+  --text: #3c3c3c;
+  --muted: #777777;
+  --subtle: #afafaf;
+  --green-soft: #d7ffb8;  --green-ink: #3f8f00;
+  --red-soft: #ffdfe0;    --red-ink: #d42a2a;
+  --blue-soft: #ddf4ff;   --blue-ink: #0f86c0;
+  --gold-soft: #fff5cc;   --gold-ink: #9a6b00;
+  --brand-soft: #fff0dc;  --brand-ink: #c45f00;
+  --purple-soft: #f4e6ff; --purple-ink: #8a3fd0;
+  --kalle: #0f86c0;
+  --locked: #e5e5e5; --locked-edge: #cfcfcf; --locked-ink: #a8a8a8;
+  --code-bg: #f1f4f6; --code-text: #b04a00;
+  --schatten: 0 10px 30px rgba(20, 33, 43, .12);
+  --backdrop: rgba(20, 33, 43, .45);
+  --svg-box: #f7f7f7; --svg-text: #3c3c3c; --svg-muted: #6b6b6b;
+
+  /* Schichtfarben L1–L7 – Namen NIE ändern, Inhalte nutzen var(--L1) … inline */
+  --L1: #9aaac0; --L2: #1cb0f6; --L3: #58cc02; --L4: #ffc800; --L5: #ce82ff; --L6: #ff8fc8; --L7: #ff9600;
+
+  /* Papier (Beweisstücke, Board, Urkunde) – Teil der Fiktion, themenunabhängig */
+  --papier: #f6efe0; --papier-2: #e9dfca; --papier-linie: #cdbf9f; --papier-ink: #231a0e; --papier-braun: #6b4a1a;
+
+  color-scheme: light;
+}
+
+[data-theme="dark"] {
+  --bg: #0b1a1e;
+  --surface: #12272d;
+  --surface-2: #173139;
+  --surface-3: #1c3a43;
+  --line: #29505a;
+  --line-2: #08161a;
+  --text: #e8f1f2;
+  --muted: #9dbac0;
+  --subtle: #5f8089;
+  --green-soft: rgba(88, 204, 2, .16);    --green-ink: #7fe02a;
+  --red-soft: rgba(255, 75, 75, .16);     --red-ink: #ff8080;
+  --blue-soft: rgba(28, 176, 246, .15);   --blue-ink: #62c9ff;
+  --gold-soft: rgba(255, 200, 0, .13);    --gold-ink: #ffd34d;
+  --brand-soft: rgba(255, 150, 0, .15);   --brand-ink: #ffab40;
+  --purple-soft: rgba(206, 130, 255, .15); --purple-ink: #dba6ff;
+  --kalle: #7fd6e8;
+  --locked: #1f3a42; --locked-edge: #0b1a1e; --locked-ink: #4f6c74;
+  --code-bg: #0a1c20; --code-text: #ffd0a6;
+  --schatten: 0 12px 34px rgba(0, 0, 0, .45);
+  --backdrop: rgba(0, 0, 0, .65);
+  --svg-box: #10262b; --svg-text: #e3eef0; --svg-muted: #9dbac0;
+  --L1: #7a8fa6; --L2: #4aa3df; --L3: #4fd18b; --L4: #e2c043; --L5: #c58af0; --L6: #f07fb0; --L7: #ff8a2a;
+  color-scheme: dark;
+}

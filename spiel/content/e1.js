@@ -177,7 +177,7 @@
     {
       id: 'e1-fund', type: 'quiz', titel: 'Der Fund', bild: 'serverraum.jpg',
       intro: `<img class="scene-img" src="img/serverraum.jpg" alt="Kleines schwarzes Gerät am Switch im Licht einer Taschenlampe">
-        <div class="kallebox"><img class="kalle-click" src="img/kalle.jpg" alt="Kalle"><div><b style="color:#7fd6e8">Kalle:</b> Da haben wir den Übeltäter. Kleines schwarzes Kästchen, keine Beschriftung, Strom über USB aus dem Server daneben. Verbunden mit einem <b>grauen Patchkabel, RJ45, Aufdruck „Cat 5e“, 50 cm</b>. Die LEDs blinken fröhlich vor sich hin.</div></div>`,
+        <div class="kallebox"><img class="kalle-click" src="img/kalle.jpg" alt="Kalle"><div><b class="kalle-name">Kalle:</b> Da haben wir den Übeltäter. Kleines schwarzes Kästchen, keine Beschriftung, Strom über USB aus dem Server daneben. Verbunden mit einem <b>grauen Patchkabel, RJ45, Aufdruck „Cat 5e“, 50 cm</b>. Die LEDs blinken fröhlich vor sich hin.</div></div>`,
       fragen: [
         { id: 'e1-fund-medium', frage: 'Über welches Übertragungsmedium ist das Gerät angeschlossen?', optionen: ['Kupfer (Twisted Pair)', 'Glasfaser (Multimode)', 'Funk', 'Glasfaser (Singlemode)'], richtig: 0, erklaerung: 'RJ45 + Cat 5e = Twisted-Pair-Kupferkabel.', hinweise: ['RJ45 ist der typische Stecker für …'] },
         {

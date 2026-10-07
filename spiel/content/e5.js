@@ -91,23 +91,23 @@
 
   // ------------------------------------------------------------ Diagramm: der Mittelsmann (SVG)
   function mitmSvg() {
-    const box = (x, y, w, titel, sub, farbe) => `<rect x="${x}" y="${y}" width="${w}" height="54" rx="8" fill="#10262b" stroke="${farbe}" stroke-width="2"/>
-      <text x="${x + w / 2}" y="${y + 23}" text-anchor="middle" font-size="14" font-weight="700" fill="#e3eef0">${titel}</text>
-      <text x="${x + w / 2}" y="${y + 42}" text-anchor="middle" font-size="12" fill="#9dbac0">${sub}</text>`;
-    const pfeil = (x1, x2, y, txt, farbe) => `<line x1="${x1}" y1="${y}" x2="${x2}" y2="${y}" stroke="${farbe}" stroke-width="2" marker-end="url(#ap)"/>
-      <text x="${(x1 + x2) / 2}" y="${y - 8}" text-anchor="middle" font-size="12" font-weight="700" fill="${farbe}">${txt}</text>`;
+    const box = (x, y, w, titel, sub, farbe) => `<rect class="svg-box" x="${x}" y="${y}" width="${w}" height="54" rx="8" style="stroke:${farbe}" stroke-width="2"/>
+      <text x="${x + w / 2}" y="${y + 23}" text-anchor="middle" font-size="14" font-weight="700" class="svg-text">${titel}</text>
+      <text x="${x + w / 2}" y="${y + 42}" text-anchor="middle" font-size="12" class="svg-muted">${sub}</text>`;
+    const pfeil = (x1, x2, y, txt, farbe) => `<line x1="${x1}" y1="${y}" x2="${x2}" y2="${y}" style="stroke:${farbe}" stroke-width="2" marker-end="url(#ap)"/>
+      <text x="${(x1 + x2) / 2}" y="${y - 8}" text-anchor="middle" font-size="12" font-weight="700" style="fill:${farbe}">${txt}</text>`;
     return `<svg viewBox="0 0 640 210" width="640" role="img" aria-label="Der Pi als Mittelsmann zwischen Frau Lindners PC und dem echten Lohnserver" font-family="Segoe UI, Arial, sans-serif">
-      <defs><marker id="ap" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#9dbac0"/></marker></defs>
-      ${box(10, 78, 150, 'PC Frau Lindner', '192.168.50.140', '#4aa3df')}
-      ${box(245, 78, 150, 'Raspberry Pi', '192.168.50.66', '#ff8a2a')}
-      ${box(480, 78, 150, 'echter Lohnserver', '192.168.50.20', '#4fd18b')}
-      ${pfeil(162, 243, 92, 'HTTP · Port 80', '#ff5d5d')}
-      ${pfeil(243, 162, 128, 'ohne Schloss', '#ff5d5d')}
-      ${pfeil(397, 478, 92, 'HTTPS · Port 443', '#4fd18b')}
-      ${pfeil(478, 397, 128, 'verschlüsselt', '#4fd18b')}
-      <text x="86" y="185" text-anchor="middle" font-size="11" fill="#9dbac0">tippt den Namen</text>
-      <text x="320" y="185" text-anchor="middle" font-size="11" fill="#9dbac0">nimmt links offen, spricht rechts verschlüsselt</text>
-      <text x="555" y="185" text-anchor="middle" font-size="11" fill="#9dbac0">echte Daten</text></svg>`;
+      <defs><marker id="ap" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path class="svg-muted" d="M0,0 L8,3 L0,6 Z"/></marker></defs>
+      ${box(10, 78, 150, 'PC Frau Lindner', '192.168.50.140', 'var(--L2)')}
+      ${box(245, 78, 150, 'Raspberry Pi', '192.168.50.66', 'var(--brand)')}
+      ${box(480, 78, 150, 'echter Lohnserver', '192.168.50.20', 'var(--L3)')}
+      ${pfeil(162, 243, 92, 'HTTP · Port 80', 'var(--red)')}
+      ${pfeil(243, 162, 128, 'ohne Schloss', 'var(--red)')}
+      ${pfeil(397, 478, 92, 'HTTPS · Port 443', 'var(--L3)')}
+      ${pfeil(478, 397, 128, 'verschlüsselt', 'var(--L3)')}
+      <text x="86" y="185" text-anchor="middle" font-size="11" class="svg-muted">tippt den Namen</text>
+      <text x="320" y="185" text-anchor="middle" font-size="11" class="svg-muted">nimmt links offen, spricht rechts verschlüsselt</text>
+      <text x="555" y="185" text-anchor="middle" font-size="11" class="svg-muted">echte Daten</text></svg>`;
   }
 
   // ------------------------------------------------------------ Mitschnitt: Frau Lindner ruft die Seite auf (Fr 07:52). Nur Seitenabruf – KEIN Anmeldevorgang.

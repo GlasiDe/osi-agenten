@@ -36,7 +36,53 @@ const { browser, seite, klick, sleep, shot } = require('./lib');
   });
   if (ergebnis.duos !== 3) fehler.push(`Erwartet 3 Duos (Duplikat zusammengeführt), gefunden ${ergebnis.duos}`);
   if (ergebnis.abgelehnt !== 1) fehler.push('Manipulierte Datei wurde nicht abgelehnt');
-  await sleep(1200);
+  await sleep(2600);
+  // Karte (Standard-Reiter) startet mit der Weltkarte: je Duo eine Figur an der Station seines Einsatzes
+  const welt = await p.evaluate(() => {
+    const P = OSIKit.progress;
+    const pins = [...document.querySelectorAll('.map-pin')];
+    const falsch = [...OSIZentrale.duos.values()].filter(d => {
+      const f = P.front(d.save), pin = pins.find(x => x.querySelector('.map-tag').textContent === d.save.duo.codename);
+      if (!pin) return true;
+      const ziel = f ? document.querySelector(`.map-station[data-e="${f.e.id}"]`) : document.querySelector('.map-ziel');
+      const a = pin.getBoundingClientRect(), b = ziel.getBoundingClientRect();
+      return Math.abs((a.left + a.width / 2) - (b.left + b.width / 2)) > 60;
+    }).map(d => d.save.duo.codename);
+    return { stationen: document.querySelectorAll('.map-station').length, pins: pins.length, falsch };
+  });
+  if (welt.stationen !== 8) fehler.push(`Weltkarte zeigt ${welt.stationen} statt 8 Stationen`);
+  if (welt.pins !== 3 || welt.falsch.length) fehler.push(`Weltkarte: ${welt.pins} Figuren, falsch platziert: ${welt.falsch.join(', ')}`);
+  await p.screenshot({ path: shot('zentrale_welt'), fullPage: true });
+  // Einsatz-Ansicht: nur die Duos, die gerade in diesem Einsatz sind
+  const ein = await p.evaluate(async () => {
+    const P = OSIKit.progress, d = [...OSIZentrale.duos.values()].find(x => P.front(x.save));
+    const sel = document.querySelector('#zk-einsatz'); sel.value = P.front(d.save).e.id; sel.dispatchEvent(new Event('change'));
+    await new Promise(r => setTimeout(r, 300));
+    const soll = [...OSIZentrale.duos.values()].filter(x => P.front(x.save) && P.front(x.save).e.id === sel.value).length;
+    return { soll, ist: document.querySelectorAll('.map-pin').length, knoten: document.querySelectorAll('.map-knoten').length, schritte: P.einsatz(sel.value).steps.length };
+  });
+  if (ein.ist !== ein.soll || ein.knoten !== ein.schritte) fehler.push(`Einsatz-Ansicht: ${ein.ist}/${ein.soll} Figuren, ${ein.knoten}/${ein.schritte} Knoten`);
+  await klick(p, '[data-ansicht="alle"]'); await sleep(3800);
+  // Alle Schritte: je Duo eine Figur mit Namensschild am nächsten offenen Schritt
+  const karte = await p.evaluate(() => {
+    const pins = [...document.querySelectorAll('.map-pin')];
+    const P = OSIKit.progress;
+    const soll = [...OSIZentrale.duos.values()].map(d => { const f = P.front(d.save); return { name: d.save.duo.codename, ziel: f ? f.st.id : null }; });
+    const knoten = id => document.querySelector(`.map-knoten[data-step="${id}"]`);
+    const falsch = soll.filter(x => {
+      const pin = pins.find(p => p.querySelector('.map-tag').textContent === x.name);
+      if (!pin) return true;
+      if (!x.ziel) return false;
+      const a = pin.getBoundingClientRect(), b = knoten(x.ziel).getBoundingClientRect();
+      return Math.abs((a.left + a.width / 2) - (b.left + b.width / 2)) > 40 || a.bottom < b.top - 20 || a.bottom > b.bottom;
+    }).map(x => x.name);
+    return { pins: pins.length, knoten: document.querySelectorAll('.map-knoten').length, schritte: OSI.einsaetze.reduce((a, e) => a + e.steps.length, 0), falsch };
+  });
+  if (karte.pins !== 3) fehler.push(`Karte zeigt ${karte.pins} statt 3 Figuren`);
+  if (karte.knoten !== karte.schritte) fehler.push(`Karte hat ${karte.knoten} Knoten für ${karte.schritte} Schritte`);
+  if (karte.falsch.length) fehler.push('Figur steht nicht an ihrem Schritt: ' + karte.falsch.join(', '));
+  await p.screenshot({ path: shot('zentrale_karte'), fullPage: true });
+  await klick(p, '[data-tab="beamer"]'); await sleep(600);
   await p.screenshot({ path: shot('zentrale_beamer'), fullPage: true });
   await klick(p, '[data-tab="duos"]'); await p.screenshot({ path: shot('zentrale_duos'), fullPage: true });
   await klick(p, '[data-tab="aufgaben"]'); await p.screenshot({ path: shot('zentrale_aufgaben'), fullPage: false });

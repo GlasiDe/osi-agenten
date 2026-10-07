@@ -1,0 +1,9 @@
+node_modules/
+.next/
+next-env.d.ts
+*.tsbuildinfo
+.env*
+!.env.example
+# erzeugt von scripts/spiel-kopieren.mjs aus ../spiel und ../lehrkraft
+public/spiel/
+public/lehrkraft/

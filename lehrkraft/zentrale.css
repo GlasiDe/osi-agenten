@@ -1,0 +1,75 @@
+/* OSI-Agenten – Einsatzzentrale: Ergänzungen zum Designsystem des Spiels. */
+#app.zentrale { max-width: 1440px; }
+#drop { margin-top: 0; padding: 22px; }
+#drop.kompakt { padding: 10px 16px; text-align: left; }
+.filelist { margin-top: 8px; font-size: .85rem; color: var(--muted); font-weight: 700; }
+#drop.kompakt .filelist { max-height: 72px; overflow: auto; }
+.bad { color: var(--red-ink); font-weight: 900; }
+
+.tabs { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin: 16px 0; }
+.tabs button {
+  padding: 8px 14px; border: 2px solid var(--line); border-radius: var(--r); background: var(--surface); box-shadow: 0 3px 0 var(--line);
+  font-weight: 900; cursor: pointer; transition: transform var(--schnell), box-shadow var(--schnell);
+}
+.tabs button small { font-weight: 700; color: var(--muted); }
+.tabs button:hover { background: var(--surface-2); }
+.tabs button:active { transform: translateY(3px); box-shadow: none; }
+.tabs button.on { border-color: var(--blue); background: var(--blue-soft); color: var(--blue-ink); box-shadow: 0 3px 0 var(--blue-edge); }
+
+.leer { text-align: center; }
+.leer-figuren { display: flex; justify-content: center; gap: 8px; margin-bottom: 8px; }
+.leer-figuren .av { width: 76px; animation: schweben 2.4s ease-in-out infinite; }
+.leer-figuren .av:nth-child(2) { animation-delay: .3s; }
+.leer-figuren .av:nth-child(3) { animation-delay: .6s; }
+
+/* Karte */
+.zk-kopf { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 16px; }
+.zk-fall-zeile { display: flex; align-items: center; gap: 16px; }
+.zk-fall-zeile .fortschritt { flex: 1; height: 22px; margin: 4px 0; }
+.zk-fall-zeile b, .zk-fall-zeile .big { font-size: 2rem; font-weight: 900; color: var(--green-ink); white-space: nowrap; }
+.zk-fall-zeile .muted { flex: 1; }
+.zk-top { display: flex; gap: 14px; align-items: center; }
+.zk-top-duo { display: flex; align-items: center; gap: 6px; }
+.zk-top-duo .av { width: 40px; }
+.zk-top-duo b { display: block; line-height: 1.1; }
+.zk-top-duo small { color: var(--gold-ink); font-weight: 900; }
+.zk-platz { font-size: 1.4rem; }
+.zk-karte-card { overflow: hidden; }
+.zk-karte-card:fullscreen { overflow: auto; border-radius: 0; background: var(--bg); }
+.zk-karte-leiste { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 8px; }
+.zk-karte { position: relative; overflow: hidden; }
+.zk-karte .map { transform-origin: 0 0; }
+@media (max-width: 900px) { .zk-kopf { grid-template-columns: 1fr; } .zk-top { flex-wrap: wrap; } }
+
+/* Beamer */
+.classbar { height: 34px; margin: 10px 0 6px; border-radius: var(--r-pill); background: var(--locked); overflow: hidden; }
+.classbar i { display: block; height: 100%; border-radius: inherit; background: linear-gradient(90deg, var(--green-edge), var(--green)); transition: width 1s var(--sanft); }
+.podium { display: grid; grid-template-columns: 1fr 1.15fr 1fr; gap: 16px; align-items: end; margin: 20px 0; }
+.pod { padding: 14px 10px 18px; text-align: center; background: var(--surface); border: 2px solid var(--line); border-radius: var(--r-l); box-shadow: 0 var(--kante) 0 var(--line); animation: pop-rein .5s var(--feder) both; }
+.pod.p1 { border-color: var(--gold); box-shadow: 0 var(--kante) 0 var(--gold-edge); padding-top: 24px; animation-delay: .2s; }
+.pod.p3 { animation-delay: .1s; }
+.pod-figur { width: 90px; margin: 0 auto; }
+.pod.p1 .pod-figur { width: 120px; }
+.pod .pl { font-size: 2.2rem; }
+.pod .nm { font-size: 1.4rem; font-weight: 900; }
+.pod .pt { font-family: var(--mono); color: var(--gold-ink); font-size: 1.15rem; font-weight: 900; }
+.cats { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 14px; }
+.cat { padding: 16px; background: var(--surface); border: 2px solid var(--line); border-radius: var(--r-l); box-shadow: 0 var(--kante) 0 var(--line); }
+.cat .ct { color: var(--muted); font-size: .9rem; font-weight: 800; }
+.cat .cw { margin: 4px 0; font-size: 1.35rem; font-weight: 900; }
+.cat .cv { font-family: var(--mono); color: var(--gold-ink); font-weight: 800; }
+
+/* Tabellen */
+.zk-duo { display: flex; align-items: center; gap: 8px; }
+.zk-duo .av { width: 34px; flex: none; }
+.bar { display: inline-block; height: 8px; border-radius: 4px; background: var(--red); vertical-align: middle; }
+th[data-sort] { cursor: pointer; }
+th[data-sort]:hover { color: var(--blue-ink); }
+td.ampel.gruen { background: var(--green-soft); }
+td.ampel.gelb { background: var(--gold-soft); }
+td.ampel.rot { background: var(--red-soft); }
+
+.zk-ansicht { display: flex; gap: 6px; flex-wrap: wrap; }
+.zk-ansicht button, .zk-ansicht select { padding: 6px 12px; border: 2px solid var(--line); border-radius: var(--r); background: var(--surface); color: var(--text); font-weight: 900; cursor: pointer; box-shadow: 0 3px 0 var(--line); }
+.zk-ansicht .on { border-color: var(--blue); background: var(--blue-soft); color: var(--blue-ink); box-shadow: 0 3px 0 var(--blue-edge); }
+#zk-info { margin: 4px 0 8px; }

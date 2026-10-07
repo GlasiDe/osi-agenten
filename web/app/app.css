@@ -1,0 +1,22 @@
+/* Ergänzungen für die Online-Seiten (Anmeldung, Konto, Lehrkraft, Admin). Farben nur aus spiel/css/tokens.css. */
+.seite { max-width: 980px; margin: 0 auto; padding: 22px 16px 70px; }
+.seite.schmal { max-width: 520px; }
+.formular label { margin-top: 14px; }
+.formular .btnrow { margin-top: 20px; }
+.meldung { margin-top: 14px; padding: 10px 14px; border-radius: var(--r); font-weight: 800; }
+.meldung.fehler { background: var(--red-soft); border: 2px solid var(--red); color: var(--red-ink); }
+.meldung.ok { background: var(--green-soft); border: 2px solid var(--green); color: var(--green-ink); }
+.umschalter { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px; }
+.umschalter button { padding: 10px; border: 2px solid var(--line); border-radius: var(--r); background: var(--surface); font-weight: 900; cursor: pointer; box-shadow: 0 3px 0 var(--line); }
+.umschalter button.on { border-color: var(--blue); background: var(--blue-soft); color: var(--blue-ink); box-shadow: 0 3px 0 var(--blue-edge); }
+.code-gross { font-family: var(--mono); font-size: 1.5rem; font-weight: 900; letter-spacing: .08em; color: var(--brand-ink); }
+.kacheln { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; }
+.kachel-klasse { display: flex; flex-direction: column; gap: 6px; }
+.kachel-klasse.gesperrt { opacity: .6; }
+.zeile { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.passwort-neu { font-family: var(--mono); font-weight: 900; background: var(--gold-soft); padding: 2px 8px; border-radius: 8px; }
+.held-online { display: grid; grid-template-columns: 1.2fr 1fr; gap: 20px; align-items: center; margin-bottom: 20px; }
+.held-online h1 b { color: var(--brand); }
+.held-online .start-parade { position: static; justify-content: center; }
+@media (max-width: 760px) { .held-online { grid-template-columns: 1fr; } }
+.fuss a { margin: 0 6px; }

@@ -10,7 +10,8 @@ Diese Datei ist die verbindliche Grundlage für alle Beiträge, von Menschen wie
 - Jede Änderung muss bestehende Spielstände weiter laden können.
 
 **Technik**
-- Das Spiel muss offline per Doppelklick (`file://`) in jedem Browser laufen: kein `fetch`, keine CDNs, keine Frameworks. Inhalte werden per `<script src>` geladen.
+- Das Spiel (`spiel/`) muss offline per Doppelklick (`file://`) in jedem Browser laufen: kein `fetch`, keine CDNs, keine Frameworks. Inhalte werden per `<script src>` geladen. Einzige Ausnahme ist `spiel/js/online/sync.js`: Es wird nur in der Online-Fassung geladen und nie von `spiel/index.html`.
+- Die Online-Fassung (`web/`) ist eine Next.js-App und darf npm-Pakete nutzen. Sie verändert das Spiel nicht, sondern kopiert es beim Build (`web/scripts/spiel-kopieren.mjs`). Spiellogik gehört deshalb immer nach `spiel/`.
 
 **Sprache**
 - Keine Gendersternchen (`*in`), stattdessen neutrale Form oder Paarform („Agentinnen und Agenten“, „Lernende“).
@@ -31,17 +32,32 @@ Diese Datei ist die verbindliche Grundlage für alle Beiträge, von Menschen wie
 - Druckmaterial immer als fertige A4-PDF. Quellen in `lehrkraft/quellen/*.html`, erzeugt mit `npm run pdf`.
 
 ## Aufbau
-- `spiel/` – das Spiel selbst.
-  - `content/meta.js`: Version, Figuren, Ränge, Abzeichen, Challenge, Einsatzliste
+- `spiel/` – das Spiel selbst. Klassische Skripte ohne Build-Schritt und ohne Module, Ladereihenfolge in `spiel/index.html`.
+  - `content/meta.js`: Version, Figuren der Story, Ränge, Abzeichen, Challenge, Einsatzliste (je Einsatz `farbe` und `icon` für die Karte)
   - `content/eN.js`: ein Einsatz je Datei
-  - `js/engine.js`: Zustand, Punkte, Navigation, Übungsmodus, Lehrkraft-Modus
-  - `js/steps.js`: Schritt-Typen story, lesson, quiz (mc/layer/pick/multi/eingabe/meldung, optional mit simuliertem `terminal` und `wireshark`-Ansicht), sort, kapsel, sealed, anklage, verhoer, urkunde, ende, dazu die Zeit-Challenge
-  - `js/storage.js`: Spielstand-Kodierung mit Prüfsumme, auch von der Einsatzzentrale genutzt
-- `lehrkraft/einsatzzentrale.html` – Auswertung der `.osiagent`-Dateien (Beamer, Spielstände, Aufgaben-Analyse, CSV).
+  - `js/kit/` – Baukasten, den Spiel **und** Einsatzzentrale nutzen (`window.OSIKit`, `window.OSIStore`, `window.OSIAudio`), ohne Abhängigkeit vom Spielzustand:
+    - `storage.js`: Spielstand-Kodierung mit Prüfsumme, Migration alter Spielstände (auch unter Node für die Werkzeuge)
+    - `util.js`, `theme.js` (Hell/Dunkel), `audio.js`, `fx.js` (Animationen, beachtet „Bewegung reduzieren“)
+    - `progress.js`: Fortschritt, Punkte, Ränge und die „Front“ (nächster offener Schritt) als reine Funktionen
+    - `avatars.js`: die 15 Spielfiguren als selbst gezeichnetes SVG
+    - `map.js`: Kletterkarten – `welt` (Station je Einsatz, im Spiel senkrecht, in der Zentrale waagerecht), `pfad` (Schritte eines Einsatzes) und `spalten` (alle Schritte als Türme), Figuren mit Lauf-Animation
+  - `js/game/` – das Spiel (`window.OSIGame`): `core.js` (Zustand, Punkte, Übungsmodus, Navigation), `shell.js` (Kopfleiste, Dialoge, Lehrkraft-Modus), `screens.js` (Start, Karte, Schritt-Rahmen), `main.js` (Router, Tastatur)
+  - `js/steps/` – Renderer der Schritt-Typen: `common.js` (gemeinsame Bausteine), `story.js` (story, lesson, sealed), `quiz.js` (quiz mit mc/layer/pick/multi/eingabe/meldung, anklage), `sort.js` (sort, kapsel), `verhoer.js`, `ende.js` (ende, urkunde)
+  - `js/tools/` – `terminal.js` (simuliertes Terminal), `wireshark.js` (Ansicht und Filter-Parser), `challenge.js` (Zeit-Challenge)
+  - `css/` – Designsystem: `tokens.css` (alle Farben, hell und dunkel), `base.css`, `components.css`, `map.css`, `steps.css`, `tools.css`, `print.css`
+- `lehrkraft/einsatzzentrale.html` mit `zentrale.js`/`zentrale.css` – Auswertung der `.osiagent`-Dateien (Karte mit allen Figuren, Beamer, Spielstände, Aufgaben-Analyse, Abschlussverhör, CSV).
 - `lehrkraft/quellen/*.html` – Quellen der PDFs in `lehrkraft/`. `loesungen.html` erzeugt die Lösungen **automatisch aus den Spielinhalten**.
 - `werkzeuge/` – Tests, PDF- und ZIP-Erzeugung, optionales Bildskript.
 - `quellbilder/` – Original-PNGs. `spiel/img/` – verkleinerte JPGs (640 px, Qualität 82).
-- `index.html` – Startseite der Online-Version (GitHub Pages veröffentlicht `main` ab Root, `.nojekyll` daneben).
+- `index.html` – Startseite der Lite-Version auf GitHub Pages (Pages veröffentlicht `main` ab Root, `.nojekyll` daneben).
+- `web/` – Online-Fassung für Vercel: Next.js, Postgres (Neon), Better Auth mit Benutzername + Passwort, Klassen mit Klassencode, Live-Einsatzzentrale. Einrichtung und Aufbau in [`web/README.md`](web/README.md).
+  - Das Spiel spricht mit dem Server nur über `OSIGame.online` (gesetzt von `spiel/js/online/sync.js`). In der Lite-Version ist es `null`.
+  - Speichern läuft immer über `OSIGame.sichern()`.
+
+**Design**
+- Farben nur als Tokens in `spiel/css/tokens.css` (hell und dunkel). Inhalte nutzen inline nur `var(--L1)` … `var(--L7)` und Klassen wie `.merk`, `.profi`, `.lchip`, `table.t`, `.evidence` – deren Namen bleiben stabil.
+- Schaubilder in Inhalten färben SVG über die Klassen `svg-box`, `svg-text`, `svg-muted`, `svg-on` oder `style="fill:var(--L3)"`, damit sie in beiden Themes lesbar sind.
+- Figuren-IDs (`a01` … `a15`) stehen in den Spielständen und werden **nie geändert oder wiederverwendet**.
 
 ## Arbeitsablauf
 Voraussetzungen:
@@ -57,8 +73,10 @@ npm run release      # Tests + PDFs + ZIP – vor jedem Commit
 
 - `npm test` spielt alle freigegebenen Einsätze durch und prüft:
   - die Werkzeuge (Terminal-Befehle, Wireshark-Filter)
+  - Kletterkarte und Figuren (Spiel und Einsatzzentrale)
   - die Antwortlängen (die richtige Antwort darf nicht auffällig länger sein)
   - Übungsmodus, Zeit-Challenge und Einsatzzentrale
+- `npm run test:online` prüft die Online-Fassung von Anmeldung bis Live-Zentrale gegen eine **Test-Datenbank**. Es braucht `TEST_DATABASE_URL` (Datenbankname mit „test“, wird geleert) und vorher `npm run build` in `web/`. Ohne die Variable wird der Test übersprungen.
 
   Screenshots landen in `werkzeuge/shots/`. Bei Änderungen an der Oberfläche bitte ansehen.
 - `npm run pdf` erzeugt die PDFs neu. Das ist nach jeder Inhaltsänderung nötig, weil das Lösungs-PDF aus den Spielinhalten entsteht.
@@ -76,9 +94,9 @@ Nicht zu verwechseln: `npm run release` baut lokal Tests, PDFs und ZIP. Ein **Gi
 In den Release-Notizen steht, was sich für Lernende und Lehrkräfte ändert. Ältere Spielstände laden weiter (siehe Grundregeln).
 
 ## Neuen Einsatz ergänzen
-1. `spiel/content/eN.js` anlegen (Muster: `e1.js`) und in `meta.js` mit `status: 'offen'` eintragen.
+1. `spiel/content/eN.js` anlegen (Muster: `e1.js`) und in `meta.js` mit `status: 'offen'`, `farbe` und `icon` eintragen. Er erscheint dann als neues Kapitel auf der Karte.
 2. Script-Tag in `spiel/index.html`, `lehrkraft/einsatzzentrale.html` und `lehrkraft/quellen/loesungen.html` ergänzen.
-3. Neuer Schritt-Typ? Renderer in `spiel/js/steps.js` **und** Behandlung in `werkzeuge/test-durchlauf.js` ergänzen.
+3. Neuer Schritt-Typ? Renderer in `spiel/js/steps/` (eigene Datei mit Script-Tag in `spiel/index.html`), Symbol und Name in `TYP_ICON`/`TYP_NAME` (`spiel/js/kit/map.js`) **und** Behandlung in `werkzeuge/test-durchlauf.js` ergänzen.
 4. Debriefing-Impulse in `lehrkraft/quellen/loesungen.html` ergänzen.
 
 ## Bilder (optional)

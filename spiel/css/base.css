@@ -1,0 +1,43 @@
+/* OSI-Agenten – Grundlagen: Reset, Typografie, Hilfsklassen. */
+*, *::before, *::after { box-sizing: border-box; }
+html, body { margin: 0; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--text);
+  font: 600 16px/1.55 var(--sans);
+  -webkit-font-smoothing: antialiased;
+}
+button, input, select, textarea { font: inherit; color: inherit; }
+img, svg { max-width: 100%; }
+a { color: var(--blue-ink); font-weight: 800; text-decoration: none; }
+a:hover { text-decoration: underline; }
+h1, h2, h3, h4 { line-height: 1.2; margin: 0 0 .5em; font-weight: 900; letter-spacing: -.01em; }
+h1 { font-size: clamp(1.9rem, 4vw, 2.6rem); }
+h2 { font-size: 1.45rem; }
+h3 { font-size: 1.12rem; color: var(--brand-ink); }
+p { margin: 0 0 .8em; }
+b, strong { font-weight: 900; }
+ul, ol { padding-left: 1.3em; }
+hr { border: 0; border-top: 2px solid var(--line); margin: 18px 0; }
+code, .mono { font-family: var(--mono); }
+code { background: var(--code-bg); color: var(--code-text); padding: 1px 6px; border-radius: 6px; font-size: .92em; font-weight: 600; }
+summary { cursor: pointer; }
+
+:focus-visible { outline: 3px solid var(--blue); outline-offset: 2px; border-radius: 6px; }
+
+/* Hilfsklassen (auch von Inhalten genutzt) */
+.hl { color: var(--brand-ink); font-weight: 900; }
+.muted { color: var(--muted); }
+.small { font-size: .88rem; }
+.hidden { display: none !important; }
+.spacer { flex: 1; }
+.mitte { text-align: center; justify-content: center; }
+.links { text-align: left; }
+.eyebrow { text-transform: uppercase; letter-spacing: .1em; font-size: .78rem; font-weight: 900; color: var(--muted); margin-bottom: 4px; }
+
+/* Bewegung reduzieren: alles Wesentliche bleibt, nur ohne Animation */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; animation-delay: 0s !important; transition-duration: .01ms !important; scroll-behavior: auto !important; }
+}
