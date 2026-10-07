@@ -1,0 +1,31 @@
+{
+  "name": "osi-agenten-web",
+  "private": true,
+  "description": "Online-Fassung der OSI-Agenten (Next.js auf Vercel, Postgres, Better Auth). Das Spiel selbst kommt unverändert aus ../spiel.",
+  "scripts": {
+    "spiel": "node scripts/spiel-kopieren.mjs",
+    "migrate": "node scripts/migrate.mjs",
+    "dev": "npm run spiel && next dev",
+    "build": "npm run spiel && npm run migrate && next build",
+    "start": "next start",
+    "typecheck": "tsc --noEmit"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "@vercel/functions": "^3.9.11",
+    "better-auth": "^1.7.7",
+    "next": "^16.4.0",
+    "pg": "^8.23.1",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.4",
+    "@types/pg": "^8.23.1",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "typescript": "^7.0.2"
+  }
+}

@@ -11,6 +11,7 @@
   transition: transform var(--schnell), box-shadow var(--schnell), filter var(--schnell), background var(--schnell);
 }
 .btn:hover { filter: brightness(1.07); }
+a.btn, a.btn:hover { text-decoration: none; }
 .btn:active { transform: translateY(var(--kante)); box-shadow: 0 0 0 var(--c-edge); }
 .btn:disabled { --c: var(--locked); --c-edge: var(--locked-edge); --c-ink: var(--locked-ink); cursor: default; filter: none; transform: none; }
 .btn.sec { --c: var(--surface); --c-edge: var(--line); --c-ink: var(--blue-ink); border-color: var(--line); }

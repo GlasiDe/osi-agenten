@@ -285,6 +285,8 @@
     });
     const zielVon = x => { const e = x.front && P.einsatzVonStep(x.front); return e ? e.id : 'ziel'; };
     MAP.pinne(karte, liste.map(x => ({ ziel: zielVon(x), avatar: x.avatar, name: x.ich ? 'Ihr' : x.codename, ich: x.ich, titel: x.codename })), { lauf: true, von: 0, staffel: 90, max: 8, proReihe: 4, versatz: 46, reihenAbstand: 40 });
+    const fokus = karte.root.querySelector('.map-station.is-cur') || karte.root.querySelector('.map-ziel');
+    if (fokus) fokus.scrollIntoView({ block: 'center' });
     const rang = liste.slice().sort((a, b) => b.punkte - a.punkte);
     $('#kl-liste').innerHTML = `<table class="t rangliste"><tr><th>#</th><th>Duo</th><th class="num">XP</th><th>Einsatz</th></tr>${rang.map((x, i) => {
       const e = x.front && P.einsatzVonStep(x.front);
