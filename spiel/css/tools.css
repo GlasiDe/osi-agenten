@@ -1,0 +1,58 @@
+/* OSI-Agenten – Ermittlungswerkzeuge: Wireshark-Ansicht und Windows-Eingabeaufforderung.
+   Bewusst „echt“ und themenunabhängig dunkel – so sehen die Werkzeuge auch im Betrieb aus. */
+.ws, .term { --ws-orange: #ff8a2a; --ws-text: #e3eef0; }
+
+/* ---------- Paket-Röntgen ---------- */
+.ws { background: #0d1417; border: 1px solid #33464c; border-radius: 8px; font-family: var(--mono); font-size: .88rem; overflow: hidden; margin: 10px 0; }
+.ws .ws-bar { background: #1f2d31; padding: 4px 10px; color: #9fb4b9; font-size: .8rem; display: flex; gap: 14px; }
+.ws .ws-list { border-bottom: 1px solid #33464c; }
+.ws .ws-row { display: grid; grid-template-columns: 50px 80px 150px 150px 70px 1fr; gap: 8px; padding: 2px 10px; white-space: nowrap; overflow: hidden; }
+.ws .ws-row.head { color: #9fb4b9; background: #182226; }
+.ws .ws-row.sel { background: #2f5d80; color: #fff; }
+.ws .ws-row.clickable { cursor: pointer; }
+.ws .ws-row.clickable:hover { background: #1c3a4a; }
+.ws .ws-tree { padding: 6px 0; }
+.ws .ws-node > .ws-lbl { padding: 1px 10px; cursor: pointer; display: flex; gap: 8px; align-items: center; }
+.ws .ws-node > .ws-lbl:hover { background: #1c2a2e; }
+.ws .ws-node > .ws-lbl .tri { width: 12px; color: #9fb4b9; }
+.ws .ws-node > .ws-lbl .lay { font-size: .72rem; padding: 0 5px; border-radius: 3px; color: #081418; font-weight: 700; }
+.ws .ws-kids { padding-left: 34px; color: #b9cdd1; }
+.ws .ws-kids div { padding: 0 10px; }
+.ws .hl-field { color: var(--ws-orange); }
+
+/* ---------- Wireshark live (Filter, Liste, Status) ---------- */
+.ws-live .ws-row { grid-template-columns: 40px 70px 170px 170px 58px 52px 1fr; }
+.ws-scroll { max-height: 300px; overflow: auto; }
+.ws-live .ws-row span { overflow: hidden; text-overflow: ellipsis; }
+.ws-filter { display: flex; gap: 6px; align-items: center; padding: 6px 10px; background: #172226; border-bottom: 1px solid #33464c; }
+.ws-filter input { flex: 1; font-family: var(--mono); font-size: .9rem; padding: 5px 8px; background: #0a1215; color: var(--ws-text); border: 2px solid #33464c; border-radius: 5px; }
+.ws-filter.ok input { border-color: #2f9e5c; background: #0f2a1b; }
+.ws-filter.bad input { border-color: #c94444; background: #2e1111; }
+.ws-filter button { background: #22363c; color: var(--ws-text); border: 1px solid #3d565d; border-radius: 5px; padding: 4px 10px; cursor: pointer; font-family: system-ui, sans-serif; font-size: .85rem; }
+.ws-filter button:hover { border-color: var(--ws-orange); }
+.ws-status { font-size: .78rem; color: #9fb4b9; background: #182226; padding: 3px 10px; border-bottom: 1px solid #33464c; }
+.ws-row.p-arp { background: #26261a; }
+.ws-row.p-dhcp { background: #1a2433; }
+.ws-row.p-dns { background: #16282c; }
+.ws-row.p-icmp { background: #251c2e; }
+.ws-live .ws-row.sel { background: #2f5d80; color: #fff; }
+.ws-live .ws-row.head { position: sticky; top: 0; z-index: 1; }
+@media (max-width: 760px) { .ws-live .ws-list .ws-row { min-width: 880px; } .ws-filter > .small { display: none; } .ws-filter input { min-width: 0; } }
+
+/* ---------- Terminal ---------- */
+.term { background: #0c0c0c; border: 1px solid #3a3a3a; border-radius: 8px; overflow: hidden; margin: 10px 0; font-family: var(--mono); font-size: .88rem; }
+.term-bar { display: flex; align-items: center; gap: 8px; background: #1f1f1f; color: #cfcfcf; padding: 4px 10px; font-family: system-ui, sans-serif; font-size: .82rem; }
+.term-spick { background: transparent; color: #7fd6e8; border: 1px dashed #7fd6e8; border-radius: 6px; padding: 2px 10px; cursor: pointer; font-size: .82rem; }
+.term-spickbox { color: var(--ws-text); background: #141e21; border-bottom: 1px solid #333; padding: 8px 12px; font-family: system-ui, sans-serif; font-size: .88rem; }
+.term-spickbox table { border-collapse: collapse; }
+.term-spickbox td { padding: 2px 10px 2px 0; vertical-align: top; }
+.term-vorlage { cursor: pointer; }
+.term-vorlage:hover { outline: 1px solid var(--ws-orange); }
+.term-body { max-height: 360px; min-height: 180px; overflow: auto; padding: 8px 12px; color: #cccccc; cursor: text; }
+.term-out div { white-space: pre-wrap; word-break: break-word; }
+.term-out .out:not(:empty) { margin-bottom: 1.1em; }
+.term-in { display: flex; margin: 0; color: #cccccc; font-size: inherit; cursor: text; }
+.term-prompt { white-space: pre; }
+.term-in input { flex: 1; background: transparent; border: 0; color: #fff; font: inherit; padding: 0 0 0 2px; outline: none; min-width: 60px; }
+.term-in input:focus { outline: none; }
+.term.matrix .term-body, .term.matrix .term-in, .term.matrix .term-in input { color: #3cff5a; }

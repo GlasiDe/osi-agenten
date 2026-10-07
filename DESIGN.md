@@ -118,10 +118,21 @@ Das Spiel erarbeitet das OSI-Modell an einem durchgehenden Fall. Es deckt keine 
   - Fehlerfrei und ohne Tipp = ⭐ „gemeistert“, 5× ⭐ = Abzeichen „Trainingsfleißig“.
   - Gespeichert in `save.uebung`.
 - Ränge als neutrale „Freigabestufen“, Abzeichen (auch geheime), Verdächtigen-Board mit Stempeln, Codenamen.
-- Einsatzzentrale: Beamer (Klassenbalken, Top 3, Kategorien) und Lehrkraft-Ansicht (Spielstände, Fehlerquote je Aufgabe, häufigste falsche Antwort, CSV).
+- **Kletterkarte** statt Aktenliste: Jeder Schritt ist ein Knoten. Die Karte läuft von unten (E0) nach oben bis zum Verhör, also bottom-up wie die Ermittlung. Jedes Kapitel (Einsatz) hat ein Banner in seiner Schichtfarbe (`farbe`/`icon` in `meta.js`). Die eigene Figur steht an der „Front“, dem ersten offenen Pflicht-Schritt, und hüpft beim Öffnen der Karte vom zuletzt gesehenen Knoten dorthin. Bonus-Akten liegen neben dem Pfad.
+- **Figuren:** 15 selbst gezeichnete SVG-Figuren (`a01`–`a15`), normal gemischt besetzt, alle mit E7-Abzeichen.
+  - Wahl beim Anlegen des Duos (eine ist vorausgewählt), später über die Figur in der Kopfleiste änderbar. Der Wechsel zählt nicht als Änderung für den Export-Hinweis.
+  - Spielstände ohne Figur (vor 2.0) bekommen eine feste Figur aus der Spielstand-ID, damit Spiel und Einsatzzentrale dieselbe zeigen.
+- Kombo-Hinweis (3, 5, 10 … richtige Antworten in Folge im ersten Versuch ohne Tipp) und Tages-Flamme (heute erledigte Schritte) sind **nur Anzeige**: keine Punkte, keine Serie über mehrere Tage, kein Druck.
+- Einsatzzentrale:
+  - Reiter **Karte**: alle Duos als Figuren mit Codename-Schild an ihrer Front, ein Turm je Kapitel, mit Lauf-Animation und Vollbild für den Beamer.
+  - Beamer (Klassenbalken, Top 3, Kategorien) und Lehrkraft-Ansicht (Spielstände, Fehlerquote je Aufgabe, häufigste falsche Antwort, CSV).
 - Lehrkraft-Modus: Strg+Alt+L oder Link „Lehrkraft“ (Passwort siehe README).
 - Ton: nur Web-Audio-Effekte, standardmäßig aus.
-- Bildstil: Graphic-Novel-Noir in Petrol und Orange (Orange = Hinweis). Besetzung normal gemischt, nicht überkompensiert.
+- Bildstil der Illustrationen: Graphic-Novel-Noir in Petrol und Orange (Orange = Hinweis). Besetzung normal gemischt, nicht überkompensiert.
+- Oberfläche im Duolingo-Stil: runde Formen, Knöpfe und Kacheln mit 3D-Kante, Grün = weiter/richtig, Rot = falsch, Gold = Punkte. Feedback als Leiste unter der Aufgabe, Antworten auch per Ziffern- und Enter-Taste.
+  - **Hell** ist Standard, **Dunkel** (Noir, passend zu den Bildern) folgt der Systemeinstellung und ist umschaltbar.
+  - Dokumente (Beweise, Board, Anklageschrift, Urkunde) bleiben auf Papier. Terminal und Wireshark sehen absichtlich echt aus.
+  - Animationen (Pop, Wackeln, XP-Flug, Konfetti, Figuren-Lauf) entfallen bei „Bewegung reduzieren“.
 
 ## Ausbau (offen)
 Packet-Tracer-Außeneinsätze (im Spiel versiegelt), `.pcapng`-Boni, Agenten-Handbuch und Lehrkraft-Handbuch als PDF. Vorschläge in `lehrkraft/Offene_Aufgaben_Lehrkraft.pdf`, alles Weitere in den GitHub Issues.

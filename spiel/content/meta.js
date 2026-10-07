@@ -1,7 +1,7 @@
 /* OSI-Agenten – Stammdaten: Figuren, Ränge, Abzeichen, Handbuch, Challenge, Einsatzliste.
    IDs NIE ändern – sie stecken in den Spielständen. */
 window.OSI = {
-  version: '1.1.0',
+  version: '2.0.0',
   lehrkraftHash: 'cbqqqlkfkl',
   // Bewusst gestrichene Aufgaben/Schritte: dürfen in alten Spielständen stehen, werden aber NIE wiederverwendet.
   ausgemustert: ['e6-d-minuten'],
@@ -96,16 +96,17 @@ window.OSI = {
     ]
   },
 
+  // Einsatzliste = Kapitel der Kletterkarte (von unten nach oben). farbe: Design-Token (L1–L7, brand, gold, purple), icon: Kapitel-Symbol.
   einsaetze: [
-    { id: 'e0', nrText: 'EINSATZ 0', titel: 'Grundausbildung', untertitel: 'Schichten, Kapselung, Nummern – und ein Alarm', status: 'offen', steps: [] },
-    { id: 'e1', nrText: 'EINSATZ 1', titel: 'L1 – Spuren am Kabel', untertitel: 'Bitübertragung im Serverraum', status: 'offen', steps: [] },
-    { id: 'e2', nrText: 'EINSATZ 2', titel: 'L2 – Gestohlene Identität', untertitel: 'Wer ist hier wer?', status: 'offen', steps: [] },
-    { id: 'e3', nrText: 'EINSATZ 3', titel: 'L3 – Falsche Wegweiser', untertitel: 'Wohin gehen die Pakete wirklich?', status: 'offen', steps: [] },
-    { id: 'e4', nrText: 'EINSATZ 4', titel: 'L4 – Offene Türen', untertitel: 'Welche Dienste lauschen?', status: 'offen', steps: [] },
-    { id: 'e5', nrText: 'EINSATZ 5', titel: 'L5–7 – Die Fälschung', untertitel: 'Namen, Seiten, Schlösser', status: 'offen', steps: [] },
-    { id: 'e6', nrText: 'FINALE', titel: 'Die Anklage', untertitel: 'Wer war es – und wie beweist ihr es?', status: 'offen', steps: [] },
+    { id: 'e0', farbe: 'brand', icon: '🎓', nrText: 'EINSATZ 0', titel: 'Grundausbildung', untertitel: 'Schichten, Kapselung, Nummern – und ein Alarm', status: 'offen', steps: [] },
+    { id: 'e1', farbe: 'L1', icon: '🔌', nrText: 'EINSATZ 1', titel: 'L1 – Spuren am Kabel', untertitel: 'Bitübertragung im Serverraum', status: 'offen', steps: [] },
+    { id: 'e2', farbe: 'L2', icon: '🪪', nrText: 'EINSATZ 2', titel: 'L2 – Gestohlene Identität', untertitel: 'Wer ist hier wer?', status: 'offen', steps: [] },
+    { id: 'e3', farbe: 'L3', icon: '🧭', nrText: 'EINSATZ 3', titel: 'L3 – Falsche Wegweiser', untertitel: 'Wohin gehen die Pakete wirklich?', status: 'offen', steps: [] },
+    { id: 'e4', farbe: 'L4', icon: '🚪', nrText: 'EINSATZ 4', titel: 'L4 – Offene Türen', untertitel: 'Welche Dienste lauschen?', status: 'offen', steps: [] },
+    { id: 'e5', farbe: 'L5', icon: '🔓', nrText: 'EINSATZ 5', titel: 'L5–7 – Die Fälschung', untertitel: 'Namen, Seiten, Schlösser', status: 'offen', steps: [] },
+    { id: 'e6', farbe: 'gold', icon: '⚖️', nrText: 'FINALE', titel: 'Die Anklage', untertitel: 'Wer war es – und wie beweist ihr es?', status: 'offen', steps: [] },
     // Abschlussverhör: nur Diagnose, zählt nicht zum Fall-Fortschritt (diagnose: true), Antworten in save.verhoer
-    { id: 'verhoer', nrText: 'ABSCHLUSS', titel: 'Das Verhör', untertitel: 'Einzeln, ohne Kalle, ohne Punkte', status: 'offen', diagnose: true, steps: [] }
+    { id: 'verhoer', farbe: 'purple', icon: '🕵️', nrText: 'ABSCHLUSS', titel: 'Das Verhör', untertitel: 'Einzeln, ohne Kalle, ohne Punkte', status: 'offen', diagnose: true, steps: [] }
   ],
 
   // ---------------------------------------------------------------- Netz von F&O (für Terminal- und Wireshark-Ansichten)
@@ -279,22 +280,21 @@ window.OSI = {
     }
   },
 
-  // Hilfsfunktion: Schichten-Stapel als SVG
+  // Hilfsfunktion: Schichten-Stapel als SVG (Farben über CSS-Klassen/Tokens, damit Hell und Dunkel passen)
   svgStapel(opts = {}) {
     const rows = this.handbuch;
     const h = 46, w = 640;
-    const col = n => ({ 1: '#7a8fa6', 2: '#4aa3df', 3: '#4fd18b', 4: '#e2c043', 5: '#c58af0', 6: '#f07fb0', 7: '#ff8a2a' }[n]);
     const k = { 1: 'Bei', 2: 'Sturm', 3: 'verlieren', 4: 'Tanker', 5: 'schnell', 6: 'die', 7: 'Anker' };
     let s = `<svg viewBox="0 0 ${w} ${rows.length * (h + 6)}" width="${w}" role="img" aria-label="Die sieben Schichten des OSI-Modells" font-family="Segoe UI, Arial, sans-serif">`;
     rows.forEach((r, i) => {
       const y = i * (h + 6);
-      s += `<rect x="0" y="${y}" width="${w}" height="${h}" rx="7" fill="#10262b" stroke="${col(r.n)}" stroke-width="2"/>
-        <rect x="0" y="${y}" width="70" height="${h}" rx="7" fill="${col(r.n)}"/>
-        <text x="35" y="${y + 31}" text-anchor="middle" font-size="22" font-weight="800" fill="#081418">L${r.n}</text>
-        <text x="86" y="${y + 20}" font-size="15" font-weight="700" fill="#e3eef0">${r.name}</text>
-        <text x="86" y="${y + 38}" font-size="12" fill="#9dbac0">${r.en}</text>
-        <text x="250" y="${y + 28}" font-size="13" fill="#e3eef0">${r.beispiele}</text>`;
-      if (opts.eselsbruecke) s += `<text x="${w - 18}" y="${y + 31}" text-anchor="end" font-size="17" font-style="italic" font-weight="700" fill="${col(r.n)}">${k[r.n]}</text>`;
+      s += `<rect class="svg-box" x="1" y="${y + 1}" width="${w - 2}" height="${h - 2}" rx="9" style="stroke:var(--L${r.n})" stroke-width="2"/>
+        <rect x="0" y="${y}" width="70" height="${h}" rx="9" style="fill:var(--L${r.n})"/>
+        <text class="svg-on" x="35" y="${y + 31}" text-anchor="middle" font-size="22" font-weight="800">L${r.n}</text>
+        <text class="svg-text" x="86" y="${y + 20}" font-size="15" font-weight="700">${r.name}</text>
+        <text class="svg-muted" x="86" y="${y + 38}" font-size="12">${r.en}</text>
+        <text class="svg-text" x="250" y="${y + 28}" font-size="13">${r.beispiele}</text>`;
+      if (opts.eselsbruecke) s += `<text x="${w - 18}" y="${y + 31}" text-anchor="end" font-size="17" font-style="italic" font-weight="800" style="fill:var(--L${r.n})">${k[r.n]}</text>`;
     });
     return s + '</svg>';
   }

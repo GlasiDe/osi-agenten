@@ -1,5 +1,5 @@
 /* OSI-Agenten – Spielstand: Kodierung, Prüfsumme, lokales Speichern, Export/Import.
-   Wird vom Spiel UND von der Einsatzzentrale genutzt. */
+   Wird vom Spiel, von der Einsatzzentrale und von den Werkzeugen (auch unter Node) genutzt. */
 (function () {
   'use strict';
 
@@ -51,6 +51,13 @@
     }
   }
 
+  // Figuren a01 … a15. Fehlt die Wahl (Spielstände vor 2.0), gibt es eine feste Figur aus der Spielstand-ID –
+  // so sehen Spiel und Einsatzzentrale für dieselbe Datei immer dieselbe Figur.
+  const AVATARE = 15;
+  const avatarId = n => 'a' + String(n + 1).padStart(2, '0');
+  function avatarFuer(seed) { return avatarId(parseInt(hash(String(seed)).slice(-6), 36) % AVATARE); }
+  function avatarGueltig(id) { return /^a\d\d$/.test(id) && +id.slice(1) >= 1 && +id.slice(1) <= AVATARE; }
+
   // Ältere Spielstände auf das aktuelle Schema bringen (IDs bleiben stabil).
   function migrate(s) {
     s.schema = s.schema || 1;
@@ -63,6 +70,8 @@
     s.uebung = s.uebung || {};
     s.unlocked = s.unlocked || {};
     s.board = s.board || {};
+    s.duo = s.duo || { codename: 'Duo', agenten: [] };
+    if (!avatarGueltig(s.duo.avatar)) s.duo.avatar = avatarFuer(s.id || s.duo.codename);
     return s;
   }
 
@@ -135,5 +144,5 @@
     return liste;
   }
 
-  window.OSIStore = { encode, decode, migrate, hash, saveLocal, loadLocal, clearLocal, localAvailable, download, readFile, alleItems, dateiname };
+  window.OSIStore = { encode, decode, migrate, hash, saveLocal, loadLocal, clearLocal, localAvailable, download, readFile, alleItems, dateiname, avatarFuer, avatarGueltig, AVATARE };
 })();

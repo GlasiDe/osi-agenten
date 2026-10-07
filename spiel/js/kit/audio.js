@@ -27,7 +27,11 @@
     funk() { ton(1400, .05, 'square', 0, .03); ton(1400, .05, 'square', .08, .03); ton(1800, .08, 'square', .16, .03); },
     rang() { [523, 659, 784, 1047].forEach((f, i) => ton(f, .22, 'triangle', i * .11, .07)); },
     abzeichen() { ton(880, .1, 'triangle'); ton(1320, .25, 'triangle', .1); },
-    tipp() { ton(420, .04, 'square', 0, .02); }
+    tipp() { ton(420, .04, 'square', 0, .02); },
+    kombo() { [784, 988, 1175].forEach((f, i) => ton(f, .12, 'triangle', i * .07, .06)); },
+    kapitel() { [523, 659, 784, 1047, 1319].forEach((f, i) => ton(f, .26, 'triangle', i * .12, .07)); ton(1568, .5, 'sine', .62, .05); },
+    hupf() { ton(520, .06, 'sine', 0, .04); ton(780, .05, 'sine', .04, .03); },
+    plopp() { ton(880, .05, 'sine', 0, .05); }
   };
   window.OSIAudio = {
     get an() { return an; },

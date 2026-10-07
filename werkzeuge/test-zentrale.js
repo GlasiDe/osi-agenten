@@ -36,7 +36,27 @@ const { browser, seite, klick, sleep, shot } = require('./lib');
   });
   if (ergebnis.duos !== 3) fehler.push(`Erwartet 3 Duos (Duplikat zusammengeführt), gefunden ${ergebnis.duos}`);
   if (ergebnis.abgelehnt !== 1) fehler.push('Manipulierte Datei wurde nicht abgelehnt');
-  await sleep(1200);
+  await sleep(3800);
+  // Karte (Standard-Reiter): je Duo eine Figur mit Namensschild am nächsten offenen Schritt
+  const karte = await p.evaluate(() => {
+    const pins = [...document.querySelectorAll('.map-pin')];
+    const P = OSIKit.progress;
+    const soll = [...OSIZentrale.duos.values()].map(d => { const f = P.front(d.save); return { name: d.save.duo.codename, ziel: f ? f.st.id : null }; });
+    const knoten = id => document.querySelector(`.map-knoten[data-step="${id}"]`);
+    const falsch = soll.filter(x => {
+      const pin = pins.find(p => p.querySelector('.map-tag').textContent === x.name);
+      if (!pin) return true;
+      if (!x.ziel) return false;
+      const a = pin.getBoundingClientRect(), b = knoten(x.ziel).getBoundingClientRect();
+      return Math.abs((a.left + a.width / 2) - (b.left + b.width / 2)) > 40 || a.bottom < b.top - 20 || a.bottom > b.bottom;
+    }).map(x => x.name);
+    return { pins: pins.length, knoten: document.querySelectorAll('.map-knoten').length, schritte: OSI.einsaetze.reduce((a, e) => a + e.steps.length, 0), falsch };
+  });
+  if (karte.pins !== 3) fehler.push(`Karte zeigt ${karte.pins} statt 3 Figuren`);
+  if (karte.knoten !== karte.schritte) fehler.push(`Karte hat ${karte.knoten} Knoten für ${karte.schritte} Schritte`);
+  if (karte.falsch.length) fehler.push('Figur steht nicht an ihrem Schritt: ' + karte.falsch.join(', '));
+  await p.screenshot({ path: shot('zentrale_karte'), fullPage: true });
+  await klick(p, '[data-tab="beamer"]'); await sleep(600);
   await p.screenshot({ path: shot('zentrale_beamer'), fullPage: true });
   await klick(p, '[data-tab="duos"]'); await p.screenshot({ path: shot('zentrale_duos'), fullPage: true });
   await klick(p, '[data-tab="aufgaben"]'); await p.screenshot({ path: shot('zentrale_aufgaben'), fullPage: false });

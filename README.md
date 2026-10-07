@@ -18,7 +18,7 @@ Das Spiel setzt Grundlagen voraus, z. B. IPv4 und Subnetting, MAC-Adressen, DHCP
 - 7 Einsätze (E0–E6) und ein Abschlussverhör, etwa 6 Doppelstunden bei freiem Tempo
 - Gespielt wird **grundsätzlich allein**. Fehlen Geräte oder spricht didaktisch etwas dafür, geht es auch zu zweit an einem Gerät mit gemeinsamem Spielstand (im Spiel „Duo“ genannt).
 - Am Stundenende wird der Spielstand als `.osiagent`-Datei exportiert und abgegeben.
-- Die **Einsatzzentrale** ([`lehrkraft/einsatzzentrale.html`](lehrkraft/einsatzzentrale.html)) liest die abgegebenen Dateien ein und zeigt Beamer-Ansicht, Fortschritt je Spielstand, Aufgaben-Analyse und CSV-Export.
+- Die **Einsatzzentrale** ([`lehrkraft/einsatzzentrale.html`](lehrkraft/einsatzzentrale.html)) liest die abgegebenen Dateien ein und zeigt alle Spielstände als Figuren mit Namensschild auf der Kletterkarte, dazu Beamer-Ansicht, Fortschritt je Spielstand, Aufgaben-Analyse und CSV-Export.
 - Das Abschlussverhör beantwortet jede Person allein. Es dient der Diagnose und ist keine Note.
 
 ## Material für Lehrkräfte
@@ -52,4 +52,4 @@ Fehler gefunden, Ideen für neue Einsätze oder eine Anpassung für eure Lerngru
 ## Lizenz
 - **Code** (`spiel/js/`, `werkzeuge/`, Startseite): [MIT](LICENSE.md#code-mit)
 - **Inhalte** (Texte, Aufgaben, Fall, PDFs, Bilder): [CC BY-SA 4.0](LICENSE.md#inhalte-cc-by-sa-40)
-- Die Illustrationen wurden mit KI erzeugt (FLUX.2 [klein] 9B) und von der Lehrkraft geprüft und ausgewählt. Details in [LICENSE.md](LICENSE.md).
+- Die Illustrationen wurden mit KI erzeugt (FLUX.2 [klein] 9B) und von der Lehrkraft geprüft und ausgewählt. Die 15 Spielfiguren, die Karte und alle Schaubilder sind selbst als SVG gezeichnet. Details in [LICENSE.md](LICENSE.md).
