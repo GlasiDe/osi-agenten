@@ -359,6 +359,9 @@
     modal(`<h2>📘 Agenten-Handbuch</h2>
       <p class="small muted">Merksatz von L1 nach oben: <b class="hl">B</b>ei <b class="hl">S</b>turm <b class="hl">v</b>erlieren <b class="hl">T</b>anker <b class="hl">s</b>chnell <b class="hl">d</b>ie <b class="hl">A</b>nker</p>
       <table class="t small"><tr><th>Nr.</th><th>Schicht</th><th>Aufgabe</th><th>Beispiele</th><th>PDU</th></tr>${rows}</table>
+      <h2 style="margin-top:22px">Befehlsreferenz</h2>
+      ${(OSI.befehle || []).map(u => `<h3>${esc(u.umgebung)}</h3>${u.bereiche.map(b => `${b.titel ? `<p class="small muted" style="margin:8px 0 4px"><code>${esc(b.prompt)}</code> ${esc(b.titel)}</p>` : ''}
+        <table class="t small">${b.befehle.map(([c, d]) => `<tr><td style="width:40%"><code>${esc(c)}</code></td><td>${esc(d)}</td></tr>`).join('')}</table>`).join('')}`).join('')}
       <div class="btnrow"><button class="btn sec" data-close>Schließen</button></div>`);
   }
 

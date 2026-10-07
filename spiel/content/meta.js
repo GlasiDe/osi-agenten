@@ -74,6 +74,30 @@ window.OSI = {
     { n: 1, name: 'Bitübertragung', en: 'Physical', aufgabe: 'Bits als Signale übertragen', beispiele: 'Kabel, Stecker, Hub, Repeater, Funk', pdu: 'Bits' }
   ],
 
+  // Befehlsreferenz im Agenten-Handbuch: immer vollständig, gegliedert nach Umgebung und bei Cisco nach Gerät und Modus
+  befehle: [
+    { umgebung: 'Windows-Eingabeaufforderung', bereiche: [{ prompt: 'C:\>', befehle: [
+      ['ipconfig', 'IP-Adresse, Subnetzmaske, Standardgateway'],
+      ['ipconfig /all', 'zusätzlich MAC-Adresse, DHCP-Server, DNS-Server, Lease'],
+      ['getmac', 'MAC-Adresse der eigenen Netzwerkkarte (auf den PCs in Packet Tracer nicht verfügbar – dort ipconfig /all)'],
+      ['hostname', 'Name des eigenen PCs'],
+      ['ping <IP-Adresse oder Name>', 'prüft, ob jemand antwortet – ein Name wird vorher aufgelöst'],
+      ['tracert <IP-Adresse>', 'zeigt alle Router (Hops) auf dem Weg zum Ziel'],
+      ['arp -a', 'ARP-Cache: Welche IP-Adresse gehört zu welcher MAC-Adresse?'],
+      ['route print', 'Routing-Tabelle des PCs'],
+      ['netstat -n', 'bestehende TCP-Verbindungen: eigener Socket ↔ Socket der Gegenseite'],
+      ['netstat -an', 'zusätzlich alle Ports, auf denen der PC selbst lauscht (ABHÖREN)'],
+      ['nslookup <Name>', 'fragt den eingestellten DNS-Server nach der IP-Adresse zu einem Namen'],
+      ['nslookup <Name> <DNS-Server>', 'fragt gezielt einen bestimmten DNS-Server'],
+      ['nslookup <IP-Adresse>', 'Rückwärtssuche: Welcher Name ist zu dieser IP-Adresse eingetragen?']
+    ] }] },
+    { umgebung: 'Cisco IOS', bereiche: [
+      { prompt: 'Switch>', titel: 'Switch · Benutzermodus (nur anzeigen)', befehle: [
+        ['show mac address-table', 'MAC-Adresstabelle: welche MAC-Adresse der Switch an welchem Port gelernt hat']
+      ] }
+    ] }
+  ],
+
   challenge: {
     sekunden: 60,
     freiNach: 'e0-sort-switch',

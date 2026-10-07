@@ -242,9 +242,9 @@
     },
     {
       id: 'e1-aussen', type: 'sealed', bonus: true, titel: 'Außeneinsatz: Wer hört mit?',
-      teaser: 'In Packet Tracer vergleicht ihr zwei Labornetze – eins mit Switch, eins mit Hub – und beobachtet im Simulationsmodus, wer welche Frames zu sehen bekommt.',
-      inhalt: `<p>Kalle will wissen, was ein fremdes Gerät im Netz alles mitbekommt. Dafür hat er im Labor zwei kleine Netze aufgebaut: <b>links</b> PC-1 bis PC-4 (192.168.0.11 bis .14) an einem <b>Switch</b>, <b>rechts</b> PC-5 bis PC-8 (192.168.0.15 bis .18) an einem <b>Hub</b>.</p>
-        <div class="btnrow" style="margin-bottom:10px"><a class="btn" href="aussen/E1_Wer-hoert-mit.pkt" download>⬇ Labornetz herunterladen (Packet Tracer)</a></div>
+      teaser: 'In Packet Tracer vergleicht ihr zwei simulierte Netze – eins mit Switch, eins mit Hub – und beobachtet im Simulationsmodus, wer welche Frames zu sehen bekommt.',
+      inhalt: `<p>Kalle will wissen, was ein fremdes Gerät im Netz alles mitbekommt. Dafür hat er in Packet Tracer zwei kleine Netze nachgebaut: <b>links</b> PC-1 bis PC-4 (192.168.0.11 bis .14) an einem <b>Switch</b>, <b>rechts</b> PC-5 bis PC-8 (192.168.0.15 bis .18) an einem <b>Hub</b>.</p>
+        <div class="btnrow" style="margin-bottom:10px"><a class="btn" href="aussen/E1_Wer-hoert-mit.pkt" download>⬇ Simulationsnetz herunterladen (Packet Tracer)</a></div>
         <h3>Euer Auftrag</h3>
         <ol>
           <li>Öffnet die Datei in <b>Cisco Packet Tracer</b>.</li>
