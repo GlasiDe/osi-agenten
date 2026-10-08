@@ -40,6 +40,10 @@ _Avoid_: Bonus, Bonusaufgabe, Pflichtaufgabe, Zusatzaufgabe
 Das vorbereitete Packet-Tracer-Netz, das die Lernenden zu einem Außeneinsatz herunterladen. Mehrere Außeneinsätze können dasselbe Simulationsnetz nutzen.
 _Avoid_: Labornetz, Übungsdatei, Vorlage
 
+**Nachbildung**:
+Ein Simulationsnetz, das einen Ausschnitt des Falls mit dessen Netzdaten (Adressen, Geräte, Ports) nachbildet; im Spiel ist das „Kalles Labor“. Gegenstück ist ein neutrales Simulationsnetz ohne Bezug zum Fall wie in den Außeneinsätzen von E1 und E2.
+_Avoid_: Nachstellung, Rekonstruktion
+
 **Labornetz**:
 Ein echtes Netz aus Hardware (Switches, Router, Kabel), das die Lernenden im Klassenraum aufbauen. Bisher nicht im Spiel; der Begriff ist dafür reserviert.
 _Avoid_: Simulationsnetz, Testnetz

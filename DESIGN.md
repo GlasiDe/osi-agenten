@@ -66,6 +66,16 @@ Das Spiel erarbeitet das OSI-Modell an einem durchgehenden Fall. Es deckt keine 
 - Auflösung: Seidel schloss den Pi am Fr 14:10 an und legte den DHCP-Dienst per Zeitsteuerung auf Mo ~08:05. Von Demir wusste er, dass der Azubi montags um 8 die Bandsicherung macht. So wollte er den Verdacht auf Berger lenken. Motiv ist die Lohnumleitung: Mit abgegriffenen Zugängen änderte er ab Mo 21.09. die Bankverbindung mehrerer Beschäftigter, alle auf dasselbe Konto. Der Lohnlauf wird rechtzeitig gestoppt.
 
 ## Einsätze
+- **E0 (Grundausbildung):**
+  - Warum Schichten (Spedition), L1–L7 mit Sortierer, Kapselung als Puzzle (Senden und Empfangen), Fachsprache der PDUs (Bits, Frame, Paket, Segment/Datagramm, Daten).
+  - Geräte-Verhör (Hub, Repeater, Switch, Router, L3-Switch), Paket-Röntgen an einem einzelnen DNS-Frame im Wireshark-Stil.
+  - Fehler-Triage: Tickets von F&O je einer Schicht zuordnen, darunter schon ein falsches Standardgateway.
+  - Am Ende die Akte „Lohnzettel“: richtige Adresse, falsche Seite, kein Schloss → jemand hat im Netz selbst manipuliert. Vier Verdächtige ans Board, Vorgehen Bottom-up ab L1.
+- **E1 (L1):**
+  - Übertragungsmedien (Twisted Pair, LWL, Funk) mit Einsatzplanung bei F&O, L1-Geräte (Hub, Repeater, Medienkonverter, Patchfeld), Autonegotiation und LEDs.
+  - Serverraum: Frontansicht von SW-SERVER-01 gegen den Patchplan → Port 23 belegt, LED orange = 100 Mbit/s; Port 7 (alter Drucker) ist die Falle.
+  - Der Fund: kleines Gerät ohne Beschriftung, Cat-5e-Patchkabel. L1 verrät Ort, Medium und Geschwindigkeit, aber keine Identität. Bonus-Akte: Portstatus über die Verwaltungsoberfläche statt Kabeltester (Kabel bleibt stecken).
+  - Zutrittsprotokoll mit Besucherbuch: Fr 14:10 Generalschlüssel (Demir mit Seidel), Mo 08:03 Karte IT-07 (Berger). Krüger war nicht im Serverraum → „VORERST ENTLASTET“.
 - **E2 (L2):**
   - Der Pi gibt sich per ARP-Spoofing als Lohnportal .20 aus (Replies alle 2 s, „duplicate use“). Ein `ping` an .20 liefert TTL 64 (Linux) statt 128 (Bonus).
   - Die OUI-Spur macht Berger verdächtig (er zeigte in der Pause einen Raspberry Pi). Das ist bewusst ein Indiz, kein Beweis.
@@ -118,6 +128,7 @@ Begriffe in [`CONTEXT.md`](CONTEXT.md), Begründung in [ADR 0004](docs/adr/0004-
 - So nah an der Praxis wie möglich: richtiger `ping` statt „Add Simple PDU“, Switch-CLI über Konsolenkabel und Terminal statt Lupe.
 - **E1 „Wer hört mit?“:** Ping PC-1 → PC-2 und PC-5 → PC-6 gleichzeitig, Filter nur ICMP (blendet ARP aus). Hub verteilt an alle, Switch nur ans Ziel; zum Switch wird nur vermutet, erklärt wird er auf L2.
 - **E2 „Der lernende Switch“:** MAC-Adressen per `ipconfig /all` erfassen, Konsolenkabel von PC-4, `show mac address-table` vor dem Ping und dreimal währenddessen (Request am Switch, nach dem Fluten, Reply am Switch). Ziel: Der Switch lernt beim Empfangen aus der Absender-MAC; Fluten trägt nichts ein. Löst auf, warum in E1 schon der erste ICMP-Frame gezielt ankam.
+- **E3 „Zwei Server, ein Discover“:** Nachbildung des F&O-Netzes („Kalles Labor“), Fremdgerät als gesperrter Cisco-Router. Ablauf: Pi aus, alle PCs von .10 → Pi einschalten (Mo 08:05) → VERSAND-02 `/release` + `/renew` im Simulationsmodus bis zu den zwei Offers, dann im Echtzeitmodus wiederholen, bis das Gateway .66 ist, `tracert` .66 → .1 → 1.1.1.1, Vergleich mit VERSAND-01 (wird nicht erneuert) → Pi aus, `tracert` scheitert, erst `/release` + `/renew` heilt. Ziel: zwei Offers als Erkennungsmerkmal, „wer zuerst kommt“, Entfernen des Geräts allein reicht nicht. Packet Tracer mischt bei zwei Servern die Angebote; der Auftrag sagt das offen (Kalles Laborhinweis), Aufgaben fragen nur nach Gateway, DNS und `tracert`, nie nach PC-Adressen oder der Zeile „DHCP Servers“.
 
 ## Gamification
 - Punkte: 1. Versuch voll, dann 50/30/20 %, je Tipp −20 %, nie 0. Kein Game Over, kein Zeitdruck außer in der freiwilligen Zeit-Challenge.
@@ -133,4 +144,4 @@ Begriffe in [`CONTEXT.md`](CONTEXT.md), Begründung in [ADR 0004](docs/adr/0004-
 - Bildstil: Graphic-Novel-Noir in Petrol und Orange (Orange = Hinweis). Besetzung normal gemischt, nicht überkompensiert.
 
 ## Ausbau (offen)
-Außeneinsätze für E3–E5 (Teaser stehen schon im Spiel), Aufgaben an einem echten Labornetz, `.pcapng`-Boni, Agenten-Handbuch und Lehrkraft-Handbuch als PDF. Vorschläge in `lehrkraft/Offene_Aufgaben_Lehrkraft.pdf`, alles Weitere in den GitHub Issues.
+Außeneinsätze für E4 und E5 (Teaser stehen schon im Spiel), Aufgaben an einem echten Labornetz, `.pcapng`-Boni, Agenten-Handbuch und Lehrkraft-Handbuch als PDF. Vorschläge in `lehrkraft/Offene_Aufgaben_Lehrkraft.pdf`, alles Weitere in den GitHub Issues.

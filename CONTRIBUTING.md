@@ -37,7 +37,7 @@ Diese Datei ist die verbindliche Grundlage für alle Beiträge, von Menschen wie
   - `js/engine.js`: Zustand, Punkte, Navigation, Übungsmodus, Lehrkraft-Modus
   - `js/steps.js`: Schritt-Typen story, lesson, quiz (mc/layer/pick/multi/eingabe/meldung, optional mit simuliertem `terminal` und `wireshark`-Ansicht), sort, kapsel, sealed, anklage, verhoer, urkunde, ende, dazu die Zeit-Challenge
   - `js/storage.js`: Spielstand-Kodierung mit Prüfsumme, auch von der Einsatzzentrale genutzt
-  - `aussen/`: Packet-Tracer-Simulationsnetze der Außeneinsätze (gehen an die Lernenden, Lösungsdateien gehören ins Lehrkraft-Material); Topologie und Adressen in `docs/simulationsnetze.md`
+  - `aussen/`: Packet-Tracer-Simulationsnetze der Außeneinsätze (gehen an die Lernenden, Lösungsdateien gehören ins Lehrkraft-Material); Topologie, Adressen und die Konfiguration der Cisco-Geräte als vollständige CLI-Befehlsfolge in `docs/simulationsnetze.md`
 - `lehrkraft/einsatzzentrale.html` – Auswertung der `.osiagent`-Dateien (Beamer, Spielstände, Aufgaben-Analyse, CSV).
 - `lehrkraft/quellen/*.html` – Quellen der PDFs in `lehrkraft/`. `loesungen.html` erzeugt die Lösungen **automatisch aus den Spielinhalten**.
 - `werkzeuge/` – Tests, PDF- und ZIP-Erzeugung, optionales Bildskript.

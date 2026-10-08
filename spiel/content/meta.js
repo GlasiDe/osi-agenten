@@ -77,19 +77,22 @@ window.OSI = {
   // Befehlsreferenz im Agenten-Handbuch: immer vollständig, gegliedert nach Umgebung und bei Cisco nach Gerät und Modus
   befehle: [
     { umgebung: 'Windows-Eingabeaufforderung', bereiche: [{ prompt: 'C:\>', befehle: [
-      ['ipconfig', 'IP-Adresse, Subnetzmaske, Standardgateway'],
-      ['ipconfig /all', 'zusätzlich MAC-Adresse, DHCP-Server, DNS-Server, Lease'],
+      ['arp -a', 'ARP-Cache: Welche IP-Adresse gehört zu welcher MAC-Adresse?'],
       ['getmac', 'MAC-Adresse der eigenen Netzwerkkarte (auf den PCs in Packet Tracer nicht verfügbar – dort ipconfig /all)'],
       ['hostname', 'Name des eigenen PCs'],
-      ['ping <IP-Adresse oder Name>', 'prüft, ob jemand antwortet – ein Name wird vorher aufgelöst'],
-      ['tracert <IP-Adresse>', 'zeigt alle Router (Hops) auf dem Weg zum Ziel'],
-      ['arp -a', 'ARP-Cache: Welche IP-Adresse gehört zu welcher MAC-Adresse?'],
-      ['route print', 'Routing-Tabelle des PCs'],
+      ['ipconfig', 'IP-Adresse, Subnetzmaske, Standardgateway'],
+      ['ipconfig /all', 'zusätzlich MAC-Adresse, DHCP-Server, DNS-Server, Lease'],
+      ['ipconfig /release', 'gibt die per DHCP bezogene IP-Konfiguration ab (Lease zurückgeben)'],
+      ['ipconfig /renew', 'fordert per DHCP eine IP-Konfiguration an – ohne vorheriges /release fragt der PC nur seinen bisherigen DHCP-Server'],
+      ['netsh interface ip delete arpcache', 'leert den ARP-Cache (nur mit Administratorrechten)'],
+      ['netstat -an', 'wie netstat -n, dazu alle Ports, auf denen der PC selbst lauscht (ABHÖREN)'],
       ['netstat -n', 'bestehende TCP-Verbindungen: eigener Socket ↔ Socket der Gegenseite'],
-      ['netstat -an', 'zusätzlich alle Ports, auf denen der PC selbst lauscht (ABHÖREN)'],
+      ['nslookup <IP-Adresse>', 'Rückwärtssuche: Welcher Name ist zu dieser IP-Adresse eingetragen?'],
       ['nslookup <Name>', 'fragt den eingestellten DNS-Server nach der IP-Adresse zu einem Namen'],
       ['nslookup <Name> <DNS-Server>', 'fragt gezielt einen bestimmten DNS-Server'],
-      ['nslookup <IP-Adresse>', 'Rückwärtssuche: Welcher Name ist zu dieser IP-Adresse eingetragen?']
+      ['ping <IP-Adresse oder Name>', 'prüft, ob jemand antwortet – ein Name wird vorher aufgelöst'],
+      ['route print', 'Routing-Tabelle des PCs'],
+      ['tracert <IP-Adresse>', 'zeigt alle Router (Hops) auf dem Weg zum Ziel']
     ] }] },
     { umgebung: 'Cisco IOS', bereiche: [
       { prompt: 'Switch>', titel: 'Switch · Benutzermodus (nur anzeigen)', befehle: [
