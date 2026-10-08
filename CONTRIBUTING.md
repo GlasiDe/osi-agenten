@@ -2,7 +2,7 @@
 
 Schön, dass du das Spiel verbessern oder anpassen möchtest! Für kleine Korrekturen genügt ein Issue. Bei größeren Änderungen bitte erst ein Issue mit der Idee eröffnen, dann einen Pull Request.
 
-Diese Datei ist die verbindliche Grundlage für alle Beiträge, von Menschen wie von KI-Assistenten. Die inhaltlichen und didaktischen Vorgaben (Fall, Figuren, Netzdaten, Spielmechanik) stehen in [`DESIGN.md`](DESIGN.md). Vor inhaltlicher Arbeit bitte lesen.
+Diese Datei ist die verbindliche Grundlage für alle Beiträge, von Menschen wie von KI-Assistenten. Die inhaltlichen und didaktischen Vorgaben (Fall, Figuren, Netzdaten, Spielmechanik) stehen in [`DESIGN.md`](DESIGN.md). Vor inhaltlicher Arbeit bitte lesen. Die Begriffe des Spiels (Einsatz, Schritt, Aufgabe, Außeneinsatz …) definiert [`CONTEXT.md`](CONTEXT.md), grundlegende Entscheidungen mit Begründung stehen in [`docs/adr/`](docs/adr/).
 
 ## Grundregeln
 **Spielstände**
@@ -37,6 +37,7 @@ Diese Datei ist die verbindliche Grundlage für alle Beiträge, von Menschen wie
   - `js/engine.js`: Zustand, Punkte, Navigation, Übungsmodus, Lehrkraft-Modus
   - `js/steps.js`: Schritt-Typen story, lesson, quiz (mc/layer/pick/multi/eingabe/meldung, optional mit simuliertem `terminal` und `wireshark`-Ansicht), sort, kapsel, sealed, anklage, verhoer, urkunde, ende, dazu die Zeit-Challenge
   - `js/storage.js`: Spielstand-Kodierung mit Prüfsumme, auch von der Einsatzzentrale genutzt
+  - `aussen/`: Packet-Tracer-Simulationsnetze der Außeneinsätze (gehen an die Lernenden, Lösungsdateien gehören ins Lehrkraft-Material); Topologie und Adressen in `docs/simulationsnetze.md`
 - `lehrkraft/einsatzzentrale.html` – Auswertung der `.osiagent`-Dateien (Beamer, Spielstände, Aufgaben-Analyse, CSV).
 - `lehrkraft/quellen/*.html` – Quellen der PDFs in `lehrkraft/`. `loesungen.html` erzeugt die Lösungen **automatisch aus den Spielinhalten**.
 - `werkzeuge/` – Tests, PDF- und ZIP-Erzeugung, optionales Bildskript.

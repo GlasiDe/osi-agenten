@@ -26,9 +26,9 @@
 </head>
 <body>
 <h1>OSI-Agenten · Offene Aufgaben und Ausbau-Ideen</h1>
-<div class="muted">Für Lehrkräfte · Stand 06.10.2026 · Spielversion 1.1.0</div>
+<div class="muted">Für Lehrkräfte · Stand 07.10.2026 · Spielversion 1.1.0</div>
 
-<div class="box warn"><b>Für den Start wird nichts davon gebraucht.</b> Einsatz 0 bis Finale und das Abschlussverhör sind vollständig spielbar. Die offenen Teile sind <b>freiwillige Bonus-Akten</b> („Außeneinsätze“, im Spiel versiegelt) und Begleitmaterial. Versiegelte Akten werden einfach übersprungen – sie bringen keine Punkte und blockieren nichts.</div>
+<div class="box warn"><b>Für den Start wird nichts davon gebraucht.</b> Einsatz 0 bis Finale und das Abschlussverhör sind vollständig spielbar. Offen sind noch einige <b>Außeneinsätze</b> in Packet Tracer und Begleitmaterial. Außeneinsätze blockieren den Fortschritt nie: Solange sie versiegelt sind, werden sie einfach übersprungen, und freigegebene können später nachgeholt werden.</div>
 
 <h2>A · Checkliste vor dem ersten Einsatz</h2>
 <ol class="check">
@@ -39,25 +39,20 @@
   <li>Stundenende: alle <code>.osiagent</code>-Dateien einsammeln (z. B. als Abgabe auf der Lernplattform) und in die Einsatzzentrale ziehen.</li>
 </ol>
 
-<h2>B · Außeneinsätze in Packet Tracer (5 Dateien – noch zu erstellen)</h2>
-<p>Am Ende der Einsätze E1–E5 steht je ein versiegelter Bonus-Schritt mit einem Teaser. Für jeden werden <b>eine .pkt-Datei</b> und <b>ein kurzer Arbeitsauftrag</b> (½ Seite) gebraucht. Vorgehen:</p>
+<h2>B · Außeneinsätze in Packet Tracer (E1 und E2 fertig, E3–E5 offen)</h2>
+<p>Am Ende der Einsätze E1–E5 steht je ein Außeneinsatz. Er steht <b>komplett im Spiel</b>: Auftrag, Download des Simulationsnetzes (<code>.pkt</code>) und Fragen mit Punkten, die auch in der Einsatzzentrale ausgewertet werden. Packet Tracer ist dafür technische Voraussetzung (siehe Mindestanforderungen). Vorgehen für einen neuen Außeneinsatz:</p>
 <ol>
-  <li>Netz in Packet Tracer aufbauen (Vorschläge unten) und im <b>Simulationsmodus</b> selbst durchspielen.</li>
-  <li>Datei speichern als <code>Aussen_E1_Wer-hoert-mit.pkt</code> usw. Tipp: einen Zustand <i>vor</i> der Beobachtung speichern (PCs ohne Konfiguration bzw. leere Tabellen), damit die Lernenden selbst auslösen.</li>
-  <li>Arbeitsauftrag schreiben: Was sollen sie auslösen, was beobachten, welche 2–3 Fragen beantworten? Ein druckfertiges A4-PDF im Spiel-Design entsteht, wenn der Auftrag als HTML in <code>lehrkraft/quellen/</code> angelegt und mit <code>npm run pdf</code> erzeugt wird (siehe CONTRIBUTING.md).</li>
-  <li>Freischalten: Im jeweiligen Spielstand Lehrkraft-Modus (Strg + Alt + L) → <b>„Außeneinsätze in diesem Spielstand freischalten“</b>. Das schaltet <b>alle fünf</b> auf einmal frei; die Akte zeigt dann „Die Unterlagen bekommt ihr von eurer Lehrkraft“.</li>
-  <li>Datei + Auftrag verteilen (z. B. über die Lernplattform). Optional: Sind alle fünf fertig, können die Texte der versiegelten Akten (Schritte vom Typ <code>sealed</code> in <code>spiel/content/eN.js</code>) direkt auf die Dateinamen verweisen.</li>
+  <li>Netz in Packet Tracer aufbauen (Vorschläge unten) und im <b>Simulationsmodus</b> selbst durchspielen. Ein Simulationsnetz kann mehreren Außeneinsätzen dienen.</li>
+  <li>Datei in <code>spiel/aussen/</code> speichern, im Zustand <i>vor</i> der Beobachtung, damit die Lernenden selbst auslösen. Alles in diesem Ordner geht mit ZIP und Online-Version an die Lernenden – Lösungsdateien gehören ins Lehrkraft-Material.</li>
+  <li>Auftrag und Fragen im Schritt vom Typ <code>sealed</code> in <code>spiel/content/eN.js</code> eintragen (Felder <code>inhalt</code>, <code>fragen</code>, optional <code>abschluss</code> für einen Profi-Tipp nach den Fragen). Der Auftrag nennt das Ziel; neue Befehle kommen in die Befehlsreferenz des Agenten-Handbuchs (<code>befehle</code> in <code>meta.js</code>).</li>
+  <li>Freischalten: Im jeweiligen Spielstand Lehrkraft-Modus (Strg + Alt + L) → <b>„Außeneinsätze in diesem Spielstand freischalten“</b>. Das schaltet alle auf einmal frei. Sind alle fertig, werden sie im Spiel dauerhaft geöffnet.</li>
 </ol>
 
-<div class="pt"><h3>E1 · „Wer hört mit?“ – Switch gegen Hub (L1/L2)</h3>
-<b>Aufbau:</b> 3–4 PCs an einem <b>Switch</b>, daneben dasselbe Netz noch einmal mit einem <b>Hub</b> (z. B. Buchhaltung 192.168.50.0/24, feste IPs).<br>
-<b>Beobachtung:</b> Im Simulationsmodus ein ping von PC-A an PC-B. Am Hub erhalten alle PCs den Frame (und verwerfen ihn), am Switch nach dem Lernen nur PC-B.<br>
-<b>Fragen-Ideen:</b> Wer bekommt den Frame zu sehen? Warum ist der Hub ein Sicherheitsrisiko? Auf welcher Schicht arbeiten die beiden Geräte?</div>
+<div class="pt"><h3>E1 · „Wer hört mit?“ – Switch gegen Hub (fertig)</h3>
+Simulationsnetz <code>E1_Wer-hoert-mit.pkt</code>: vier PCs an einem Switch, vier an einem Hub. Gleichzeitiger Ping in beiden Netzen, Filter nur ICMP: Am Hub bekommen alle den Frame, am Switch nur das Ziel. Zum Switch stellen die Lernenden nur eine Vermutung auf.</div>
 
-<div class="pt"><h3>E2 · „Der lernende Switch“ – MAC-Tabelle und ARP (L2)</h3>
-<b>Aufbau:</b> Ein Switch, 3 PCs, ein Server. Switch frisch (Tabelle leer; im CLI <code>show mac address-table</code>).<br>
-<b>Beobachtung:</b> Erster ping → ARP-Request als Broadcast an alle Ports, ARP-Reply gezielt zurück; danach MAC-Tabelle und <code>arp -a</code> am PC ansehen. Filter im Simulationsmodus auf ARP und ICMP.<br>
-<b>Fragen-Ideen:</b> Welche Einträge stehen nach dem ersten ping in der MAC-Tabelle? Warum ist der Request ein Broadcast, der Reply nicht? Was passiert beim Umstecken eines PCs?</div>
+<div class="pt"><h3>E2 · „Der lernende Switch“ – MAC-Tabelle und ARP (fertig)</h3>
+Dasselbe Simulationsnetz. MAC-Adressen erfassen, Konsolenkabel zum Switch, <code>show mac address-table</code> vor und während des ersten Pings (Filter ARP und ICMP). Ergebnis: Der Switch lernt beim Empfangen aus der Absender-MAC, Fluten trägt nichts ein.</div>
 
 <div class="pt"><h3>E3 · „Zwei Server, ein Discover“ – DHCP und Gateway (L3)</h3>
 <b>Aufbau:</b> Ein LAN mit zwei DHCP-Servern, die <b>unterschiedliche Standardgateways</b> verteilen (Server 1 → Router .1, Server 2 → ein zweiter Router). Für den sichtbaren Extra-Hop in tracert muss das zweite Gateway ein Router sein, der weiterleitet. Dahinter ein „Internet“-Server.<br>
@@ -80,7 +75,6 @@
 <p>Beiträge sind willkommen – am besten vorher ein Issue auf GitHub eröffnen (github.com/GlasiDe/osi-agenten).</p>
 <table>
   <tr><th style="width:26%">Punkt</th><th>Was zu tun ist</th></tr>
-  <tr><td>Arbeitsaufträge zu B</td><td>Je ½ Seite, als PDF im Spiel-Design</td></tr>
   <tr><td><code>.pcapng</code>-Boni</td><td>Echte Mitschnitte zum Öffnen im echten Wireshark (z. B. DORA, Handshake, DNS, HTTP-Seitenaufruf). Am einfachsten im eigenen Testnetz oder in einer VM aufnehmen. Wichtig: nur eigener, harmloser Verkehr ohne Zugangsdaten oder personenbezogene Daten. Dazu passende Aufgaben.</td></tr>
   <tr><td>Agenten-Handbuch (PDF)</td><td>Das 📘 Handbuch aus dem Spiel als Spickzettel zum Ausdrucken (Schichten, PDUs, Ports, Befehle, Filter)</td></tr>
   <tr><td>Lehrkraft-Handbuch (PDF)</td><td>Ablauf, Einsatzzentrale, Freischalten, Updates verteilen. Größtenteils schon im Lösungs-PDF und in diesem Blatt enthalten.</td></tr>

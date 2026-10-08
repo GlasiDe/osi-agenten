@@ -36,7 +36,7 @@ Das Spiel erarbeitet das OSI-Modell an einem durchgehenden Fall. Es deckt keine 
 - **Auswahlfragen:**
   - Die richtige Antwort ist nie länger oder erklärender als die falschen (`werkzeuge/test-werkzeuge.js` prüft die Länge).
   - Die Begründung steht in der Erklärung nach dem Lösen.
-  - Die Frage enthält keine Zaunpfähle.
+  - Die Frage enthält keine offensichtlichen Hinweise auf die richtige Lösung.
 - **Belegt vs. vermutet:** Fragen trennen klar, was ein Dokument belegt und was nur Indiz oder Möglichkeit ist. Dokumente zeigen Rohdaten ohne fertige Auswertung. Keine trivialen Rechen- oder Zeitvergleichsaufgaben. Zeugenaussagen sind realistisch ungenau („gegen halb drei“), exakte Zeiten stehen nur in Dokumenten.
 - Die Beweiskette läuft über Erkennungsmerkmale, Zeitspuren, Protokolle und Zuordnung, nie über die Funktionsweise eines Angriffs.
 - TLS gilt im Spiel als L6 **oder** L5, weil die Literatur uneinheitlich ist (Hinweis in der HTTP-Lektion). Sortierer und Schichtfragen erlauben dafür mehrere richtige Schichten (`ziel`/`richtig` als Liste).
@@ -110,6 +110,15 @@ Das Spiel erarbeitet das OSI-Modell an einem durchgehenden Fall. Es deckt keine 
   - Danach ein persönlicher, immer wertschätzender Dank der Direktorin, abgestuft nach Ergebnis. Dann Schritt `v-ende` (Typ `urkunde`): Schlussworte, druckbare **Ernennungsurkunde** als eigenes A4-Blatt, Konfetti (aus bei `prefers-reduced-motion`).
   - Einsatzzentrale: Reiter „Abschlussverhör“ mit Kürzel × Bereich, Fragen nach Quote, 🤷 getrennt von falschen Antworten, eigene CSV.
 
+## Außeneinsätze
+Begriffe in [`CONTEXT.md`](CONTEXT.md), Begründung in [ADR 0004](docs/adr/0004-ausseneinsaetze-im-spiel.md), Topologie und Adressen der Simulationsnetze in [`docs/simulationsnetze.md`](docs/simulationsnetze.md).
+- Je Einsatz ein Außeneinsatz am Ende (Schritt-Typ `sealed`, `bonus: true` = blockiert nicht). Freigegeben wird er im Lehrkraft-Modus; sind alle fertig, werden sie dauerhaft geöffnet.
+- Kennzeichnung „★ AUSSENEINSATZ“ mit dem Satz, dass er den Fortschritt nicht blockiert und später nachgeholt werden kann.
+- Packet Tracer ist technische Voraussetzung, kein Vorwissen. Bedienung und Cisco-CLI erschließen sich die Lernenden selbst; Aufträge nennen das Ziel, die Befehle stehen in der Befehlsreferenz ([ADR 0005](docs/adr/0005-befehle-in-der-befehlsreferenz.md)).
+- So nah an der Praxis wie möglich: richtiger `ping` statt „Add Simple PDU“, Switch-CLI über Konsolenkabel und Terminal statt Lupe.
+- **E1 „Wer hört mit?“:** Ping PC-1 → PC-2 und PC-5 → PC-6 gleichzeitig, Filter nur ICMP (blendet ARP aus). Hub verteilt an alle, Switch nur ans Ziel; zum Switch wird nur vermutet, erklärt wird er auf L2.
+- **E2 „Der lernende Switch“:** MAC-Adressen per `ipconfig /all` erfassen, Konsolenkabel von PC-4, `show mac address-table` vor dem Ping und dreimal währenddessen (Request am Switch, nach dem Fluten, Reply am Switch). Ziel: Der Switch lernt beim Empfangen aus der Absender-MAC; Fluten trägt nichts ein. Löst auf, warum in E1 schon der erste ICMP-Frame gezielt ankam.
+
 ## Gamification
 - Punkte: 1. Versuch voll, dann 50/30/20 %, je Tipp −20 %, nie 0. Kein Game Over, kein Zeitdruck außer in der freiwilligen Zeit-Challenge.
 - Zeit-Challenge: Nach einem Fehler steht die Uhr 2,5 s. Es läuft nur ein Durchgang gleichzeitig. Angezeigt wird „Richtige“. Begriffe aus späteren Einsätzen sind als Vorgeschmack erlaubt.
@@ -124,4 +133,4 @@ Das Spiel erarbeitet das OSI-Modell an einem durchgehenden Fall. Es deckt keine 
 - Bildstil: Graphic-Novel-Noir in Petrol und Orange (Orange = Hinweis). Besetzung normal gemischt, nicht überkompensiert.
 
 ## Ausbau (offen)
-Packet-Tracer-Außeneinsätze (im Spiel versiegelt), `.pcapng`-Boni, Agenten-Handbuch und Lehrkraft-Handbuch als PDF. Vorschläge in `lehrkraft/Offene_Aufgaben_Lehrkraft.pdf`, alles Weitere in den GitHub Issues.
+Außeneinsätze für E3–E5 (Teaser stehen schon im Spiel), Aufgaben an einem echten Labornetz, `.pcapng`-Boni, Agenten-Handbuch und Lehrkraft-Handbuch als PDF. Vorschläge in `lehrkraft/Offene_Aufgaben_Lehrkraft.pdf`, alles Weitere in den GitHub Issues.
