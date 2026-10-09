@@ -44,6 +44,10 @@ _Avoid_: Labornetz, Übungsdatei, Vorlage
 Ein Simulationsnetz, das einen Ausschnitt des Falls mit dessen Netzdaten (Adressen, Geräte, Ports) nachbildet; im Spiel ist das „Kalles Labor“. Gegenstück ist ein neutrales Simulationsnetz ohne Bezug zum Fall wie in den Außeneinsätzen von E1 und E2.
 _Avoid_: Nachstellung, Rekonstruktion
 
+**Laborhinweis**:
+Ein Merkkasten im Auftrag eines Außeneinsatzes („Kalles Laborhinweis“), der offen sagt, wo das Simulationsnetz von der Wirklichkeit abweicht und worauf sich die Lernenden stattdessen verlassen sollen. Fragen setzen nie bei diesen Abweichungen an.
+_Avoid_: Fehlerhinweis, Disclaimer
+
 **Labornetz**:
 Ein echtes Netz aus Hardware (Switches, Router, Kabel), das die Lernenden im Klassenraum aufbauen. Bisher nicht im Spiel; der Begriff ist dafür reserviert.
 _Avoid_: Simulationsnetz, Testnetz

@@ -85,6 +85,7 @@ window.OSI = {
       ['ipconfig /release', 'gibt die per DHCP bezogene IP-Konfiguration ab (Lease zurückgeben)'],
       ['ipconfig /renew', 'fordert per DHCP eine IP-Konfiguration an – ohne vorheriges /release fragt der PC nur seinen bisherigen DHCP-Server'],
       ['netsh interface ip delete arpcache', 'leert den ARP-Cache (nur mit Administratorrechten)'],
+      ['netstat', 'bestehende TCP-Verbindungen (in Packet Tracer nur so, ohne Optionen und mit englischen Spalten)'],
       ['netstat -an', 'wie netstat -n, dazu alle Ports, auf denen der PC selbst lauscht (ABHÖREN)'],
       ['netstat -n', 'bestehende TCP-Verbindungen: eigener Socket ↔ Socket der Gegenseite'],
       ['nslookup <IP-Adresse>', 'Rückwärtssuche: Welcher Name ist zu dieser IP-Adresse eingetragen?'],

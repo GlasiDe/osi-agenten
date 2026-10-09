@@ -138,3 +138,77 @@ Zwei DHCP-Server im selben Netz bildet Packet Tracer nicht korrekt ab. Der Auße
 - Die PDU-Details eines Offers/Acks zeigen nur Option 6 (DNS) und 15 (Domain Name), **nicht** Option 3 (Router).
 - Läuft nur ein Server (Pi aus), verläuft DORA sauber. Phase 4 des Auftrags (Pi aus, `tracert` scheitert, `/release` + `/renew` → .10) funktioniert.
 - Nach dem Öffnen holen sich die PCs ihre Konfiguration neu (alle Geräte fahren hoch). Fast Forward nötig, nach dem Einschalten des Pi ebenfalls, bis sein Switch-Port grün ist.
+
+## `E4_Wer-hebt-ab.pkt` (Außeneinsatz E4)
+
+Nachbildung im Kleinen („Kalles Labor“): Kalles Laptop und ein Nachbau von SRV-LOHN am SW-SERVER-01, Ports wie im Patchplan (E1). Kein Router, kein DHCP, alle Adressen fest in 192.168.50.0/24. SRV-LOHN wird im „Auslieferungszustand“ gespeichert (HTTP **und** HTTPS an); die Lernenden schalten HTTP selbst ab.
+
+| Gerät | Typ | IP-Adresse | Anschluss |
+|---|---|---|---|
+| SW-SERVER-01 | Cisco 2960-24TT | – | – |
+| SRV-LOHN | Server-PT | 192.168.50.20 /24 (statisch) | Fa0/2 |
+| Laptop Kalle | Laptop-PT | 192.168.50.99 /24 (statisch) | Fa0/22 |
+
+- Verbindungen Copper Straight-Through.
+- Kein Gateway und kein DNS-Server nötig, die Lernenden rufen die Seite per IP-Adresse auf.
+
+### SW-SERVER-01 (CLI)
+Nur Name und Portbeschreibungen, sonst Werkszustand.
+```
+enable
+configure terminal
+hostname SW-SERVER-01
+interface FastEthernet0/2
+ description Server SRV-LOHN (Lohnportal)
+ exit
+interface FastEthernet0/22
+ description Laptop Kalle (Labor)
+ exit
+end
+copy running-config startup-config
+```
+
+### SRV-LOHN (Oberfläche)
+- Config → Settings: Display Name `SRV-LOHN`
+- Desktop → IP Configuration: Static, 192.168.50.20 / 255.255.255.0, Gateway und DNS leer
+- Services → HTTP: **HTTP On**, **HTTPS On**
+- Services → HTTP → File Manager:
+  - `quellbilder/pt-fo-logistik.jpg` importieren (Import). Das Bild ist `quellbilder/firma.png`, auf 480 px Breite verkleinert (JPG, Qualität 82).
+  - `index.html` bearbeiten (Edit) und vollständig durch den Code unten ersetzen, dann Save. Die übrigen Beispielseiten von Packet Tracer dürfen bleiben.
+- Alle anderen Dienste unter Services auf **Off** (DHCP, DNS, FTP, EMAIL, TFTP, SYSLOG, AAA, NTP …), damit nur Port 80 und 443 eine Rolle spielen.
+
+`index.html` (Umlaute als HTML-Entities, weil der Browser von Packet Tracer UTF-8 nicht zuverlässig darstellt; CSS wird kaum unterstützt, deshalb HTML-Attribute):
+```html
+<html>
+<head><title>F&amp;O Lohnportal (Labor)</title></head>
+<body bgcolor="#0f2a30" text="#e8f1f2">
+<center>
+<img src="pt-fo-logistik.jpg" width="480" height="274" alt="F&amp;O Logistik">
+<h2><font color="#ff8a3d">Falkenrath &amp; Oltmanns Logistik GmbH</font></h2>
+<h3>Lohnportal &middot; Nachbau in Kalles Labor</h3>
+<table border="1" cellpadding="6" bordercolor="#ff8a3d" width="480">
+<tr><td>Server</td><td>SRV-LOHN &middot; 192.168.50.20</td></tr>
+<tr><td>Zweck</td><td>Testaufbau f&uuml;r die Ermittlung &ndash; kein echtes Portal, keine Anmeldung</td></tr>
+</table>
+<p>Seite geladen? Dann hat der Server auf eurem Port <b>abgehoben</b>.<br>
+Schaut im Simulationsmodus nach, welcher Port das war.</p>
+<p><font size="2" color="#9fb8bc">OSI-Agenten &middot; Operation Lohnzettel</font></p>
+</center>
+</body>
+</html>
+```
+
+### Laptop Kalle (Oberfläche)
+- Config → Settings: Display Name `Laptop Kalle`
+- Desktop → IP Configuration: Static, 192.168.50.99 / 255.255.255.0, Gateway und DNS leer
+
+Danach im Realtime-Modus speichern, HTTP und HTTPS am Server an.
+
+### Eigenheiten von Packet Tracer 9.0 (getestet 08.10.2026)
+Im Auftrag als „Kalles Laborhinweis“ genannt; keine Aufgabe fragt danach.
+- Die TCP-Flags zeigen die PDU-Details nur als Bitfeld (`FLAGS:0b00010010` = ACK + SYN; Reihenfolge Bit 7 → 0: CWR, ECE, URG, ACK, PSH, RST, SYN, FIN). Der Reiter „OSI Model“ nennt sie zusätzlich in Textform. Die Werte stimmen: SYN `0b00000010`, SYN+ACK `0b00010010`, ACK `0b00010000`, RST+ACK `0b00010100`.
+- Ist HTTP aus, antwortet der Server auf das SYN an Port 80 mit RST+ACK; der Browser zeigt „Server Reset Connection“.
+- HTTPS erscheint im Simulationsmodus als Typ „HTTPS“; einen Filter für TLS/SSL gibt es nicht. Ein Schloss zeigt der Browser nicht.
+- Quell-Ports werden fortlaufend ab 1025 vergeben, nicht zufällig im dynamischen Bereich.
+- `netstat` gibt es nur ohne Optionen (kein `-a`, `-n`). Der Browser baut Verbindungen sofort wieder ab, die Zeilen stehen deshalb schon auf `FIN_WAIT_1`/`FIN_WAIT_2` oder `CLOSED` und verschwinden schnell. Die Eingabeaufforderung lässt sich nur öffnen, wenn der Browser geschlossen ist. Gefragt wird deshalb nur der Remote-Socket (Spalte „Foreign Address“).
+- Sequenz- und Bestätigungsnummern sind im Header sichtbar, werden im Spiel aber nicht behandelt.

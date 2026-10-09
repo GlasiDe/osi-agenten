@@ -39,7 +39,7 @@
   <li>Stundenende: alle <code>.osiagent</code>-Dateien einsammeln (z. B. als Abgabe auf der Lernplattform) und in die Einsatzzentrale ziehen.</li>
 </ol>
 
-<h2>B · Außeneinsätze in Packet Tracer (E1 und E2 fertig, E3–E5 offen)</h2>
+<h2>B · Außeneinsätze in Packet Tracer (E1–E4 fertig, E5 offen)</h2>
 <p>Am Ende der Einsätze E1–E5 steht je ein Außeneinsatz. Er steht <b>komplett im Spiel</b>: Auftrag, Download des Simulationsnetzes (<code>.pkt</code>) und Fragen mit Punkten, die auch in der Einsatzzentrale ausgewertet werden. Packet Tracer ist dafür technische Voraussetzung (siehe Mindestanforderungen). Vorgehen für einen neuen Außeneinsatz:</p>
 <ol>
   <li>Netz in Packet Tracer aufbauen (Vorschläge unten) und im <b>Simulationsmodus</b> selbst durchspielen. Ein Simulationsnetz kann mehreren Außeneinsätzen dienen.</li>
@@ -54,17 +54,11 @@ Simulationsnetz <code>E1_Wer-hoert-mit.pkt</code>: vier PCs an einem Switch, vie
 <div class="pt"><h3>E2 · „Der lernende Switch“ – MAC-Tabelle und ARP (fertig)</h3>
 Dasselbe Simulationsnetz. MAC-Adressen erfassen, Konsolenkabel zum Switch, <code>show mac address-table</code> vor und während des ersten Pings (Filter ARP und ICMP). Ergebnis: Der Switch lernt beim Empfangen aus der Absender-MAC, Fluten trägt nichts ein.</div>
 
-<div class="pt"><h3>E3 · „Zwei Server, ein Discover“ – DHCP und Gateway (L3)</h3>
-<b>Aufbau:</b> Ein LAN mit zwei DHCP-Servern, die <b>unterschiedliche Standardgateways</b> verteilen (Server 1 → Router .1, Server 2 → ein zweiter Router). Für den sichtbaren Extra-Hop in tracert muss das zweite Gateway ein Router sein, der weiterleitet. Dahinter ein „Internet“-Server.<br>
-<b>Beobachtung:</b> PCs auf DHCP stellen (bzw. neu anfordern lassen), im Simulationsmodus DHCP filtern: ein Discover, zwei Offers. Danach <code>ipconfig /all</code> und <code>tracert</code> zum Internet-Server vergleichen.<br>
-<b>Fragen-Ideen:</b> Welches Offer hat der PC genommen und woran seht ihr das? Wie unterscheidet sich die tracert-Ausgabe? Woran erkennt man einen zweiten DHCP-Server?<br>
-<span class="muted">Vorab testen, welches Angebot Packet Tracer annimmt. Das hängt vom Ablauf in der Simulation ab. Wenn es immer derselbe Server ist, im Arbeitsauftrag auf „Beobachtet, welches Angebot gewinnt“ ausweichen.</span></div>
+<div class="pt"><h3>E3 · „Zwei Server, ein Discover“ – DHCP und Gateway (fertig)</h3>
+Simulationsnetz <code>E3_Zwei-Server-ein-Discover.pkt</code>: Nachbildung des F&amp;O-Netzes mit SRV-DC01 und dem Fremdgerät als gesperrtem Cisco-Router. Ein Discover, zwei Offers; mit Gateway .66 zeigt <code>tracert</code> den Extra-Hop. Gerät aus allein heilt nicht, erst Abgeben und Neu-Anfordern. Packet Tracer mischt bei zwei Servern die Angebote; der Auftrag sagt das offen (Kalles Laborhinweis).</div>
 
-<div class="pt"><h3>E4 · „Wer hebt ab?“ – 3-Wege-Handshake (L4)</h3>
-<b>Aufbau:</b> PC und Server-PT mit HTTP-Dienst, ein Switch genügt.<br>
-<b>Beobachtung:</b> Im Webbrowser des PCs die Seite aufrufen, Simulationsmodus mit Filter TCP/HTTP: SYN – SYN, ACK – ACK, dann die HTTP-Anfrage. Danach den HTTP-Dienst am Server ausschalten und erneut aufrufen.<br>
-<b>Fragen-Ideen:</b> In welcher Reihenfolge kommen die Flags? Was kommt zurück, wenn kein Dienst lauscht?<br>
-<span class="muted">Vorab prüfen, was Packet Tracer bei abgeschaltetem Dienst zurückschickt. Ungeklärt ist, ob PT dann wie ein echtes Betriebssystem RST, ACK sendet. Falls nicht, die zweite Frage weglassen oder als „Was zeigt der Browser?“ stellen.</span></div>
+<div class="pt"><h3>E4 · „Wer hebt ab?“ – 3-Wege-Handshake (fertig)</h3>
+Simulationsnetz <code>E4_Wer-hebt-ab.pkt</code>: Kalles Laptop und ein Nachbau von SRV-LOHN mit HTTP und HTTPS. Handshake auf Port 80 im Simulationsmodus, dann HTTP abschalten: Der Server antwortet mit RST, ACK, der Browser meldet „Server Reset Connection“. Danach Handshake auf 443 und <code>netstat</code>. Packet Tracer zeigt die Flags nur als Binärzahl, deshalb steht eine Flag-Tafel im Auftrag.</div>
 
 <div class="pt"><h3>E5 · „Name gegen Adresse“ – DNS (L7)</h3>
 <b>Aufbau:</b> PC, DNS-Server (Server-PT, Dienst DNS mit A-Eintrag, z. B. <code>lohn.firma.intern → 192.168.50.20</code>), Webserver .20. Für den zweiten Teil einen zweiten DNS-Server mit <b>anderem</b> A-Eintrag für denselben Namen.<br>
