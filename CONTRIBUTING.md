@@ -71,7 +71,7 @@ npm run release      # Tests + PDFs + ZIP – vor jedem Commit
 ## Veröffentlichen (Maintainer)
 Jeder Push ist sofort live. Ändert er etwas in `spiel/` oder `lehrkraft/`, ist er deshalb eine neue Version mit GitHub-Release ([ADR 0006](docs/adr/0006-jeder-push-eine-version.md)). Reine Änderungen an Doku und Werkzeugen brauchen keine Version. Nicht zu verwechseln: `npm run release` baut lokal Tests, PDFs und ZIP, ein **GitHub-Release** stellt die ZIP öffentlich zum Download bereit.
 1. `version` in `spiel/content/meta.js` erhöhen: Patch für Korrekturen, Minor für neuen Inhalt oder neue Funktionen, Major für wesentliche Veränderungen am Spiel.
-2. In `CHANGELOG.md` den Abschnitt „Unveröffentlicht“ in `vX.Y.Z – TT.MM.JJJJ` umbenennen. Den Abschnitt (ohne Überschrift) als `verteilen/notizen.md` speichern.
+2. In `CHANGELOG.md` den Abschnitt „Unveröffentlicht“ in `vX.Y.Z – TT.MM.JJJJ` umbenennen. Die Release-Notiz `verteilen/notizen.md` besteht aus dem festen Kopf `werkzeuge/release-kopf.md` (Download-Anleitung) und dem Abschnitt der Version ohne Überschrift.
 3. `npm run release` ausführen, dann committen und pushen.
 4. GitHub-Release `vX.Y.Z` auf diesem Commit anlegen und `verteilen/OSI-Agenten_vX.Y.Z.zip` anhängen:
    `gh release create vX.Y.Z verteilen/OSI-Agenten_vX.Y.Z.zip --target main --title "vX.Y.Z – …" --notes-file verteilen/notizen.md`
