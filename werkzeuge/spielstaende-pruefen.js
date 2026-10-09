@@ -3,13 +3,11 @@
 // Aufruf: node spielstaende-pruefen.js [ordner]   (Standard: ../test)
 const fs = require('fs');
 const path = require('path');
-const { ROOT } = require('./lib');
+const { ROOT, ladeInhalte } = require('./lib');
 
-global.window = {};
-const html = fs.readFileSync(path.join(ROOT, 'spiel/index.html'), 'utf8');
-[...html.matchAll(/<script src="(content\/[^"]+)"/g)].forEach(m => require(path.join(ROOT, 'spiel', m[1])));
+const OSI = ladeInhalte();
 require(path.join(ROOT, 'spiel/js/storage.js'));
-const OSI = window.OSI, S = window.OSIStore;
+const S = window.OSIStore;
 global.btoa = s => Buffer.from(s, 'binary').toString('base64');
 global.atob = s => Buffer.from(s, 'base64').toString('binary');
 

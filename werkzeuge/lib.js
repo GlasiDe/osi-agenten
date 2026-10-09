@@ -51,4 +51,22 @@ async function klick(p, sel) {
 
 function shot(name) { fs.mkdirSync(SHOTS, { recursive: true }); return path.join(SHOTS, name + '.png'); }
 
-module.exports = { ROOT, SHOTS, EDGE, url, sleep, browser, seite, klick, shot };
+// Inhaltsdateien (spiel/content/*.js), die eine HTML-Seite per <script src> lädt, in ihrer Reihenfolge
+function inhaltsliste(rel) {
+  const html = fs.readFileSync(path.join(ROOT, rel), 'utf8');
+  return [...html.matchAll(/<script\b[^>]*\bsrc="[^"]*\bcontent\/([^"/]+\.js)"/g)].map(m => m[1]);
+}
+
+// Inhalte unter Node laden wie im Spiel (Reihenfolge aus spiel/index.html). Jeder Aufruf liefert ein frisches window.OSI.
+function ladeInhalte() {
+  global.window = {};
+  for (const f of inhaltsliste('spiel/index.html')) {
+    const datei = path.join(ROOT, 'spiel/content', f);
+    if (!fs.existsSync(datei)) throw new Error(`spiel/index.html lädt content/${f}, die Datei gibt es aber nicht.`);
+    delete require.cache[require.resolve(datei)];
+    require(datei);
+  }
+  return global.window.OSI;
+}
+
+module.exports = { ROOT, SHOTS, EDGE, url, sleep, browser, seite, klick, shot, inhaltsliste, ladeInhalte };

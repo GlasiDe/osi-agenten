@@ -56,7 +56,15 @@ npm install          # nur beim ersten Mal
 npm run release      # Tests + PDFs + ZIP – vor jedem Commit
 ```
 
-- `npm test` spielt alle freigegebenen Einsätze durch und prüft:
+- `npm test` prüft zuerst ohne Browser, ob die Inhalte formal zusammenpassen (`npm run konsistenz`, Datei `werkzeuge/konsistenz-pruefen.js`):
+  - IDs: keine doppelte und keine ausgemusterte ID
+  - Verweise: Antworten, Fächer, Figuren, Abzeichen und Verdächtige gibt es
+  - Pflichtfelder: bekannter Schritt-Typ, genau eine Antwortart, eine Erklärung je Aufgabe und Verhörfrage
+  - Challenge-Pool und die Script-Tags der drei Seiten, die die Inhalte laden
+
+  Ob die Inhalte fachlich stimmen, prüft sie nicht.
+
+  Danach spielt `npm test` alle freigegebenen Einsätze durch und prüft:
   - die Werkzeuge (Terminal-Befehle, Wireshark-Filter)
   - die Antwortlängen (die richtige Antwort darf nicht auffällig länger sein)
   - Übungsmodus, Zeit-Challenge und Einsatzzentrale
@@ -83,6 +91,7 @@ Die Release-Notiz ist also der Abschnitt aus `CHANGELOG.md`: was sich für Lerne
 2. Script-Tag in `spiel/index.html`, `lehrkraft/einsatzzentrale.html` und `lehrkraft/quellen/loesungen.html` ergänzen.
 3. Neuer Schritt-Typ? Renderer in `spiel/js/steps.js` **und** Behandlung in `werkzeuge/test-durchlauf.js` ergänzen.
 4. Debriefing-Impulse in `lehrkraft/quellen/loesungen.html` ergänzen.
+5. `npm run konsistenz` (in `werkzeuge/`) meldet in Sekunden fehlende Script-Tags, doppelte IDs und falsche Verweise.
 
 ## Bilder (optional)
 Die fertigen Bilder liegen im Repo. Neue Bilder im selben Stil erzeugt `werkzeuge/bild.ps1` über ein lokales ComfyUI mit FLUX.2 [klein] 9B (nur das unveränderte Basismodell). Der Stil-Prompt steht im Skript, die Server-Adresse kommt aus `$env:COMFYUI_URL`. Danach mit Pillow als JPG nach `spiel/img/` verkleinern. Lichtquellen und Bildlogik prüfen.
