@@ -134,7 +134,7 @@ Begriffe in [`CONTEXT.md`](CONTEXT.md), Begründung in [ADR 0004](docs/adr/0004-
 
 ## Gamification
 - Punkte: 1. Versuch voll, dann 50/30/20 %, je Tipp −20 %, nie 0. Kein Game Over, kein Zeitdruck außer in der freiwilligen Zeit-Challenge.
-- Zeit-Challenge: Nach einem Fehler steht die Uhr 2,5 s. Es läuft nur ein Durchgang gleichzeitig. Angezeigt wird „Richtige“. Begriffe aus späteren Einsätzen sind als Vorgeschmack erlaubt.
+- Zeit-Challenge: Nach einem Fehler steht die Uhr 2,5 s. Es läuft nur ein Durchgang gleichzeitig. Angezeigt wird „Richtige“. Begriffe aus späteren Einsätzen sind als Vorgeschmack erlaubt. Der Pool mischt Fachbegriffe mit typischen Werten (Portnummern, IP- und MAC-Adressen), weil die Zuordnung der Werte den Transfer übt. Jeder Eintrag gehört eindeutig zu genau einer Schicht. Mehrdeutige Begriffe (z. B. „Port“ als Anschluss am Switch) kommen nicht hinein.
 - „Nochmal üben“ für erledigte Fragen-, Sortier- und Puzzle-Schritte:
   - Der erste Durchgang bleibt maßgeblich, Übung gibt und kostet keine Punkte.
   - Fehlerfrei und ohne Tipp = ⭐ „gemeistert“, 5× ⭐ = Abzeichen „Trainingsfleißig“.

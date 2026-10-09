@@ -16,6 +16,10 @@ _Avoid_: Ordner, Datei
 Die Akte nach dem Finale, die jede Person einzeln ohne Punkte, Tipps und zweiten Versuch beantwortet. Sie dient nur der Diagnose und zählt nicht zum Fall-Fortschritt.
 _Avoid_: Test, Klausur, Abschlussprüfung
 
+**Verhörfrage**:
+Eine Frage im Abschlussverhör, ohne Punkte, Tipp und zweiten Versuch, von jeder Person einzeln beantwortet. Sie ist keine Aufgabe, ihre ID ist aber genauso fest.
+_Avoid_: Prüfungsfrage, Testfrage
+
 **Schritt**:
 Eine Station innerhalb eines Einsatzes, z. B. Story, Lektion, Quiz oder Außeneinsatz. Jeder Schritt hat eine feste ID, die nie geändert wird.
 _Avoid_: Seite, Station, Level
