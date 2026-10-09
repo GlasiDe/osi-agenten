@@ -12,7 +12,7 @@ Alle Regeln, der Aufbau und der Arbeitsablauf stehen in CONTRIBUTING.md und gelt
 - Über Inhalte entscheidet die Lehrkraft (Maintainer). Vor neuen Konzepten mit unklarem Vorwissen sie fragen.
 - Was im Gespräch über den Unterricht erzählt wird, ist Kontext. In Dateien, Commits und Issues fließt nur das Fachliche, anonym formuliert (siehe Grundregeln).
 - Erst `npm run release`, dann committen und **pushen**. Pages veröffentlicht `main` sofort für die spielenden Klassen, deshalb nur fertige, getestete Stände. Keine weiteren Remotes anlegen.
-- Die Version in `meta.js` nur auf Wunsch der Lehrkraft erhöhen.
+- Vor jedem Push mit Änderungen in `spiel/` oder `lehrkraft/` die Version in `meta.js` erhöhen (Patch, Minor oder Major laut ADR 0006, im Zweifel die Lehrkraft fragen), den Changelog-Abschnitt anlegen und nach dem Push das GitHub-Release erstellen.
 
 ## Agent skills
 Die Dateien in `docs/agents/` konfigurieren die Agent-Skills aus [mattpocock/skills](https://github.com/mattpocock/skills), einer Skill-Sammlung für Claude Code. Wer diese Skills nicht nutzt, kann sie ignorieren.

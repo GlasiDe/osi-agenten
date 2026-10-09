@@ -1,7 +1,7 @@
 /* OSI-Agenten – Stammdaten: Figuren, Ränge, Abzeichen, Handbuch, Challenge, Einsatzliste.
    IDs NIE ändern – sie stecken in den Spielständen. */
 window.OSI = {
-  version: '1.1.0',
+  version: '1.2.0',
   lehrkraftHash: 'cbqqqlkfkl',
   // Bewusst gestrichene Aufgaben/Schritte: dürfen in alten Spielständen stehen, werden aber NIE wiederverwendet.
   ausgemustert: ['e6-d-minuten'],

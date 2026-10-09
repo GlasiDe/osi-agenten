@@ -66,12 +66,12 @@ npm run release      # Tests + PDFs + ZIP – vor jedem Commit
 - `npm run zip` baut `verteilen/OSI-Agenten_v<version>.zip` (Spiel + Kurzanleitung). Der Ordner `verteilen/` ist nur lokal, veröffentlicht wird die ZIP über ein GitHub-Release (siehe unten).
 - Optional: Eigene `.osiagent`-Dateien in einen Ordner `test/` im Projekt legen. Er wird von Git ignoriert. `npm test` prüft dann, ob diese Spielstände noch laden.
 - Commit-Nachrichten auf Deutsch, kurz: was und warum.
-- Was Lernende oder Lehrkräfte bemerken, kommt in [`CHANGELOG.md`](CHANGELOG.md) unter „Unveröffentlicht“.
+- Was Lernende oder Lehrkräfte bemerken, kommt in [`CHANGELOG.md`](CHANGELOG.md) unter „Unveröffentlicht“ (nur lokal bis zum Push, siehe unten).
 
-## Neue Version veröffentlichen (Maintainer)
-Nicht zu verwechseln: `npm run release` baut lokal Tests, PDFs und ZIP. Ein **GitHub-Release** stellt die ZIP öffentlich zum Download bereit.
-1. In `CHANGELOG.md` den Abschnitt „Unveröffentlicht“ in `vX.Y.Z – … (Datum)` umbenennen und darüber einen neuen, leeren Abschnitt „Unveröffentlicht“ anlegen. Den Abschnitt der neuen Version als Datei `verteilen/notizen.md` speichern.
-2. `version` in `spiel/content/meta.js` erhöhen. Das nur, wenn eine neue Fassung an Lernende verteilt werden soll, nicht für jede Kleinigkeit.
+## Veröffentlichen (Maintainer)
+Jeder Push ist sofort live. Ändert er etwas in `spiel/` oder `lehrkraft/`, ist er deshalb eine neue Version mit GitHub-Release ([ADR 0006](docs/adr/0006-jeder-push-eine-version.md)). Reine Änderungen an Doku und Werkzeugen brauchen keine Version. Nicht zu verwechseln: `npm run release` baut lokal Tests, PDFs und ZIP, ein **GitHub-Release** stellt die ZIP öffentlich zum Download bereit.
+1. `version` in `spiel/content/meta.js` erhöhen: Patch für Korrekturen, Minor für neuen Inhalt oder neue Funktionen, Major für wesentliche Veränderungen am Spiel.
+2. In `CHANGELOG.md` den Abschnitt „Unveröffentlicht“ in `vX.Y.Z – TT.MM.JJJJ` umbenennen. Den Abschnitt (ohne Überschrift) als `verteilen/notizen.md` speichern.
 3. `npm run release` ausführen, dann committen und pushen.
 4. GitHub-Release `vX.Y.Z` auf diesem Commit anlegen und `verteilen/OSI-Agenten_vX.Y.Z.zip` anhängen:
    `gh release create vX.Y.Z verteilen/OSI-Agenten_vX.Y.Z.zip --target main --title "vX.Y.Z – …" --notes-file verteilen/notizen.md`

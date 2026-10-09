@@ -1,8 +1,8 @@
 # Änderungen
 
-Was sich für Lernende und Lehrkräfte ändert. Neues kommt laufend unter „Unveröffentlicht“; beim nächsten GitHub-Release wird daraus der Abschnitt der neuen Version und zugleich die Release-Notiz. Ältere Spielstände laden in jeder Version weiter.
+Was sich für Lernende und Lehrkräfte ändert. Jede Version ist online sofort live und steht als ZIP unter den GitHub-Releases; der Abschnitt einer Version ist zugleich ihre Release-Notiz ([ADR 0006](docs/adr/0006-jeder-push-eine-version.md)). Ältere Spielstände laden weiter.
 
-## Unveröffentlicht
+## v1.2.0 – 09.10.2026
 
 ### Für Lernende
 - **Außeneinsätze in Packet Tracer** am Ende von Einsatz 1 bis 5, ab jetzt immer offen (vorher versiegelt). Auftrag, Download des Simulationsnetzes und Fragen stehen direkt im Spiel. Sie blockieren den Fortschritt nicht und lassen sich später nachholen.
@@ -20,7 +20,8 @@ Was sich für Lernende und Lehrkräfte ändert. Neues kommt laufend unter „Unv
 - Lösungen und Debriefing enthalten die Fragen der Außeneinsätze und Impulse zur Nachbesprechung.
 - Bauanleitungen der Simulationsnetze in `docs/simulationsnetze.md`, Begriffe in `CONTEXT.md`, Grundsatzentscheidungen in `docs/adr/`.
 
-## v1.1.0 – erste öffentliche Fassung (06.10.2026)
+## v1.1.0 – 06.10.2026
+Erste öffentliche Fassung.
 - Einsätze E0–E6 (L1–L7) und Abschlussverhör
 - simuliertes Terminal und Wireshark-Ansicht
 - Zeit-Challenge und Übungsmodus
