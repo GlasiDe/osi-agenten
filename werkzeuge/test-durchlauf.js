@@ -25,14 +25,14 @@ const { browser, seite, klick, sleep, shot } = require('./lib');
     while (guard++ < 1000) {
       const st = await page.evaluate(() => { const p = OSIGame.save.pos; if (!p) return null; const E = OSI.einsaetze.find(x => x.id === p.e); const s = E.steps.find(s => s.id === p.s); return { e: p.e, id: s.id, type: s.type }; });
       if (!st || st.e !== e) break;
-      // Außeneinsatz mit Fragen: freigeben und wie ein Quiz durchspielen
-      if (st.type === 'sealed' && await page.evaluate(id => { const p = OSIGame.save.pos; const s = OSI.einsaetze.find(x => x.id === p.e).steps.find(s => s.id === id); if (!s.fragen) return false; OSIGame.save.unlocked[id] = Date.now(); OSIGame.gotoStep(p.e, id); return true; }, st.id)) { st.type = 'quiz'; await sleep(100); }
+      // Außeneinsatz: wie ein Quiz durchspielen
+      if (st.type === 'aussen') st.type = 'quiz';
       if (shots.has(st.id) || shots.has('all')) await page.screenshot({ path: shot(st.id), fullPage: true });
       try {
         if (st.type === 'story') {
           while (await page.$('#dl-next')) { await klick(page, '#dl-next'); await sleep(20); }
           await klick(page, '#st-weiter');
-        } else if (st.type === 'lesson' || st.type === 'sealed') {
+        } else if (st.type === 'lesson') {
           await klick(page, '#st-weiter');
         } else if (st.type === 'quiz' || st.type === 'anklage') {
           const qs = await page.evaluate(id => { const p = OSIGame.save.pos; const s = OSI.einsaetze.find(x => x.id === p.e).steps.find(s => s.id === id); return s.fragen.map(q => ({ id: q.id, richtig: q.richtig, layer: !!q.layer, pick: !!q.pick, multi: !!q.multi, eingabe: q.eingabe || null, meldung: !!q.meldung })); }, st.id);

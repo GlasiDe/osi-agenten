@@ -271,7 +271,7 @@ Physische Adresse   Transportname
     {
       id: 'e2-filter', type: 'lesson', tag: 'TRAINING 4 · WIRESHARK-FILTER', titel: 'Die Nadel im Heuhaufen',
       html: `
-        <p>Ein Mitschnitt enthält schnell Tausende Frames. Mit einem <b>Anzeigefilter</b> blendet Wireshark alles aus, was nicht passt. Die Filterzeile wird <b style="color:#4fd18b">grün</b>, wenn Wireshark den Filter versteht, und <b style="color:#ff5d5d">rot</b>, wenn nicht.</p>
+        <p>Ein Mitschnitt enthält schnell Tausende Frames. Mit einem <b>Anzeigefilter</b> blendet Wireshark alles aus, was nicht passt. Jede Zeile ist ein Frame. Der Filter prüft aber alles, was darin eingepackt ist: das IP-Paket (<code>ip.</code>), das Segment (<code>tcp.</code>), das Datagramm (<code>udp.</code>) und das Protokoll darüber. Die Filterzeile wird <b style="color:#4fd18b">grün</b>, wenn Wireshark den Filter versteht, und <b style="color:#ff5d5d">rot</b>, wenn nicht.</p>
         <table class="t">
           <tr><th>Filter</th><th>zeigt …</th></tr>
           <tr><td><code>arp</code> · <code>dns</code> · <code>icmp</code> · <code>tcp</code> · <code>udp</code></td><td>nur Frames mit diesem Protokoll</td></tr>
@@ -353,8 +353,7 @@ Physische Adresse   Transportname
       ]
     },
     {
-      id: 'e2-aussen', type: 'sealed', bonus: true, titel: 'Außeneinsatz: Der lernende Switch',
-      teaser: 'In Packet Tracer beobachtet ihr, wie ein Switch seine MAC-Adresstabelle füllt, und verfolgt im Simulationsmodus ARP-Request und ARP-Reply Schritt für Schritt.',
+      id: 'e2-aussen', type: 'aussen', bonus: true, titel: 'Außeneinsatz: Der lernende Switch',
       inhalt: `<p>Im Außeneinsatz von Einsatz 1 habt ihr vermutet, wie der Switch das Ziel eines Frames findet. Jetzt prüft ihr das direkt am Switch – so, wie Admins es auch machen: über ein <b>Konsolenkabel</b> und die Kommandozeile des Switches. Ihr nutzt dasselbe Simulationsnetz wie in Einsatz 1.</p>
         <div class="btnrow" style="margin-bottom:10px"><a class="btn" href="aussen/E1_Wer-hoert-mit.pkt" download>⬇ Simulationsnetz herunterladen (Packet Tracer)</a></div>
         <div class="merk"><b>Befehle:</b> Welche Befehle ihr braucht, schlagt ihr in der <b>Befehlsreferenz</b> im 📘 Handbuch nach (oben in der Leiste).</div>

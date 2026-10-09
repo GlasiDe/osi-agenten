@@ -111,7 +111,7 @@ _Avoid_: Pinnwand, Tatverdächtigenliste
 ## Lehrkraft
 
 **Lehrkraft-Modus**:
-Ein mit Passwort geschützter Modus im Spiel, in dem die Lehrkraft frei springen und Außeneinsätze oder das Abschlussverhör für einen Spielstand freigeben kann.
+Ein mit Passwort geschützter Modus im Spiel, in dem die Lehrkraft frei springen und das Abschlussverhör für einen Spielstand freigeben kann.
 _Avoid_: Admin-Modus, Debug-Modus
 
 **Einsatzzentrale**:

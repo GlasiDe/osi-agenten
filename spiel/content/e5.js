@@ -378,8 +378,7 @@ Content-Type: text/html</div>
       ]
     },
     {
-      id: 'e5-aussen', type: 'sealed', bonus: true, titel: 'Außeneinsatz: Name gegen Adresse',
-      teaser: 'In Packet Tracer verfolgt ihr im Simulationsmodus, was passiert, bevor eine Webseite lädt: Erst wird der Name aufgelöst, dann wird verbunden. Ihr seht, wie derselbe Name je nach DNS-Server zu einem ganz anderen Gerät führt.',
+      id: 'e5-aussen', type: 'aussen', bonus: true, titel: 'Außeneinsatz: Name gegen Adresse',
       inhalt: `<p>Frau Lindner hat <code>lohn.fo-logistik.intern</code> richtig eingetippt und ist trotzdem beim Pi gelandet. Herr Brandt will genau sehen, wie das abläuft. Kalle hat dafür in seinem Labor nachgebaut: Frau Lindners PC mit dem DNS-Server .66, SRV-DC01 mit dem richtigen Eintrag, SRV-LOHN, der wie das echte Portal nur <b>HTTPS</b> anbietet, und den Pi mit seinem DNS-Dienst und einer Webseite über <b>HTTP</b>. Ihr verfolgt, was vor dem Laden der Seite passiert, und stellt den PC danach so ein, wie Herr Brandt es im Fall getan hat.</p>
         <div class="btnrow" style="margin-bottom:10px"><a class="btn" href="aussen/E5_Name-gegen-Adresse.pkt" download>⬇ Simulationsnetz herunterladen (Packet Tracer)</a></div>
         <div class="merk"><b>Befehle:</b> Welche Befehle ihr braucht, schlagt ihr in der <b>Befehlsreferenz</b> im 📘 Handbuch nach (oben in der Leiste).</div>

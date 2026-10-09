@@ -131,8 +131,8 @@
     html += `<h2>${e.nrText} – ${e.titel}</h2>`;
     e.steps.forEach((st, i) => {
       const nr = st.bonus ? '★' : (i + 1);
-      if (st.type === 'quiz' || st.type === 'anklage' || (st.type === 'sealed' && st.fragen)) {
-        html += `<h3>Schritt ${nr}: ${st.titel}${st.type === 'sealed' ? ' (Außeneinsatz)' : st.bonus ? ' (Bonus)' : ''}</h3><table>`;
+      if (st.type === 'quiz' || st.type === 'anklage' || st.type === 'aussen') {
+        html += `<h3>Schritt ${nr}: ${st.titel}${st.type === 'aussen' ? ' (Außeneinsatz)' : st.bonus ? ' (Bonus)' : ''}</h3><table>`;
         st.fragen.forEach(q => {
           let a;
           if (q.layer) a = [].concat(q.richtig).map(n => `<span class="lchip">L${n}</span>`).join(' oder ');

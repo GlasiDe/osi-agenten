@@ -122,7 +122,7 @@ Das Spiel erarbeitet das OSI-Modell an einem durchgehenden Fall. Es deckt keine 
 
 ## Außeneinsätze
 Begriffe in [`CONTEXT.md`](CONTEXT.md), Begründung in [ADR 0004](docs/adr/0004-ausseneinsaetze-im-spiel.md), Topologie und Adressen der Simulationsnetze in [`docs/simulationsnetze.md`](docs/simulationsnetze.md).
-- Je Einsatz ein Außeneinsatz am Ende (Schritt-Typ `sealed`, `bonus: true` = blockiert nicht). Freigegeben wird er im Lehrkraft-Modus; sind alle fertig, werden sie dauerhaft geöffnet.
+- Je Einsatz ein Außeneinsatz am Ende (Schritt-Typ `aussen`, `bonus: true` = blockiert nicht), immer offen. Ein neuer Außeneinsatz kommt erst ins Spiel, wenn er fertig ist.
 - Kennzeichnung „★ AUSSENEINSATZ“ mit dem Satz, dass er den Fortschritt nicht blockiert und später nachgeholt werden kann.
 - Packet Tracer ist technische Voraussetzung, kein Vorwissen. Bedienung und Cisco-CLI erschließen sich die Lernenden selbst; Aufträge nennen das Ziel, die Befehle stehen in der Befehlsreferenz ([ADR 0005](docs/adr/0005-befehle-in-der-befehlsreferenz.md)).
 - So nah an der Praxis wie möglich: richtiger `ping` statt „Add Simple PDU“, Switch-CLI über Konsolenkabel und Terminal statt Lupe.

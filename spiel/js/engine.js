@@ -366,7 +366,7 @@
   }
 
   // ---------------------------------------------------------------- Inhaltsverzeichnis
-  const TYP_ICON = { story: '🎬', lesson: '📖', quiz: '❓', sort: '🗂️', kapsel: '🧩', sealed: '🔒', ende: '🏁', anklage: '⚖️', verhoer: '🕵️', urkunde: '🏅' };
+  const TYP_ICON = { story: '🎬', lesson: '📖', quiz: '❓', sort: '🗂️', kapsel: '🧩', aussen: '★', ende: '🏁', anklage: '⚖️', verhoer: '🕵️', urkunde: '🏅' };
   function inhaltsverzeichnis() {
     const aktE = G.save.pos ? G.save.pos.e : null;
     const teile = OSI.einsaetze.map(e => {
@@ -412,15 +412,13 @@
   function lehrkraftDialog() {
     const liste = OSI.einsaetze.filter(e => e.steps.length).map(e => `<h3>${esc(e.nrText)} – ${esc(e.titel)}</h3><div class="opts">${e.steps.map(st => `<button class="opt" data-e="${e.id}" data-s="${st.id}">${stepDone(st) ? '✅' : '⬜'} <span class="mono small">${esc(st.id)}</span> ${esc(st.titel || st.type)}</button>`).join('')}</div>`).join('');
     modal(`<h2>🔑 Lehrkraft-Modus</h2>
-      <p class="small">Springt zu jedem Schritt, ohne ihn als erledigt zu markieren. Alle Akten und Außeneinsätze sind geöffnet, solange der Modus aktiv ist.</p>
+      <p class="small">Springt zu jedem Schritt, ohne ihn als erledigt zu markieren. Alle Akten sind geöffnet, solange der Modus aktiv ist.</p>
       <div class="btnrow"><button class="btn sec" id="lk-off">Modus beenden</button>
-      <button class="btn sec" id="lk-unlock">Außeneinsätze in diesem Spielstand freischalten</button>
       <button class="btn sec" id="lk-verhoer">Abschlussverhör in diesem Spielstand freischalten</button></div>
       ${liste}
       <div class="btnrow"><button class="btn sec" data-close>Schließen</button></div>`, m => {
       m.querySelectorAll('[data-s]').forEach(b => b.onclick = () => { m.remove(); gotoStep(b.dataset.e, b.dataset.s); });
       $('#lk-off', m).onclick = () => { G.teacher = false; m.remove(); render(); };
-      $('#lk-unlock', m).onclick = () => { G.save.unlocked.alle = now(); persist(); toast('Außeneinsätze freigeschaltet.'); };
       $('#lk-verhoer', m).onclick = () => { G.save.unlocked.verhoer = now(); persist(); toast('Abschlussverhör freigeschaltet – auch nach Verlassen des Lehrkraft-Modus.'); };
     });
   }
