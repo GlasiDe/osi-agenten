@@ -121,8 +121,8 @@
       if (st.terminal) terminalMount($('#term-mount', box), st.terminal, st.id);
       const area = $('#qarea', box);
       if (cur >= qs.length) {
-        area.innerHTML = `<div class="feedback ok"><b>Alle Aufgaben gelöst.</b></div>${st.abschluss || ''}` +
-          qs.map((q, i) => `<details style="margin-top:8px"><summary class="small">${i + 1}. ${q.frage}</summary><div class="small" style="padding:6px 0 0 14px">${q.erklaerung || ''}</div></details>`).join('') + weiterButton(ctx);
+        area.innerHTML = `<div class="feedback ok"><b>Alle Aufgaben gelöst.</b></div>` +
+          qs.map((q, i) => `<details style="margin-top:8px"><summary class="small">${i + 1}. ${q.frage}</summary><div class="small" style="padding:6px 0 0 14px">${q.erklaerung || ''}</div></details>`).join('') + (st.abschluss || '') + weiterButton(ctx);
         $('#st-weiter', box).onclick = ctx.weiter;
         if (alleFertig) ctx.fertig();
         return;

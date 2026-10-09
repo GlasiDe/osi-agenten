@@ -212,3 +212,101 @@ Im Auftrag als „Kalles Laborhinweis“ genannt; keine Aufgabe fragt danach.
 - Quell-Ports werden fortlaufend ab 1025 vergeben, nicht zufällig im dynamischen Bereich.
 - `netstat` gibt es nur ohne Optionen (kein `-a`, `-n`). Der Browser baut Verbindungen sofort wieder ab, die Zeilen stehen deshalb schon auf `FIN_WAIT_1`/`FIN_WAIT_2` oder `CLOSED` und verschwinden schnell. Die Eingabeaufforderung lässt sich nur öffnen, wenn der Browser geschlossen ist. Gefragt wird deshalb nur der Remote-Socket (Spalte „Foreign Address“).
 - Sequenz- und Bestätigungsnummern sind im Header sichtbar, werden im Spiel aber nicht behandelt.
+
+## `E5_Name-gegen-Adresse.pkt` (Außeneinsatz E5)
+
+Nachbildung im Kleinen („Kalles Labor“): Frau Lindners PC, SRV-DC01 mit DNS, SRV-LOHN und das Fremdgerät am SW-SERVER-01, Ports wie im Patchplan (E1). Kein Router, kein DHCP, alle Adressen fest in 192.168.50.0/24. Beim Speichern hat PC-VERSAND-02 die **.66** als DNS-Server eingetragen (Zustand wie im Fall); die Lernenden stellen später selbst auf .10 um. Den DHCP-Weg zum falschen DNS-Server zeigt schon E3.
+
+| Gerät | Typ | IP-Adresse | Dienste | Anschluss |
+|---|---|---|---|---|
+| SW-SERVER-01 | Cisco 2960-24TT | – | – | – |
+| SRV-DC01 | Server-PT | 192.168.50.10 /24 | DNS: `lohn.fo-logistik.intern` → .20 | Fa0/1 |
+| SRV-LOHN | Server-PT | 192.168.50.20 /24 | nur HTTPS | Fa0/2 |
+| PC-VERSAND-02 | PC-PT | 192.168.50.140 /24, DNS 192.168.50.66 | – | Fa0/12 |
+| Fremdgerät (Pi) | Server-PT, eigenes Icon | 192.168.50.66 /24 | DNS: `lohn.fo-logistik.intern` → .66, nur HTTP | Fa0/23 |
+
+- Verbindungen Copper Straight-Through.
+- Der Pi ist diesmal ein Server-PT, weil er DNS **und** HTTP anbieten muss. Server-PT lässt sich nicht sperren; der Auftrag sagt offen, dass es Kalles Nachbau ist und von außen (am PC) ermittelt wird. Keine Aufgabe lässt sich aus dem Reiter Services beantworten.
+- Icon wie in E3: `quellbilder/pt-einplatinenrechner_128.png`.
+- Beide Webseiten sind vollständig gleich (Absicht: Der Seite sieht man die Fälschung nicht an). Keine Anmeldefelder, auf beiden der Hinweis „Testaufbau“.
+
+### SW-SERVER-01 (CLI)
+Nur Name und Portbeschreibungen wie im Patchplan, sonst Werkszustand.
+```
+enable
+configure terminal
+hostname SW-SERVER-01
+interface FastEthernet0/1
+ description Server SRV-DC01 (DNS/DHCP)
+ exit
+interface FastEthernet0/2
+ description Server SRV-LOHN (Lohnportal)
+ exit
+interface FastEthernet0/12
+ description Dose V-302 Versand
+ exit
+end
+copy running-config startup-config
+```
+Port Fa0/23 bekommt bewusst keine Beschreibung (im Patchplan aus E1 ist er frei).
+
+### SRV-DC01 (Oberfläche)
+- Config → Settings: Display Name `SRV-DC01`
+- Desktop → IP Configuration: Static, 192.168.50.10 / 255.255.255.0, Gateway leer, DNS 192.168.50.10
+- Services → DNS: DNS Service **On**, Eintrag Name `lohn.fo-logistik.intern`, Type `A Record`, Address `192.168.50.20` → **Add**
+- Alle anderen Dienste **Off** (HTTP, HTTPS, DHCP, FTP, EMAIL …)
+
+### SRV-LOHN (Oberfläche)
+- Wie in E4 (Display Name, IP 192.168.50.20), aber Services → HTTP: **HTTP Off**, **HTTPS On** (Endzustand von E4)
+- **Kein Bild** im File Manager (siehe Eigenheiten unten); ein aus E4 übernommenes `pt-fo-logistik.jpg` löschen
+- `index.html` vollständig durch den Code unten ersetzen
+- Alle anderen Dienste **Off**
+
+### Fremdgerät (Pi) (Oberfläche)
+- Config → Settings: Display Name `Fremdgerät (Pi)`
+- Desktop → IP Configuration: Static, 192.168.50.66 / 255.255.255.0, Gateway und DNS leer
+- Services → DNS: DNS Service **On**, Eintrag Name `lohn.fo-logistik.intern`, Type `A Record`, Address `192.168.50.66` → **Add**
+- Services → HTTP: **HTTP On**, **HTTPS Off**; `index.html` durch denselben Code wie bei SRV-LOHN ersetzen, kein Bild
+- Alle anderen Dienste **Off**
+
+### PC-VERSAND-02 (Oberfläche)
+- Config → Settings: Display Name `PC-VERSAND-02`
+- Desktop → IP Configuration: Static, 192.168.50.140 / 255.255.255.0, Gateway leer, DNS Server **192.168.50.66**
+
+`index.html` für SRV-LOHN **und** Pi (gleicher Code; Umlaute als HTML-Entities wie in E4):
+```html
+<html>
+<head><title>F&amp;O Lohnportal (Labor)</title></head>
+<body bgcolor="#0f2a30" text="#e8f1f2">
+<center>
+<h1><font color="#ff8a3d">F&amp;O Logistik</font></h1>
+<h2><font color="#ff8a3d">Falkenrath &amp; Oltmanns Logistik GmbH</font></h2>
+<h3>Lohnportal &middot; Nachbau in Kalles Labor</h3>
+<table border="1" cellpadding="6" bordercolor="#ff8a3d" width="480">
+<tr><td>Zweck</td><td>Testaufbau f&uuml;r die Ermittlung &ndash; kein echtes Portal, keine Anmeldung</td></tr>
+</table>
+<p>Seite geladen? Schaut im Simulationsmodus nach,<br>
+welches Ger&auml;t sie geschickt hat.</p>
+<p><font size="2" color="#9fb8bc">OSI-Agenten &middot; Operation Lohnzettel</font></p>
+</center>
+</body>
+</html>
+```
+Gegenüber E4 fehlen das Bild (eine Datei = ein Aufruf, siehe unten) und die Zeile „Server“, damit die Seite nicht verrät, wer sie geschickt hat.
+
+Danach im Realtime-Modus speichern.
+
+### Eigenheiten von Packet Tracer 9.0 (getestet 09.10.2026)
+- Der Browser baut für **jede Datei** eine eigene TCP-Verbindung auf (wie HTTP/1.0) und fragt dafür jedes Mal neu per DNS. Mit Bild auf der Seite käme nach der Seite eine zweite Runde DNS + Handshake + Bild. Deshalb haben die E5-Seiten kein Bild.
+- DNS-Antworten werden **nicht zwischengespeichert**; nach dem Umstellen des DNS-Servers fragt der PC sofort den neuen. Ein echter PC hält Antworten eine Weile im Cache (`ipconfig /flushdns`); das steht im Laborhinweis, abgefragt wird es nicht.
+- `nslookup` zeigt in der Zeile „Server:“ keinen Namen, nur die IP-Adresse in eckigen Klammern (ein echter PC nennt dort den Namen, vgl. LEON-NB im Spiel). Keine Aufgabe fragt danach. Ausgabe:
+```
+C:\>nslookup lohn.fo-logistik.intern 192.168.50.10
+
+Server: [192.168.50.10]
+Address:  192.168.50.10
+
+Non-authoritative answer:
+Name:   lohn.fo-logistik.intern
+Address:   192.168.50.20
+```

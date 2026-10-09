@@ -39,7 +39,7 @@
   <li>Stundenende: alle <code>.osiagent</code>-Dateien einsammeln (z. B. als Abgabe auf der Lernplattform) und in die Einsatzzentrale ziehen.</li>
 </ol>
 
-<h2>B · Außeneinsätze in Packet Tracer (E1–E4 fertig, E5 offen)</h2>
+<h2>B · Außeneinsätze in Packet Tracer (alle fertig)</h2>
 <p>Am Ende der Einsätze E1–E5 steht je ein Außeneinsatz. Er steht <b>komplett im Spiel</b>: Auftrag, Download des Simulationsnetzes (<code>.pkt</code>) und Fragen mit Punkten, die auch in der Einsatzzentrale ausgewertet werden. Packet Tracer ist dafür technische Voraussetzung (siehe Mindestanforderungen). Vorgehen für einen neuen Außeneinsatz:</p>
 <ol>
   <li>Netz in Packet Tracer aufbauen (Vorschläge unten) und im <b>Simulationsmodus</b> selbst durchspielen. Ein Simulationsnetz kann mehreren Außeneinsätzen dienen.</li>
@@ -60,10 +60,8 @@ Simulationsnetz <code>E3_Zwei-Server-ein-Discover.pkt</code>: Nachbildung des F&
 <div class="pt"><h3>E4 · „Wer hebt ab?“ – 3-Wege-Handshake (fertig)</h3>
 Simulationsnetz <code>E4_Wer-hebt-ab.pkt</code>: Kalles Laptop und ein Nachbau von SRV-LOHN mit HTTP und HTTPS. Handshake auf Port 80 im Simulationsmodus, dann HTTP abschalten: Der Server antwortet mit RST, ACK, der Browser meldet „Server Reset Connection“. Danach Handshake auf 443 und <code>netstat</code>. Packet Tracer zeigt die Flags nur als Binärzahl, deshalb steht eine Flag-Tafel im Auftrag.</div>
 
-<div class="pt"><h3>E5 · „Name gegen Adresse“ – DNS (L7)</h3>
-<b>Aufbau:</b> PC, DNS-Server (Server-PT, Dienst DNS mit A-Eintrag, z. B. <code>lohn.firma.intern → 192.168.50.20</code>), Webserver .20. Für den zweiten Teil einen zweiten DNS-Server mit <b>anderem</b> A-Eintrag für denselben Namen.<br>
-<b>Beobachtung:</b> <code>nslookup</code> und Browser am PC; im Simulationsmodus DNS filtern. Dann am PC den zweiten DNS-Server eintragen und vergleichen.<br>
-<b>Fragen-Ideen:</b> Welche Adresse liefert welcher Server? Woran seht ihr in der nslookup-Ausgabe, welcher Server geantwortet hat? Was zeigt die Adresszeile des Browsers?</div>
+<div class="pt"><h3>E5 · „Name gegen Adresse“ – DNS vor HTTP (fertig)</h3>
+Simulationsnetz <code>E5_Name-gegen-Adresse.pkt</code>: Frau Lindners PC mit DNS-Server .66, SRV-DC01 mit dem richtigen Eintrag, SRV-LOHN nur mit HTTPS und das Fremdgerät mit gefälschtem DNS-Eintrag und HTTP. Im Simulationsmodus läuft vor dem SYN erst die DNS-Anfrage; derselbe Name führt zum Pi, die Seite sieht gleich aus. Nach dem Umstellen auf SRV-DC01 antwortet <code>http://</code> mit RST, ACK, <code>https://</code> liefert die Seite. Bauanleitung in <code>docs/simulationsnetze.md</code>.</div>
 
 <h2>C · Weitere Ideen für Begleitmaterial</h2>
 <p>Beiträge sind willkommen – am besten vorher ein Issue auf GitHub eröffnen (github.com/GlasiDe/osi-agenten).</p>
