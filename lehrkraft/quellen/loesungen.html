@@ -24,7 +24,7 @@
 </head>
 <body>
 <h1>OSI-Agenten · Operation Lohnzettel – Lösungen &amp; Debriefing</h1>
-<div class="muted" id="ver"></div>
+<div class="muted">Automatisch erzeugt aus den Spielinhalten. Die passende Spielversion steht beim Download unter den GitHub-Releases.</div>
 
 <div class="box">
   <b>Lehrkraft-Modus:</b> im Spiel unten auf „Lehrkraft“ klicken (Startseite oder Einsatzakten) oder <b>Strg + Alt + L</b> drücken. Standard-Passwort: <span class="pw">Einheit7-Zentrale</span> – öffentlich bekannt, da das Spiel Open Source ist. Es hält nur vom versehentlichen Öffnen ab und ist <b>kein Schutz</b>; ein eigenes Passwort lässt sich setzen (Anleitung in der README auf GitHub).<br>
@@ -125,7 +125,6 @@
 <script>
   const OSI = window.OSI;
   const strip = s => String(s == null ? '' : s).replace(/<(?!\/?(b|i|code)\b)[^>]+>/g, '').replace(/\s+/g, ' ').trim();
-  document.getElementById('ver').textContent = 'Automatisch erzeugt aus Spielversion ' + OSI.version + ' · Stand ' + new Date().toLocaleDateString('de-DE');
   let html = '';
   OSI.einsaetze.filter(e => e.steps.length).forEach(e => {
     html += `<h2>${e.nrText} – ${e.titel}</h2>`;
