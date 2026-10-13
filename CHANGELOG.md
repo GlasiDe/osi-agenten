@@ -2,6 +2,11 @@
 
 Was sich für Lernende und Lehrkräfte ändert. Jede Version ist online sofort live und steht als ZIP unter den GitHub-Releases; der Abschnitt einer Version ist zugleich ihre Release-Notiz ([ADR 0006](docs/adr/0006-jeder-push-eine-version.md)). Ältere Spielstände laden weiter.
 
+## v1.2.1 – 13.10.2026
+
+### Für Lernende
+- Simulationsnetz `E1_Wer-hoert-mit.pkt` (Außeneinsätze E1 und E2): fehlerhafte IP-Konfiguration korrigiert.
+
 ## v1.2.0 – 09.10.2026
 
 ### Für Lernende
