@@ -2,6 +2,12 @@
 
 Was sich für Lernende und Lehrkräfte ändert. Jede Version ist online sofort live und steht als ZIP unter den GitHub-Releases; der Abschnitt einer Version ist zugleich ihre Release-Notiz ([ADR 0006](docs/adr/0006-jeder-push-eine-version.md)). Ältere Spielstände laden weiter.
 
+## v1.2.2 – 14.10.2026
+
+### Für Lernende
+- Zeit-Challenge: Jeder Fehler wird vom Ergebnis abgezogen, damit sich Raten nicht lohnt. Bisherige Rekorde und Abzeichen bleiben erhalten.
+- Beweisstücke (Protokolle, Berichte, Tabellen): Die Scrollleiste wird nicht mehr zackig dargestellt.
+
 ## v1.2.1 – 13.10.2026
 
 ### Für Lernende

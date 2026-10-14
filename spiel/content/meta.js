@@ -1,7 +1,7 @@
 /* OSI-Agenten – Stammdaten: Figuren, Ränge, Abzeichen, Handbuch, Challenge, Einsatzliste.
    IDs NIE ändern – sie stecken in den Spielständen. */
 window.OSI = {
-  version: '1.2.1',
+  version: '1.2.2',
   lehrkraftHash: 'cbqqqlkfkl',
   // Bewusst gestrichene Aufgaben/Schritte: dürfen in alten Spielständen stehen, werden aber NIE wiederverwendet.
   ausgemustert: ['e6-d-minuten'],
@@ -45,8 +45,8 @@ window.OSI = {
     { id: 'verhoer-fertig', icon: '🕵️', name: 'Akte übergeben', text: 'Abschlussverhör von allen im Duo abgeschlossen' },
     { id: 'sortierer-perfekt', icon: '🎯', name: 'Scharfschütze', text: 'Schichten-Sortierer ohne Fehler und ohne Tipp' },
     { id: 'training-5', icon: '🏋️', name: 'Trainingsfleißig', text: '5 Schritte beim Üben fehlerfrei gemeistert' },
-    { id: 'speed-15', icon: '⚡', name: 'Flinke Finger', text: '15 Richtige in der Zeit-Challenge' },
-    { id: 'speed-25', icon: '🚀', name: 'Lichtgeschwindigkeit', text: '25 Richtige in der Zeit-Challenge' },
+    { id: 'speed-15', icon: '⚡', name: 'Flinke Finger', text: 'Ergebnis 15 in der Zeit-Challenge' },
+    { id: 'speed-25', icon: '🚀', name: 'Lichtgeschwindigkeit', text: 'Ergebnis 25 in der Zeit-Challenge' },
     { id: 'koffein', icon: '☕', name: 'Koffein-Alarm', text: 'Kalle beim Kaffee gestört', geheim: true },
     { id: 'pizza', icon: '🍕', name: 'Internationaler Austausch', text: 'Die englische Eselsbrücke gefunden', geheim: true },
     { id: 'matrix', icon: '🟩', name: 'Matrix-Modus', text: 'Im Terminal den echten Befehl für grüne Schrift gefunden', geheim: true }

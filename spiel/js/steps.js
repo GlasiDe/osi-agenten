@@ -837,15 +837,18 @@
     start() {
       const C = OSI.challenge;
       const lauf = ++chLauf;
-      let pool = shuffle(C.pool), idx = 0, score = 0, fehler = 0, ende = Date.now() + C.sekunden * 1000, pause = false, timer = null;
+      let pool = shuffle(C.pool), idx = 0, richtig = 0, fehler = 0, ende = Date.now() + C.sekunden * 1000, pause = false, timer = null;
       G.view = 'challenge';
       const app = $('#app');
       const aktiv = () => lauf === chLauf && G.view === 'challenge' && document.getElementById('ch-item');
       const stopp = () => { clearTimeout(timer); document.removeEventListener('keydown', key); };
+      // Challenge-Ergebnis: Richtige minus Fehler, damit sich Raten nicht lohnt (kann negativ sein)
+      const ergebnis = () => richtig - fehler;
+      const zahl = n => n < 0 ? `−${-n}` : `${n}`;
       const prozent = () => Math.max(0, Math.min(100, (ende - Date.now()) / (C.sekunden * 10)));
       const draw = () => {
         const it = pool[idx % pool.length];
-        app.innerHTML = `<div class="card"><div class="ch-top"><span>⏱️ Zeit-Challenge</span><span>Richtige: <b class="hl" id="ch-s">${score}</b> · Fehler: ${fehler}</span></div>
+        app.innerHTML = `<div class="card"><div class="ch-top"><span>⏱️ Zeit-Challenge</span><span>Ergebnis: <b class="hl" id="ch-s">${zahl(ergebnis())}</b> (${richtig} richtig · ${fehler} Fehler)</span></div>
           <div class="timebar"><i id="ch-t" style="width:${prozent()}%"></i></div>
           <div class="ch-item" id="ch-item">${esc(it.t)}</div>
           <div class="ch-btns">${[1, 2, 3, 4, 5, 6, 7].map(n => `<button data-l="${n}" style="background:${layerColor(n)}">L${n}</button>`).join('')}</div>
@@ -855,9 +858,10 @@
       const antwort = n => {
         if (pause || !aktiv()) return;
         const it = pool[idx % pool.length];
-        if (n === it.l) { score++; A.play('klick'); idx++; draw(); return; }
-        // Fehler: Uhr anhalten, richtige Schicht zeigen, danach mit derselben Restzeit weiter
+        if (n === it.l) { richtig++; A.play('klick'); idx++; draw(); return; }
+        // Fehler: wird abgezogen, Uhr anhalten, richtige Schicht zeigen, danach mit derselben Restzeit weiter
         fehler++; A.play('falsch'); pause = true;
+        $('#ch-s').textContent = zahl(ergebnis());
         const rest = ende - Date.now();
         clearTimeout(timer);
         $('#ch-item').innerHTML = `${esc(it.t)} → <span style="color:${layerColor(it.l)}">L${it.l}</span>`;
@@ -883,13 +887,13 @@
         stopp();
         G.view = 'hub';
         const ch = G.save.challenge;
-        const rekord = score > ch.best;
+        const erg = ergebnis(), rekord = erg > ch.best;
         ch.runs++;
-        if (rekord) ch.best = score;
+        if (rekord) ch.best = erg;
         G.persist();
-        C.abzeichen.forEach(a => { if (score >= a.ab) G.abzeichen(a.id); });
-        app.innerHTML = `<div class="card summary"><h2>Zeit abgelaufen!</h2><div><span class="big">${score}</span> <span class="muted" style="font-size:1.2rem">Richtige</span></div><div class="muted">${fehler} Fehler</div>
-          ${rekord ? '<p class="hl"><b>🏆 Neuer Rekord!</b></p>' : `<p class="muted">Euer Rekord: ${ch.best} Richtige</p>`}
+        C.abzeichen.forEach(a => { if (erg >= a.ab) G.abzeichen(a.id); });
+        app.innerHTML = `<div class="card summary"><h2>Zeit abgelaufen!</h2><div><span class="big">${zahl(erg)}</span> <span class="muted" style="font-size:1.2rem">Ergebnis</span></div><div class="muted">${richtig} richtig − ${fehler} Fehler</div>
+          ${rekord ? '<p class="hl"><b>🏆 Neuer Rekord!</b></p>' : `<p class="muted">Euer Rekord: ${ch.best}</p>`}
           <div class="btnrow" style="justify-content:center"><button class="btn" id="ch-again">Nochmal</button><button class="btn sec" id="ch-back">Zurück</button></div></div>`;
         $('#ch-again').onclick = () => G.challenge.start();
         $('#ch-back').onclick = () => G.render();

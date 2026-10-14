@@ -1,5 +1,5 @@
 // Prüft die Zeit-Challenge: Uhr steht nach einem Fehler, verlassene Läufe laufen nicht weiter,
-// ein Neustart hat genau eine Uhr, Endanzeige „Richtige“. Läuft mit verkürzter Zeit (8 s).
+// ein Neustart hat genau eine Uhr, Fehler werden vom Ergebnis abgezogen, Endanzeige „Ergebnis“. Läuft mit verkürzter Zeit (8 s).
 const { browser, seite, klick, sleep, shot } = require('./lib');
 
 (async () => {
@@ -19,8 +19,9 @@ const { browser, seite, klick, sleep, shot } = require('./lib');
   const w1 = await breite(); await sleep(1200); const w2 = await breite();
   if (w1 == null || Math.abs(w1 - w2) > 0.5) fehler.push(`Uhr läuft während der Fehlerpause weiter (${w1} → ${w2})`);
   if (!(await p.$eval('#ch-item', el => el.textContent.includes('→')))) fehler.push('Nach einem Fehler wird die richtige Schicht nicht angezeigt');
+  if ((await p.$eval('#ch-s', el => el.textContent)) !== '−1') fehler.push('Ein Fehler wird nicht vom Ergebnis abgezogen');
   await p.keyboard.press(String(it.l)); await sleep(100);
-  if ((await p.$eval('#ch-s', el => el.textContent)) !== '0') fehler.push('Während der Pause werden Antworten gezählt');
+  if ((await p.$eval('#ch-s', el => el.textContent)) !== '−1') fehler.push('Während der Pause werden Antworten gezählt');
   await sleep(1500);
   const w3 = await breite(); await sleep(600); const w4 = await breite();
   if (!(w4 < w3)) fehler.push(`Uhr läuft nach der Pause nicht weiter (${w3} → ${w4})`);
@@ -46,7 +47,7 @@ const { browser, seite, klick, sleep, shot } = require('./lib');
   await sleep(7500);
   const ende = await p.evaluate(() => { const bg = document.querySelector('.summary .big'); return bg ? bg.parentElement.textContent.replace(/\s+/g, ' ').trim() : null; });
   if (!ende) fehler.push('Keine Endanzeige nach Ablauf der Zeit');
-  else if (!/^\d+ Richtige$/.test(ende)) fehler.push(`Endanzeige nicht „<Zahl> Richtige“ in einer Zeile: „${ende}“`);
+  else if (!/^−?\d+ Ergebnis$/.test(ende)) fehler.push(`Endanzeige nicht „<Zahl> Ergebnis“ in einer Zeile: „${ende}“`);
   if (await p.evaluate(() => document.body.textContent.includes('Treffer'))) fehler.push('Das Wort „Treffer“ taucht noch auf');
   await p.screenshot({ path: shot('challenge_ende'), fullPage: true });
 

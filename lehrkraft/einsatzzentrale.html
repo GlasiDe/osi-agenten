@@ -154,7 +154,7 @@
       ['🏆 Meiste Punkte', sieger(L, d => d.k.punkte, 'max', 0, v => v + ' P')],
       ['🧠 Wenigste Tipps', sieger(L, d => d.k.tippsProAufgabe, 'min', minA, v => v.toFixed(2).replace('.', ',') + ' pro Aufgabe')],
       ['🎯 Beste Erstversuch-Quote', sieger(L, d => d.k.erstQuote, 'max', minA, pct)],
-      ['⚡ Zeit-Challenge-Rekord', sieger(L, d => d.k.challenge, 'max', 0, v => v + ' Richtige')],
+      ['⚡ Zeit-Challenge-Rekord', sieger(L, d => d.k.challenge, 'max', 0, v => 'Ergebnis ' + v)],
       ['🚀 Größter Sprung (7 Tage)', sieger(L, d => d.k.sprung, 'max', 0, v => '+' + v + ' P')]
     ].filter(([, s]) => s).map(([t, s]) => `<div class="cat"><div class="ct">${t}</div><div class="cw">${esc(s.namen)}</div><div class="cv">${esc(s.wert)}</div></div>`).join('');
     $('#view').innerHTML = `<div class="beamer">

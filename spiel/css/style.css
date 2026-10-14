@@ -210,9 +210,13 @@ table.t th { background: var(--panel2); color: var(--muted); font-weight: 600; }
 .port { cursor: pointer; }
 .port:hover rect.body { stroke: var(--orange); stroke-width: 2.5; }
 .port.sel rect.body { stroke: var(--orange); stroke-width: 3; }
-.evidence { background: #f2e9d8; color: #231a0e; border-radius: 6px; padding: 14px 16px; font-family: var(--mono); font-size: .88rem; box-shadow: 0 6px 20px rgba(0, 0, 0, .4); transform: rotate(-.4deg); margin: 12px 0; overflow-x: auto; }
+/* Schräg liegt nur das Papier (::before); Inhalt und Scrollleisten bleiben gerade, sonst wird die Scrollleiste zackig gezeichnet. */
+.evidence { position: relative; isolation: isolate; color: #231a0e; padding: 14px 16px; font-family: var(--mono); font-size: .88rem; margin: 12px 0; }
+.evidence::before { content: ''; position: absolute; inset: 0; z-index: -1; background: #f2e9d8; border-radius: 6px; box-shadow: 0 6px 20px rgba(0, 0, 0, .4); transform: rotate(-.4deg); }
+.evidence table, .evidence pre { max-width: 100%; overflow-x: auto; }
 .evidence h4 { margin: 0 0 8px; font-family: var(--sans); letter-spacing: .05em; text-transform: uppercase; font-size: .85rem; color: #6b4a1a; }
-.evidence table { border-collapse: collapse; width: 100%; }
+.evidence table { border-collapse: collapse; width: 100%; display: block; }
+.evidence tbody { display: table; width: 100%; border-collapse: collapse; }
 .evidence td, .evidence th { border-bottom: 1px solid #cdbf9f; padding: 3px 8px; text-align: left; white-space: nowrap; }
 .evidence th { color: #6b4a1a; }
 

@@ -86,6 +86,10 @@ _Avoid_: Wiederholung, Trainingsmodus
 Freiwilliges Schichten-Zuordnen gegen die Uhr, das einzige Element mit Zeitdruck.
 _Avoid_: Quiz, Wettbewerb
 
+**Challenge-Ergebnis**:
+Richtige minus Fehler eines Durchgangs der Zeit-Challenge; kann negativ sein. Rekord und Challenge-Abzeichen beziehen sich darauf. Es bringt keine Punkte.
+_Avoid_: Punkte, Score, Richtige
+
 ## Hilfen und Zusatzwissen
 
 **Tipp**:

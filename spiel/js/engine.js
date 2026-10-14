@@ -501,8 +501,8 @@
       <div class="akten">${akten}</div>
       <div class="grid2" style="margin-top:16px">
         <div class="card"><h2>⏱️ Zeit-Challenge</h2>
-          <p>Ordnet so viele Begriffe wie möglich in ${OSI.challenge.sekunden} Sekunden der richtigen Schicht zu. Beliebig oft wiederholbar!</p>
-          <p class="small muted">Euer Rekord: <b class="hl">${ch.best}</b> Richtige · Versuche: ${ch.runs}</p>
+          <p>Ordnet so viele Begriffe wie möglich in ${OSI.challenge.sekunden} Sekunden der richtigen Schicht zu. Jeder Fehler wird vom Ergebnis abgezogen. Beliebig oft wiederholbar!</p>
+          <p class="small muted">Euer Rekord: <b class="hl">${ch.best}</b> · Versuche: ${ch.runs}</p>
           <div class="btnrow"><button class="btn" id="hub-ch" ${chOffen ? '' : 'disabled'}>Challenge starten</button>${chOffen ? '' : '<span class="small muted">Wird im Training von Einsatz 0 freigeschaltet.</span>'}</div></div>
         <div class="card"><h2>🎖️ Abzeichen</h2><div class="badges" style="justify-content:flex-start">${badges}</div></div>
       </div>
