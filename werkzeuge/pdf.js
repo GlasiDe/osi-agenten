@@ -1,4 +1,4 @@
-// Erzeugt die druckfertigen A4-PDFs aus lehrkraft/quellen/*.html (per Edge).
+// Erzeugt die druckfertigen A4-PDFs aus lehrkraft/quellen/*.html (per Chromium-Browser).
 const fs = require('fs');
 const path = require('path');
 const { browser, url, ROOT, sleep } = require('./lib');
@@ -11,7 +11,9 @@ const JOBS = [
   ['lehrkraft/quellen/loesungen.html', 'lehrkraft/Loesungen_und_Debriefing.pdf'],
   ['lehrkraft/quellen/offene-aufgaben.html', 'lehrkraft/Offene_Aufgaben_Lehrkraft.pdf'],
   ['lehrkraft/quellen/mindestanforderungen.html', 'lehrkraft/Mindestanforderungen_Vorwissen.pdf'],
-  ['lehrkraft/quellen/inhaltsuebersicht.html', 'lehrkraft/Inhaltsuebersicht_Einsaetze.pdf']
+  ['lehrkraft/quellen/inhaltsuebersicht.html', 'lehrkraft/Inhaltsuebersicht_Einsaetze.pdf'],
+  ['lehrkraft/quellen/laborauftrag-aussenlager.html', 'lehrkraft/Laborauftrag_Aussenlager.pdf'],
+  ['lehrkraft/quellen/laborauftrag-aussenlager-lehrkraft.html', 'lehrkraft/Laborauftrag_Aussenlager_Lehrkraft.pdf']
 ];
 
 (async () => {

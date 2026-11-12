@@ -25,7 +25,7 @@ Diese Datei ist die verbindliche Grundlage für alle Beiträge, von Menschen wie
 **Personen und Daten**
 - Figuren bekommen keine echten Namen aus dem Schulumfeld.
 - Keine Spielstände, Klassenbezeichnungen oder andere Angaben zu Lerngruppen und Personen ins Repo, auch nicht in Issues oder Commits. Rückmeldungen aus dem Unterricht nur fachlich und anonym („Rückmeldung aus dem Unterricht: Aufgabe X wurde oft missverstanden“).
-- Bilder nur selbst erstellt oder mit geklärter freier Lizenz. Fachliches (Diagramme, Terminal, Wireshark) als HTML/SVG, nie als KI-Bild.
+- Bilder nur selbst erstellt oder mit geklärter freier Lizenz. Ausnahme: fremde Grafiken, die unverändert frei genutzt werden dürfen (z. B. Cisco-Icons). Sie werden in `LICENSE.md` als Ausnahme aufgeführt und im Material gekennzeichnet. Fachliches (Diagramme, Terminal, Wireshark) als HTML/SVG, nie als KI-Bild.
 
 **Material**
 - Druckmaterial immer als fertige A4-PDF. Quellen in `lehrkraft/quellen/*.html`, erzeugt mit `npm run pdf`.
@@ -47,7 +47,7 @@ Diese Datei ist die verbindliche Grundlage für alle Beiträge, von Menschen wie
 ## Arbeitsablauf
 Voraussetzungen:
 - Node.js
-- ein Chromium-Browser (Edge oder Chrome). Er wird automatisch gesucht, sonst den Pfad in `CHROME_PATH` angeben.
+- ein Chromium-Browser (Edge, Chrome oder Vivaldi). Er wird automatisch gesucht, sonst den Pfad in `CHROME_PATH` angeben.
 - für die ZIP zusätzlich PowerShell 7 (`pwsh`)
 
 ```

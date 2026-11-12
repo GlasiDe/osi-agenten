@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<title>OSI-Agenten – Laborauftrag „Außenlager“ (Lehrkraft)</title>
+<style>
+  @page { size: A4; margin: 12mm 14mm; }
+  body { font: 9.8pt/1.4 "Segoe UI", Arial, sans-serif; color: #111; margin: 0; }
+  img { filter: grayscale(1); }
+  .head { display: flex; align-items: center; gap: 5mm; border: 2px solid #111; border-radius: 3mm; padding: 3mm 5mm; }
+  .head img { width: 20mm; height: 20mm; border-radius: 50%; object-fit: cover; object-position: top; border: 2px solid #111; }
+  .head h1 { margin: 0; font-size: 18pt; }
+  .head div.s { color: #444; font-size: 9.5pt; }
+  h2 { font-size: 12.5pt; margin: 5mm 0 2mm; border-bottom: 2px solid #111; padding-bottom: 1mm; }
+  h3 { font-size: 10.3pt; margin: 3mm 0 1mm; }
+  p { margin: 1.5mm 0; }
+  ul, ol { margin: 1mm 0; padding-left: 6mm; }
+  li { margin: 0.6mm 0; }
+  .hinweis { border: 1px dashed #111; padding: 2mm 4mm; margin: 2.5mm 0; }
+  .hinweis::before { content: "⚠ "; font-weight: 700; }
+  code, pre { font-family: Consolas, monospace; font-size: 8.8pt; }
+  code { background: #eee; padding: 0 1mm; border-radius: 1mm; }
+  pre { background: #f2f2f2; border: 1px solid #bbb; padding: 2mm 3mm; margin: 1.5mm 0; white-space: pre; line-height: 1.3; }
+  table { border-collapse: collapse; width: 100%; margin: 2mm 0; }
+  th, td { border: 1px solid #555; padding: 1.2mm 2mm; text-align: left; vertical-align: top; font-size: 9pt; }
+  th { background: #e6e6e6; }
+  .cols { display: grid; grid-template-columns: 1fr 1fr; gap: 4mm; }
+  .cols > div { break-inside: avoid; }
+  .bruch { break-before: page; }
+  h2, h3, dt { break-after: avoid; }
+  table, dd, pre { break-inside: avoid; }
+  .muted { color: #555; font-size: 8.8pt; }
+  svg { width: 100%; height: auto; display: block; margin: 2mm 0; }
+  svg text { font-family: "Segoe UI", Arial, sans-serif; }
+  dl.antw dt { font-weight: 700; margin-top: 2mm; }
+  dl.antw dd { margin: 0.5mm 0 0 5mm; }
+</style>
+</head>
+<body>
+
+<div class="head"><img src="../../spiel/img/kalle.jpg" alt=""><div><h1>Laborauftrag „Außenlager“ · Lehrkraft</h1><div class="s">Aufbau, Vorbereitung, Adressplan, erwartete Antworten, Musterlösung und typische Fehlerbilder</div></div></div>
+
+<h2>Einordnung</h2>
+<ul>
+  <li><b>Differenzierung</b> für Lernende, die das Spiel abgeschlossen haben. Das Spiel bleibt das Minimum für alle, der Laborauftrag gehört nicht dazu und bringt keine Punkte. Keine Benotung, das Protokoll dient der Sicherung.</li>
+  <li><b>Umfang:</b> 3–4 Unterrichtsstunden à 45 Min. einplanen, Gruppen bis 4 Personen (je Seite ein Paar). In der Erprobung reichten 3 Stunden einschließlich Fremdgerät, gute Gruppen schaffen den Auftrag ohne Fremdgerät in etwa 2 Stunden. Der Aufbau bleibt zwischen den Stunden stehen.</li>
+  <li><b>Inhalt:</b> IP-Adressen statisch und per DHCP an PC und Cisco-Gerät, Wireshark selbst benutzen, Tabellen von Switch und Router anzeigen und Schichten zuordnen, Subnetting mit /26 und /30, Standardroute auf beiden Routern. Die WAN-Verbindung ist je nach Ausstattung Ethernet oder seriell (dann mit Takt auf der DCE-Seite). Nur IPv4. Statische Routen zu einzelnen Netzen sind noch nicht behandelt und kommen deshalb nicht vor.</li>
+  <li><b>Bewusst nicht enthalten,</b> weil es später für alle kommt: VLANs (nur <code>Vlan1</code> als Verwaltungsschnittstelle wird erwähnt), Port-Security/802.1X, Firewall-Konfiguration, IPv6.</li>
+  <li><b>Befehle:</b> Die Aufträge nennen das Ziel, die Befehle stehen in der Befehlsreferenz im Anhang. <b>Kalles Notizen</b> sind gestufte Hilfekarten (Stufe 1 Denkanstoß, Stufe 2 konkreter Weg), die die Lehrkraft auf Nachfrage ausgibt.</li>
+</ul>
+
+<h2>Material je Gruppe</h2>
+<table>
+  <tr><th>Anzahl</th><th>Material</th><th>Hinweis</th></tr>
+  <tr><td>2</td><td>Router mit Cisco IOS, je <b>eine Ethernet-Schnittstelle</b> fürs LAN und eine Ethernet- oder <b>serielle Schnittstelle</b> für die WAN-Verbindung</td><td>DHCP-Server-Funktion nötig (in üblichen IOS-Images vorhanden). Schnittstellennamen tragen die Lernenden selbst ein.</td></tr>
+  <tr><td>2</td><td>Switches mit Cisco IOS</td><td>z. B. Catalyst 2960</td></tr>
+  <tr><td>4</td><td>Rechner der Lernenden mit Windows und Wireshark</td><td>Adminrechte nötig. Ohne RJ45-Buchse: USB-Netzwerkkarte.</td></tr>
+  <tr><td>≥ 2</td><td>Konsolenkabel (seriell oder USB) und Terminalprogramm (z. B. PuTTY)</td><td>USB-Konsolenkabel haben oft einen FTDI-Chip. Den Treiber holt Windows meist über Windows Update, also nur mit Internet.</td></tr>
+  <tr><td>6–7</td><td>Patchkabel, davon eins für die WAN-Verbindung, oder für sie ein serielles Kabelpaar DCE/DTE (z. B. V.35)</td><td>Ethernet: Ältere Router ohne Auto-MDIX brauchen dort ein Cross-Over-Kabel. Seriell: Der Router am DCE-Ende braucht <code>clock rate</code>.</td></tr>
+  <tr><td>+1</td><td>optional: dritter Router als Fremdgerät</td><td>für den Zusatz; eine Ethernet-Schnittstelle genügt</td></tr>
+</table>
+
+<h2>Vorbereitung</h2>
+<ul>
+  <li>Laborauftrag je Person drucken (Protokoll), Kalles Notizen <b>einmal</b> drucken und ausschneiden. Die Karten nach Thema und Stufe sortiert bei der Lehrkraft lassen.</li>
+  <li>Prüfen, ob die Geräte Passwörter von früheren Gruppen tragen. Wenn ja: Passwort-Wiederherstellung nach Herstelleranleitung vor dem Unterricht.</li>
+  <li>Teil A von Phase 0 möglichst schon vor dem Labortag erledigen lassen: Terminalprogramm, Wireshark mit Npcap, Konsolenkabel und ggf. USB-Netzwerkkarte einmal mit Internet einstecken, damit Windows die Treiber lädt. Im Labor ist das WLAN aus.</li>
+  <li>Auf die <b>IT-Sicherheitsvorgaben der Schule</b> für eigene Geräte hinweisen. Die Lernenden ändern ihre IP-Konfiguration und eine Firewall-Regel und müssen beides in Phase 6 zurückstellen.</li>
+</ul>
+<div class="hinweis"><b>Labornetz nie mit dem Schulnetz verbinden.</b> RT-FO ist ein DHCP-Server. An einer Netzwerkdose wäre er ein Rogue-DHCP wie der Pi im Fall. Das gilt erst recht für das Fremdgerät im Zusatz.</div>
+
+<h2>Aufbau (Lösung)</h2>
+<svg viewBox="0 0 720 260" role="img" aria-label="Aufbau: zwei PCs an SW-FO an RT-FO, WAN-Verbindung zu RT-LAGER, SW-LAGER mit zwei PCs">
+  <defs><style>.k{stroke:#111;stroke-width:2}.l{stroke:#111;stroke-width:4;stroke-dasharray:10 5}.n{font-size:13px;font-weight:700}.a{font-size:11.5px}.z{fill:none;stroke:#555;stroke-width:1.2;stroke-dasharray:4 3}</style></defs>
+  <rect class="z" x="6" y="6" width="300" height="248" rx="10"/>
+  <rect class="z" x="414" y="6" width="300" height="248" rx="10"/>
+  <text class="n" x="16" y="26" text-anchor="start">Zentrale F&amp;O · LAN A</text>
+  <text class="a" x="16" y="42" text-anchor="start">192.168.50.0/24 · DHCP von RT-FO ab .100</text>
+  <text class="n" x="704" y="26" text-anchor="end">Außenlager · LAN B</text>
+  <text class="a" x="704" y="42" text-anchor="end">192.168.60.0/26 · manuell</text>
+  <line class="k" x1="53" y1="98" x2="152" y2="144"/><line class="k" x1="53" y1="182" x2="152" y2="144"/>
+  <line class="k" x1="152" y1="144" x2="250" y2="144"/>
+  <line class="l" x1="279" y1="144" x2="441" y2="144"/>
+  <line class="k" x1="470" y1="144" x2="568" y2="144"/>
+  <line class="k" x1="663" y1="98" x2="568" y2="144"/><line class="k" x1="663" y1="182" x2="568" y2="144"/>
+  <image href="cisco/workstation.svg" x="30" y="64" width="46" height="37"/>
+  <image href="cisco/workstation.svg" x="30" y="176" width="46" height="37"/>
+  <image href="cisco/workgroup-switch.svg" x="120" y="128" width="64" height="33"/>
+  <image href="cisco/router.svg" x="221" y="124" width="58" height="40"/>
+  <image href="cisco/router.svg" x="441" y="124" width="58" height="40"/>
+  <image href="cisco/workgroup-switch.svg" x="536" y="128" width="64" height="33"/>
+  <image href="cisco/workstation.svg" x="640" y="64" width="46" height="37"/>
+  <image href="cisco/workstation.svg" x="640" y="176" width="46" height="37"/>
+  <text class="n" x="53" y="59" text-anchor="middle">PC-FO-1</text>
+  <text class="n" x="53" y="230" text-anchor="middle">PC-FO-2</text>
+  <text class="n" x="663" y="59" text-anchor="middle">PC-LAGER-1</text>
+  <text class="n" x="663" y="230" text-anchor="middle">PC-LAGER-2</text>
+  <text class="n" x="152" y="178" text-anchor="middle">SW-FO</text>
+  <text class="n" x="568" y="178" text-anchor="middle">SW-LAGER</text>
+  <text class="n" x="250" y="182" text-anchor="middle">RT-FO</text>
+  <text class="n" x="470" y="182" text-anchor="middle">RT-LAGER</text>
+  <text class="n" x="360" y="132" text-anchor="middle">WAN-Verbindung</text>
+  <text class="a" x="360" y="164" text-anchor="middle">192.168.60.252/30</text>
+  <text class="a" x="250" y="198" text-anchor="middle">LAN .50.1/24</text>
+  <text class="a" x="250" y="213" text-anchor="middle">WAN .60.253/30</text>
+  <text class="a" x="470" y="198" text-anchor="middle">LAN .60.1/26</text>
+  <text class="a" x="470" y="213" text-anchor="middle">WAN .60.254/30</text>
+  <text class="a" x="568" y="193" text-anchor="middle">.60.2</text>
+  <text class="a" x="152" y="193" text-anchor="middle">.50.2</text>
+  <text class="a" x="82" y="86" text-anchor="start">DHCP</text>
+  <text class="a" x="82" y="200" text-anchor="start">DHCP</text>
+  <text class="a" x="636" y="86" text-anchor="end">.60.11</text>
+  <text class="a" x="636" y="200" text-anchor="end">.60.12</text>
+</svg>
+<p class="muted" style="text-align:right;margin-top:0">Netzwerk-Icons: Cisco Network Topology Icons, unverändert</p>
+
+<h2>Lösungen zum Protokoll</h2>
+<p class="muted">Die Tabellen entsprechen denen im Auftrag, damit sich die Ergebnisse direkt vergleichen lassen.</p>
+
+<h3>Phase 0 · Vorbereitung</h3>
+<table>
+  <tr><th>Gerät</th><th>Schnittstelle zum LAN</th><th>Schnittstelle zur WAN-Verbindung</th></tr>
+  <tr><td>RT-FO</td><td>je nach Gerät, z. B. FastEthernet0/0</td><td>z. B. FastEthernet0/1 oder Serial0/0</td></tr>
+  <tr><td>RT-LAGER</td><td>z. B. GigabitEthernet0/0</td><td>z. B. GigabitEthernet0/1 oder Serial0/0</td></tr>
+</table>
+<dl class="antw">
+  <dt>Netzwerkprofil</dt>
+  <dd>Meist <b>Öffentlich</b>: Windows stuft unbekannte Netze ohne erreichbaren Domänencontroller vorsichtshalber so ein. „Domäne“ erscheint nur, wenn der Rechner in einer Domäne ist und deren Server erreicht. Das gibt es im Labornetz nicht.</dd>
+  <dt>Stromausfall ohne Sichern</dt>
+  <dd>Alles Eingestellte steht nur in der laufenden Konfiguration im Arbeitsspeicher und ist nach dem Neustart weg. Das Gerät startet mit der (gelöschten) Startkonfiguration, also im Werkszustand.</dd>
+</dl>
+
+<h3>Phase 1 · Adressplan</h3>
+<table>
+  <tr><th></th><th>Netzadresse / Präfix</th><th>Subnetzmaske</th><th>erste nutzbare</th><th>letzte nutzbare</th><th>Broadcast</th></tr>
+  <tr><td><b>LAN A</b> (Zentrale)</td><td>192.168.50.0/24</td><td>255.255.255.0</td><td>192.168.50.1</td><td>192.168.50.254</td><td>192.168.50.255</td></tr>
+  <tr><td><b>LAN B</b> (Lager)</td><td>192.168.60.0/26</td><td>255.255.255.192</td><td>192.168.60.1</td><td>192.168.60.62</td><td>192.168.60.63</td></tr>
+  <tr><td><b>WAN-Verbindung</b></td><td>192.168.60.252/30</td><td>255.255.255.252</td><td>192.168.60.253</td><td>192.168.60.254</td><td>192.168.60.255</td></tr>
+</table>
+<table>
+  <tr><th>Gerät</th><th>Schnittstelle</th><th>IP-Adresse / Präfix</th><th>Standardgateway</th></tr>
+  <tr><td>RT-FO</td><td>LAN A</td><td>192.168.50.1/24</td><td>–</td></tr>
+  <tr><td>RT-FO</td><td>WAN-Verbindung</td><td>192.168.60.253/30 (oder .254)</td><td>–</td></tr>
+  <tr><td>SW-FO</td><td>Verwaltung</td><td>z. B. 192.168.50.2/24 (frei in .2–.99)</td><td>192.168.50.1</td></tr>
+  <tr><td>PC-FO-1, PC-FO-2</td><td>Ethernet</td><td>per DHCP ab 192.168.50.100</td><td>per DHCP</td></tr>
+  <tr><td>RT-LAGER</td><td>WAN-Verbindung</td><td>192.168.60.254/30 (oder .253)</td><td>–</td></tr>
+  <tr><td>RT-LAGER</td><td>LAN B</td><td>192.168.60.1/26</td><td>–</td></tr>
+  <tr><td>SW-LAGER</td><td>Verwaltung</td><td>z. B. 192.168.60.2/26</td><td>192.168.60.1</td></tr>
+  <tr><td>PC-LAGER-1</td><td>Ethernet</td><td>z. B. 192.168.60.11/26</td><td>192.168.60.1</td></tr>
+  <tr><td>PC-LAGER-2</td><td>Ethernet</td><td>z. B. 192.168.60.12/26</td><td>192.168.60.1</td></tr>
+</table>
+<p class="muted"><b>Rechenweg:</b> Lager: 50 Geräte + Netzadresse + Broadcast = 52 → nächste Zweierpotenz 64 = 2<sup>6</sup> → /26. Ein /27 (30 Hosts) wäre zu klein. WAN-Verbindung: 2 + 2 = 4 = 2<sup>2</sup> → /30. Der letzte 4er-Block im /24 beginnt bei 256 − 4 = 252. Freie Adressen im LAN B: .2–.62, Gateway immer die LAN-Adresse des Routers.</p>
+<dl class="antw">
+  <dt>Feste Adresse für SW-FO</dt>
+  <dd>Netzgeräte wie Switches, Router und Server brauchen eine <b>feste, bekannte</b> Adresse, damit man sie zuverlässig verwalten und anpingen kann. Eine DHCP-Adresse könnte sich ändern, und ohne DHCP-Server wäre der Switch gar nicht erreichbar. Sie muss im Netz LAN A liegen, aber <b>außerhalb des DHCP-Bereichs</b> (hier .2–.99), damit der Router sie nicht zusätzlich an einen PC vergibt.</dd>
+</dl>
+
+<h3>Phase 2 · Zentrale: Adressen automatisch</h3>
+<table>
+  <tr><th>Nr.</th><th>Nachricht</th><th>Absender-IP</th><th>Ziel-IP</th></tr>
+  <tr><td>1</td><td>DHCP Discover</td><td>0.0.0.0</td><td>255.255.255.255</td></tr>
+  <tr><td>2</td><td>DHCP Offer</td><td>192.168.50.1</td><td>angebotene Adresse, z. B. 192.168.50.100</td></tr>
+  <tr><td>3</td><td>DHCP Request</td><td>0.0.0.0</td><td>255.255.255.255</td></tr>
+  <tr><td>4</td><td>DHCP ACK</td><td>192.168.50.1</td><td>z. B. 192.168.50.100</td></tr>
+</table>
+<p class="muted">Je nach Broadcast-Flag des Clients gehen Offer und ACK auch an 255.255.255.255, beides ist richtig.</p>
+<dl class="antw">
+  <dt>Warum diese Adressen beim Discover?</dt>
+  <dd>Der PC hat noch keine IP-Adresse (deshalb 0.0.0.0) und kennt keinen DHCP-Server (deshalb Broadcast an alle).</dd>
+  <dt>Optionen im Offer</dt>
+  <dd>Auswahl: 53 Nachrichtentyp „Offer“, 54 Server-Kennung 192.168.50.1, 51 Leasedauer, 1 Subnetzmaske 255.255.255.0, 3 Router 192.168.50.1, dazu 58/59 (Erneuerung/Neubindung). Die Lease gilt beim Cisco-DHCP ab Werk <b>1 Tag</b>.</dd>
+  <dt>Vergleich mit dem Router</dt>
+  <dd><code>show ip dhcp binding</code> listet die Adresse mit einer Client-ID, die aus <code>01</code> (Ethernet) und der MAC-Adresse des PCs besteht. Die MAC-Adresse stimmt mit der „Physischen Adresse“ in <code>ipconfig /all</code> überein, nur anders geschrieben (Cisco: Punkte in 4er-Gruppen).</dd>
+</dl>
+
+<h3>Phase 3 · Außenlager: Adressen von Hand</h3>
+<dl class="antw">
+  <dt><code>ipconfig /all</code> auf PC-LAGER-1</dt>
+  <dd>„DHCP aktiviert: Nein“. Es fehlen DHCP-Server und die beiden Lease-Zeilen.</dd>
+  <dt>Gateway am Switch</dt>
+  <dd>Für seine Verwaltung ist der Switch selbst ein Endgerät. Antworten an Geräte aus einem anderen Netz (z. B. Ping aus LAN A) muss er wie jeder PC über ein Gateway schicken. Fürs Weiterleiten von Frames braucht er es nicht.</dd>
+</dl>
+
+<h3>Phase 4 · Die WAN-Verbindung</h3>
+<dl class="antw">
+  <dt>Nur seriell: Takt</dt>
+  <dd><code>show controllers serial 0/0</code> zeigt am einen Router „DCE V.35, no clock“, am anderen „DTE V.35 clocks stopped“. Bis zum <code>clock rate 64000</code> auf der DCE-Seite bleibt die Schnittstelle „up / down“: L1 steht (die Lampe CONN leuchtet), L2 (HDLC) kommt ohne Takt nicht zustande. Danach meldet der DTE „clocks detected“.</dd>
+  <dt>Vor den Routen</dt>
+  <dd>„Antwort von 192.168.50.1: Zielnetz nicht erreichbar“. Das meldet RT-FO selbst. <code>show ip route</code> auf RT-FO zeigt nur <b>C</b> 192.168.50.0/24 und <b>C</b> 192.168.60.252/30, also direkt verbunden. Neuere IOS-Versionen zeigen zusätzlich <b>L</b>-Einträge (/32, eigene Adresse der Schnittstelle).</dd>
+  <dt>Nach der Standardroute auf RT-FO</dt>
+  <dd>„Zeitüberschreitung der Anforderung“. Der Hinweg klappt, PC-LAGER-1 antwortet, aber RT-LAGER kennt den Weg zurück nach 192.168.50.0/24 nicht und verwirft die Antwort. Mit der Standardroute auf RT-LAGER klappt es.</dd>
+  <dt>Standardroute und <code>route print</code></dt>
+  <dd>Beide haben Ziel 0.0.0.0 mit Maske 0.0.0.0 und einen nächsten Router. Gemeint ist: „alles, wofür es keine genauere Route gibt“. In <code>show ip route</code> steht der Eintrag <b>S*</b> und „Gateway of last resort is …“ mit der WAN-IP der Gegenseite.</dd>
+</dl>
+<table>
+  <tr><th>Ziel</th><th>TTL der Antwort</th><th>Erklärung</th></tr>
+  <tr><td>PC-FO-2</td><td>128</td><td>Startwert von Windows, kein Router dazwischen</td></tr>
+  <tr><td>RT-LAGER</td><td>254</td><td>Cisco startet mit 255, RT-FO zieht 1 ab</td></tr>
+  <tr><td>PC-LAGER-1</td><td>126</td><td>Startwert 128, zwei Router ziehen je 1 ab</td></tr>
+</table>
+<p class="muted">Schluss: Jeder Router zieht 1 ab. Die TTL verrät also den Startwert (Betriebssystem, vgl. Bonus-Akte E2) und die Anzahl der Router. In Wireshark: IP-Header, Feld „Time to Live“ der Antwort.</p>
+<dl class="antw">
+  <dt><code>tracert</code></dt>
+  <dd>192.168.50.1 → 192.168.60.254 → 192.168.60.11. RT-LAGER antwortet mit der Adresse der Schnittstelle, über die seine Meldung zum Absender zurückgeht. Das ist seine WAN-Schnittstelle, nicht sein LAN.</dd>
+  <dt>Firewall-Versuch</dt>
+  <dd><code>tracert</code> zeigt Hop 1 und 2, dann nur noch <code>*</code>. <code>ping</code> meldet Zeitüberschreitung. Weg, Routen und Router funktionieren, also liegt das Problem nicht auf L1–L3 der Strecke. Der Ziel-PC selbst verwirft die Anfrage. <code>show arp</code> auf RT-LAGER zeigt seine MAC-Adresse weiterhin.</dd>
+</dl>
+
+<h3>Phase 5 · Was weiß das Gerät?</h3>
+<table>
+  <tr><th style="width:23%">Befehl</th><th style="width:15%">Gerät</th><th>Was steht drin?</th><th style="width:22%">Schicht</th></tr>
+  <tr><td><code>show mac address-table</code></td><td>SW-LAGER</td><td>MAC-Adresse ↔ Port (und VLAN 1)</td><td>L2</td></tr>
+  <tr><td><code>show arp</code></td><td>RT-FO</td><td>IP-Adresse ↔ MAC-Adresse, mit Alter und Schnittstelle</td><td>L2 wie im Spiel (verbindet L3 mit L2, mit Begründung auch L3)</td></tr>
+  <tr><td><code>show ip route</code></td><td>RT-LAGER</td><td>Zielnetz ↔ nächster Router bzw. Schnittstelle (C, S*)</td><td>L3</td></tr>
+  <tr><td><code>show ip dhcp binding</code></td><td>RT-FO</td><td>vergebene Adresse ↔ Client-ID, Ablauf der Lease</td><td>L7 (DHCP, wie im Spiel)</td></tr>
+  <tr><td><code>show interfaces …</code></td><td>beide Router</td><td>Status, Geschwindigkeit, Duplex, Fehlerzähler</td><td>L1 (CRC-Fehler betreffen die FCS im Trailer, also L2)</td></tr>
+</table>
+<table>
+  <tr><th style="width:10%">Schicht</th><th style="width:30%">Gerät und Befehl</th><th>Was würde auffallen? (Beispiele)</th></tr>
+  <tr><td>L1</td><td>Switch: <code>show interfaces</code> bzw. <code>show ip interface brief</code></td><td>ein Port aktiv, der laut Patchplan frei sein müsste, ggf. mit anderer Geschwindigkeit</td></tr>
+  <tr><td>L2</td><td>Switch: <code>show mac address-table</code>, Router: <code>show arp</code></td><td>unbekannte MAC-Adresse an einem Port, fremder Hersteller (OUI); zwei IP-Adressen mit derselben MAC</td></tr>
+  <tr><td>L3</td><td>PC: <code>ipconfig /all</code>, <code>tracert</code>; Router: <code>show ip dhcp binding</code></td><td>falscher DHCP-Server oder falsches Gateway; Adresse, die der eigene DHCP-Server nicht vergeben hat; zusätzlicher Hop</td></tr>
+</table>
+
+<h2 class="bruch">Musterlösung (CLI)</h2>
+<p class="muted">Schnittstellen hier als <code>&lt;LAN&gt;</code> und <code>&lt;WAN&gt;</code>, je nach Gerät z. B. <code>FastEthernet0/0</code> oder <code>GigabitEthernet0/1</code>. Vorher jeweils Werkszustand: <code>enable</code>, <code>erase startup-config</code>, an Switches zusätzlich <code>delete vlan.dat</code>, dann <code>reload</code> und den Einrichtungsdialog mit <code>no</code> überspringen.</p>
+<div class="cols">
+<div>
+<h3>RT-FO</h3>
+<pre>enable
+configure terminal
+hostname RT-FO
+no ip domain-lookup
+interface &lt;LAN&gt;
+ ip address 192.168.50.1 255.255.255.0
+ no shutdown
+ exit
+interface &lt;WAN&gt;
+ ip address 192.168.60.253 255.255.255.252
+ clock rate 64000   ! nur seriell, nur am DCE-Ende
+ no shutdown
+ exit
+ip dhcp excluded-address 192.168.50.1 192.168.50.99
+ip dhcp pool FO-LAN
+ network 192.168.50.0 255.255.255.0
+ default-router 192.168.50.1
+ exit
+ip route 0.0.0.0 0.0.0.0 192.168.60.254
+end
+copy running-config startup-config</pre>
+<h3>SW-FO</h3>
+<pre>enable
+configure terminal
+hostname SW-FO
+no ip domain-lookup
+interface vlan 1
+ ip address 192.168.50.2 255.255.255.0
+ no shutdown
+ exit
+ip default-gateway 192.168.50.1
+end
+copy running-config startup-config</pre>
+</div>
+<div>
+<h3>RT-LAGER</h3>
+<pre>enable
+configure terminal
+hostname RT-LAGER
+no ip domain-lookup
+interface &lt;LAN&gt;
+ ip address 192.168.60.1 255.255.255.192
+ no shutdown
+ exit
+interface &lt;WAN&gt;
+ ip address 192.168.60.254 255.255.255.252
+ clock rate 64000   ! nur seriell, nur am DCE-Ende
+ no shutdown
+ exit
+ip route 0.0.0.0 0.0.0.0 192.168.60.253
+end
+copy running-config startup-config</pre>
+<h3>SW-LAGER</h3>
+<pre>enable
+configure terminal
+hostname SW-LAGER
+no ip domain-lookup
+interface vlan 1
+ ip address 192.168.60.2 255.255.255.192
+ no shutdown
+ exit
+ip default-gateway 192.168.60.1
+end
+copy running-config startup-config</pre>
+</div>
+</div>
+<p><b>PCs:</b> PC-FO-1/2 auf „automatisch“. PC-LAGER-1: 192.168.60.11, Maske 255.255.255.192, Gateway 192.168.60.1; PC-LAGER-2 entsprechend .12. Einen DNS-Server braucht das Labor nicht.</p>
+
+<h2>Zusatz: Kalle versteckt ein Fremdgerät</h2>
+<p>Nur aus Ermittlersicht: Die Lernenden finden und belegen, sie bauen nichts. Die Lehrkraft konfiguriert einen dritten Router vorab und schließt ihn ohne Ankündigung an einen freien Port von SW-FO an. Die PCs der Zentrale fordern dann neue Adressen an (<code>ipconfig /release</code>, <code>/renew</code>), bis einer das Gateway .66 bekommt.</p>
+<div class="cols">
+<div>
+<pre>enable
+configure terminal
+hostname FREMDGERAET
+no ip domain-lookup
+interface &lt;LAN&gt;
+ ip address 192.168.50.66 255.255.255.0
+ no ip redirects
+ no shutdown
+ exit
+ip dhcp excluded-address 192.168.50.1 192.168.50.149
+ip dhcp excluded-address 192.168.50.200 192.168.50.254
+ip dhcp ping packets 0
+ip dhcp pool FREMD
+ network 192.168.50.0 255.255.255.0
+ default-router 192.168.50.66
+ exit
+ip route 0.0.0.0 0.0.0.0 192.168.50.1
+end</pre>
+</div>
+<div>
+<ul>
+  <li><b>Getrennte Bereiche</b> (.150–.199), damit keine doppelten Adressen entstehen. Wie im Simulationsnetz von E3.</li>
+  <li><code>ip dhcp ping packets 0</code>: Ein Cisco-DHCP-Server prüft ab Werk per Ping, ob eine Adresse frei ist, bevor er sie anbietet. Ohne diese Prüfung antwortet das Fremdgerät schneller, und sein Offer gewinnt meist.</li>
+  <li><code>no ip redirects</code>: Sonst schickt das Fremdgerät den PCs ICMP-Redirects zum echten Gateway, und der Extra-Hop in <code>tracert</code> verschwindet.</li>
+  <li><b>Erwartete Belege:</b> zwei Offers mit Server-Kennung .1 und .66 in Wireshark · <code>ipconfig /all</code>: DHCP-Server und Gateway 192.168.50.66 · <code>show ip dhcp binding</code> auf RT-FO kennt die Adresse des betroffenen PCs nicht · <code>arp -a</code> → MAC von .66 → <code>show mac address-table</code> auf SW-FO → Port · <code>tracert</code> an PC-LAGER-1: .66 → .50.1 → .60.254 → Ziel.</li>
+  <li>Danach Fremdgerät abziehen, betroffene PCs <code>/release</code> und <code>/renew</code>.</li>
+</ul>
+</div>
+</div>
+
+<h2 class="bruch">Typische Fehlerbilder</h2>
+<table>
+  <tr><th style="width:38%">Beobachtung</th><th>Ursache und Lösung</th></tr>
+  <tr><td>Konsole bleibt leer</td><td>Falscher COM-Port, Treiber des USB-Konsolenkabels fehlt (kommt meist per Windows Update, also nur mit Internet), Geschwindigkeit nicht 9600, Kabel am falschen Anschluss. Enter drücken.</td></tr>
+  <tr><td>Gerät fragt nach unbekanntem Passwort</td><td>Konfiguration einer früheren Gruppe. Passwort-Wiederherstellung nach Herstelleranleitung durch die Lehrkraft.</td></tr>
+  <tr><td>„Translating …“ und lange Wartezeit nach Tippfehler</td><td>IOS hält das Wort für einen Hostnamen. Abbrechen mit Strg+Umschalt+6, vorbeugend <code>no ip domain-lookup</code>.</td></tr>
+  <tr><td>Schnittstelle „administratively down“</td><td>Router-Schnittstellen sind ab Werk aus: <code>no shutdown</code>. Am Switch ebenso bei <code>interface vlan 1</code>.</td></tr>
+  <tr><td>WAN-Verbindung „down / down“</td><td>L1: Kabel, Port. Ethernet: Ältere Router ohne Auto-MDIX brauchen ein Cross-Over-Kabel.</td></tr>
+  <tr><td>Serielle WAN-Verbindung „up / down“</td><td>Kein Takt. <code>show controllers serial …</code> zeigt die DCE-Seite, dort <code>clock rate 64000</code>. Melden beide Seiten DTE, sind zwei DTE-Kabelenden verbunden. Seltener: unterschiedliche Kapselung aus einer alten Konfiguration (<code>encapsulation hdlc</code> auf beiden Seiten).</td></tr>
+  <tr><td>PC bekommt 169.254.x.x</td><td>Kein DHCP-Server erreichbar: Pool fehlt, LAN-Schnittstelle von RT-FO aus, falsche Netzwerkkarte am PC.</td></tr>
+  <tr><td>PC behält eine Adresse aus dem Schulnetz</td><td>WLAN noch an oder falscher Adapter. <code>ipconfig /all</code> zeigt beide.</td></tr>
+  <tr><td>Ping im eigenen Netz geht nicht, <code>arp -a</code> kennt die MAC</td><td>Firewall des Ziels. Echo-Regel für das falsche Profil aktiviert (es gibt sie dreimal).</td></tr>
+  <tr><td>„Zielnetz nicht erreichbar“</td><td>Der eigene Router hat keine Route zum Ziel.</td></tr>
+  <tr><td>„Zeitüberschreitung“ über die WAN-Verbindung, Router untereinander erreichbar</td><td>Die Route der <b>Gegenseite</b> fehlt (Rückweg). Oder die Firewall des Ziel-PCs.</td></tr>
+  <tr><td>Ping an eine Adresse außerhalb des Labors (z. B. 8.8.8.8) meldet „TTL abgelaufen“</td><td>Erwartbar: Jeder Router schickt Unbekanntes per Standardroute zum anderen, das Paket kreist, bis die TTL abläuft. Guter Anlass für die Frage, warum man in echten Netzen genauere Routen braucht.</td></tr>
+  <tr><td>Switch nur aus dem eigenen LAN erreichbar</td><td><code>ip default-gateway</code> fehlt.</td></tr>
+  <tr><td>Wireshark zeigt kein DHCP</td><td>Falsche Schnittstelle gewählt, Mitschnitt zu spät gestartet.</td></tr>
+  <tr><td>MAC-Adresstabelle leer</td><td>Kein Verkehr in den letzten Minuten (Einträge altern nach etwa 5 Minuten).</td></tr>
+</table>
+
+<h2>Abschluss</h2>
+<ul>
+  <li>Phase 6 kontrollieren: Geräte im Werkszustand, IP-Konfiguration der Lernenden-Rechner wieder automatisch, Firewall-Regel deaktiviert, WLAN an.</li>
+  <li><code>erase startup-config</code> lässt auf Catalyst-Switches die VLAN-Datenbank (<code>vlan.dat</code>) stehen. Deshalb löschen die Lernenden sie in Phase 0 und 6 zusätzlich mit <code>delete vlan.dat</code>. Das ist wichtig, wenn andere Klassen die Switches für VLANs nutzen. VLAN 1 lässt sich ohnehin nicht löschen, Reste schaden diesem Auftrag also kaum. Sauber ist es trotzdem.</li>
+</ul>
+
+</body>
+</html>

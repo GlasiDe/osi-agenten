@@ -12,6 +12,9 @@ Namensnennung bei Weitergabe: **„OSI-Agenten · Operation Lohnzettel“ von Ch
 ## Hinweis zu den Illustrationen
 Die Bilder in `quellbilder/` und `spiel/img/` wurden mit einem KI-Bildmodell erzeugt (**FLUX.2 [klein] 9B** von Black Forest Labs, lokal über ComfyUI) und vom Autor vor der Veröffentlichung geprüft und ausgewählt. Die Modell-Lizenz (FLUX Non-Commercial License) gilt für das Modell. An den erzeugten Bildern beansprucht Black Forest Labs keine Rechte. Die Bilder dürfen nicht zum Training konkurrierender Bildmodelle verwendet werden. Ob rein KI-generierte Bilder urheberrechtlich geschützt sind, ist rechtlich nicht abschließend geklärt. Die CC-Lizenz gilt für sie, soweit ein Schutz besteht.
 
+## Ausnahme: Cisco-Icons
+Die Netzwerk-Icons in `lehrkraft/quellen/cisco/` und in den daraus erzeugten PDFs (Topologie der Laboraufträge) stammen aus den [Cisco Network Topology Icons](https://www.cisco.com/c/en/us/about/brand-center/network-topology-icons.html). Sie stehen **nicht** unter CC BY-SA. Cisco erlaubt: „You may use them freely, but you may not alter them.“ Die Icons sind nur ins SVG-Format übertragen, Form und Farbe sind unverändert. Wer das Material bearbeitet, verwendet sie unverändert weiter oder ersetzt sie durch eigene.
+
 Alle Personen, Firmen, Schulen, Adressen und Kontodaten im Spiel sind frei erfunden.
 
 ---

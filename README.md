@@ -30,6 +30,8 @@ Alle Unterlagen liegen als druckfertige A4-PDFs in [`lehrkraft/`](lehrkraft/):
 | `Loesungen_und_Debriefing.pdf` | alle Lösungen (automatisch aus den Spielinhalten erzeugt) und Debriefing-Impulse je Einsatz |
 | `Inhaltsuebersicht_Einsaetze.pdf` | Fachinhalt und Handlung je Einsatz |
 | `Mindestanforderungen_Vorwissen.pdf` | vorausgesetztes Vorwissen und Vorab-Check |
+| `Laborauftrag_Aussenlager.pdf` | Laborauftrag für Lernende, die mit dem Spiel fertig sind: Labornetz aus Cisco-Routern und -Switches, mit Protokoll, Befehlsreferenz und Hilfekarten |
+| `Laborauftrag_Aussenlager_Lehrkraft.pdf` | Material, Vorbereitung, Adressplan, erwartete Antworten, Musterlösung und Fehlerbilder zum Laborauftrag |
 | `Offene_Aufgaben_Lehrkraft.pdf` | Ideen für Packet-Tracer-Außeneinsätze und weiteres Material |
 
 ### Lehrkraft-Modus

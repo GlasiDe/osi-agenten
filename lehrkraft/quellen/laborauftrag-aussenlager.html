@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<title>OSI-Agenten – Laborauftrag „Außenlager“</title>
+<style>
+  @page { size: A4; margin: 12mm 14mm; }
+  body { font: 10pt/1.4 "Segoe UI", Arial, sans-serif; color: #111; margin: 0; }
+  img { filter: grayscale(1); }
+  .head { display: flex; align-items: center; gap: 5mm; border: 2px solid #111; border-radius: 3mm; padding: 3mm 5mm; }
+  .head img { width: 22mm; height: 22mm; border-radius: 50%; object-fit: cover; object-position: top; border: 2px solid #111; }
+  .head h1 { margin: 0; font-size: 19pt; }
+  .head div.s { color: #444; font-size: 9.5pt; }
+  h2 { font-size: 13pt; margin: 5mm 0 2mm; border-bottom: 2px solid #111; padding-bottom: 1mm; }
+  h2 .t { float: right; font-size: 9pt; font-weight: normal; color: #444; padding-top: 1.5mm; }
+  h3 { font-size: 10.5pt; margin: 3mm 0 1mm; }
+  p { margin: 1.5mm 0; }
+  ul, ol { margin: 1mm 0; padding-left: 6mm; }
+  li { margin: 0.6mm 0; }
+  .brief { border: 1px solid #111; border-left: 5px solid #111; padding: 2.5mm 4mm; margin: 3mm 0; }
+  .brief .von { font-size: 9pt; color: #444; margin-bottom: 1mm; }
+  .hinweis { border: 1px dashed #111; padding: 2mm 4mm; margin: 2.5mm 0; }
+  .hinweis::before { content: "⚠ "; font-weight: 700; }
+  .labor { border: 1px solid #111; background: #f0f0f0; padding: 2mm 4mm; margin: 2.5mm 0; }
+  .labor b.k { display: block; }
+  .ziel { font-weight: 600; }
+  code { background: #eee; padding: 0 1mm; border-radius: 1mm; font-family: Consolas, monospace; font-size: 9.3pt; }
+  table { border-collapse: collapse; width: 100%; margin: 2mm 0; }
+  th, td { border: 1px solid #555; padding: 1.2mm 2mm; text-align: left; vertical-align: top; font-size: 9.3pt; }
+  th { background: #e6e6e6; }
+  td.f { height: 6.5mm; }
+  .frage { margin: 2mm 0 0; }
+  .frage::before { content: "✎ "; }
+  .zeilen { border-bottom: 1px solid #888; height: 6.5mm; }
+  .zeilen + .zeilen { margin-top: 0; }
+  .zeichen { display: flex; gap: 6mm; margin-top: 2mm; font-size: 9pt; }
+  .zeichen span { flex: 1; border-bottom: 1px solid #111; padding-top: 6mm; }
+  .notizen { font-size: 8.5pt; color: #333; margin-top: 2mm; }
+  .notizen span { display: inline-block; border-bottom: 1px solid #888; width: 60mm; }
+  .bruch { break-before: page; }
+  h2, h3, .frage, .ziel { break-after: avoid; }
+  .labor, .hinweis, .brief, table, ol { break-inside: avoid; }
+  .muted { color: #555; font-size: 8.8pt; }
+  svg { width: 100%; height: auto; display: block; margin: 2mm 0; }
+  svg text { font-family: "Segoe UI", Arial, sans-serif; }
+  /* Befehlsreferenz */
+  .ref th, .ref td { padding: 0.6mm 2mm; font-size: 8.8pt; line-height: 1.3; }
+  .ref table td:first-child { width: 38%; font-family: Consolas, monospace; font-size: 8.5pt; }
+  .ref table th:nth-child(n+3), .ref table td:nth-child(n+3) { width: 8%; padding: 0.8mm 1mm; text-align: center; font-weight: 700; }
+  .ref h3 { margin-top: 2.5mm; }
+  .ref .modus { font-family: Consolas, monospace; background: #e6e6e6; padding: 0 1.5mm; }
+  /* Kalles Notizen */
+  .karten { display: grid; grid-template-columns: 1fr 1fr; gap: 0; }
+  .karte { border: 1px dashed #555; padding: 3mm 4mm; height: 62mm; box-sizing: border-box; break-inside: avoid; position: relative; }
+  .karte .kopf { display: flex; align-items: center; gap: 2.5mm; border-bottom: 1px solid #111; padding-bottom: 1.5mm; margin-bottom: 1.5mm; }
+  .karte .kopf img { width: 9mm; height: 9mm; border-radius: 50%; object-fit: cover; object-position: top; }
+  .karte .kopf b { font-size: 9.5pt; display: block; }
+  .karte .kopf small { font-size: 8pt; color: #444; }
+  .karte .stufe { position: absolute; top: 3mm; right: 4mm; border: 1.5px solid #111; border-radius: 1mm; font-size: 8pt; font-weight: 700; padding: 0 1.5mm; }
+  .karte p { font-size: 9pt; margin: 1mm 0; }
+</style>
+</head>
+<body>
+
+<div class="head"><img src="../../spiel/img/brandt.jpg" alt=""><div><h1>Laborauftrag „Außenlager“</h1><div class="s">OSI-Agenten · nach Operation Lohnzettel · für alle, die den Fall abgeschlossen haben · 3–4 Unterrichtsstunden, Gruppen bis 4 Personen</div></div></div>
+
+<div class="brief">
+  <div class="von">Von: T. Brandt, IT-Leitung Falkenrath &amp; Oltmanns Logistik GmbH · An: Einheit 7, z. H. Kalle</div>
+  <p>Nach dem Fall hat F&amp;O eine Lagerhalle im Gewerbegebiet angemietet: unser neues <b>Außenlager</b>. Es bekommt ein eigenes kleines Netz für Scanner, Drucker und ein paar PCs und wird über eine eigene WAN-Verbindung mit der Zentrale verbunden. In der Zentrale soll diesmal der Router die Adressen verteilen, im Lager vergeben wir sie von Hand.</p>
+  <p>Bevor wir das bei uns in Betrieb nehmen, möchte ich es vorher sauber aufgebaut und getestet sehen. Kalle sagt, Ihre Agentinnen und Agenten kennen unser Netz inzwischen besser als manche meiner Leute. Bitte bauen Sie das in Kalles Labor mit echten Geräten nach und halten Sie fest, was Sie dabei beobachten.</p>
+</div>
+
+<h2>Euer Labornetz</h2>
+<svg viewBox="0 0 720 260" role="img" aria-label="Aufbau: zwei PCs an SW-FO an RT-FO, WAN-Verbindung zu RT-LAGER, SW-LAGER mit zwei PCs">
+  <defs><style>.k{stroke:#111;stroke-width:2}.l{stroke:#111;stroke-width:4;stroke-dasharray:10 5}.n{font-size:13px;font-weight:700}.a{font-size:11.5px}.z{fill:none;stroke:#555;stroke-width:1.2;stroke-dasharray:4 3}</style></defs>
+  <rect class="z" x="6" y="6" width="300" height="248" rx="10"/>
+  <rect class="z" x="414" y="6" width="300" height="248" rx="10"/>
+  <text class="n" x="16" y="26" text-anchor="start">Zentrale F&amp;O · LAN A</text>
+  <text class="a" x="16" y="42" text-anchor="start">192.168.50.0/24 · automatisch (DHCP vom Router)</text>
+  <text class="n" x="704" y="26" text-anchor="end">Außenlager · LAN B</text>
+  <text class="a" x="704" y="42" text-anchor="end">Netz: ____________ /____ · manuell</text>
+  <line class="k" x1="53" y1="98" x2="152" y2="144"/><line class="k" x1="53" y1="182" x2="152" y2="144"/>
+  <line class="k" x1="152" y1="144" x2="250" y2="144"/>
+  <line class="l" x1="279" y1="144" x2="441" y2="144"/>
+  <line class="k" x1="470" y1="144" x2="568" y2="144"/>
+  <line class="k" x1="663" y1="98" x2="568" y2="144"/><line class="k" x1="663" y1="182" x2="568" y2="144"/>
+  <image href="cisco/workstation.svg" x="30" y="64" width="46" height="37"/>
+  <image href="cisco/workstation.svg" x="30" y="176" width="46" height="37"/>
+  <image href="cisco/workgroup-switch.svg" x="120" y="128" width="64" height="33"/>
+  <image href="cisco/router.svg" x="221" y="124" width="58" height="40"/>
+  <image href="cisco/router.svg" x="441" y="124" width="58" height="40"/>
+  <image href="cisco/workgroup-switch.svg" x="536" y="128" width="64" height="33"/>
+  <image href="cisco/workstation.svg" x="640" y="64" width="46" height="37"/>
+  <image href="cisco/workstation.svg" x="640" y="176" width="46" height="37"/>
+  <text class="n" x="53" y="59" text-anchor="middle">PC-FO-1</text>
+  <text class="n" x="53" y="230" text-anchor="middle">PC-FO-2</text>
+  <text class="n" x="663" y="59" text-anchor="middle">PC-LAGER-1</text>
+  <text class="n" x="663" y="230" text-anchor="middle">PC-LAGER-2</text>
+  <text class="n" x="152" y="178" text-anchor="middle">SW-FO</text>
+  <text class="n" x="568" y="178" text-anchor="middle">SW-LAGER</text>
+  <text class="n" x="250" y="182" text-anchor="middle">RT-FO</text>
+  <text class="n" x="470" y="182" text-anchor="middle">RT-LAGER</text>
+  <text class="n" x="360" y="132" text-anchor="middle">WAN-Verbindung</text>
+  <text class="a" x="360" y="164" text-anchor="middle">__________ /___</text>
+  <text class="a" x="250" y="198" text-anchor="middle">LAN: 192.168.50.1</text>
+  <text class="a" x="470" y="198" text-anchor="middle">LAN: ____________</text>
+</svg>
+<p class="muted" style="text-align:right;margin-top:0">Netzwerk-Icons: Cisco Network Topology Icons, unverändert</p>
+<p class="muted">Die vier PCs sind eure eigenen Rechner. Die WAN-Verbindung zwischen den Routern ist im Labor ein einzelnes Kabel, je nach Ausstattung ein Netzwerkkabel oder ein serielles Kabel. Auf jeder Seite arbeitet am besten ein Paar.</p>
+
+<h2>So läuft der Auftrag</h2>
+<ul>
+  <li><b>Sieben Phasen</b> (0–6). Jede nennt ein Ziel. Die Befehle stehen in der <b>Befehlsreferenz</b> am Ende. Welchen ihr braucht, findet ihr selbst heraus.</li>
+  <li><b>Protokoll:</b> Alles mit ✎ beantwortet ihr direkt auf diesen Blättern. Es gibt keine Note, aber Brandt will Belege, keine Vermutungen.</li>
+  <li><b>Kalles Notizen:</b> Hängt ihr fest, fragt eure Lehrkraft nach einer Notiz zu eurem Problem. Es gibt sie in Stufen: erst ein Denkanstoß, dann der konkrete Weg. Notiert euch, welche ihr gebraucht habt.</li>
+  <li><b>Sichern:</b> Nach jeder größeren Änderung an einem Cisco-Gerät die laufende Konfiguration als Startkonfiguration sichern (Befehlsreferenz). Dann kostet euch ein Neustart oder Stromausfall nichts, und der Aufbau kann zwischen den Stunden stehen bleiben.</li>
+  <li><b>Fehler gehören dazu.</b> An echten Geräten klappt selten alles beim ersten Mal. Fehlersuche Schicht für Schicht ist genau das, was ihr im Fall geübt habt.</li>
+</ul>
+<div class="hinweis"><b>Das Labornetz bleibt für sich.</b> Kein Kabel in eine Netzwerkdose der Schule, kein WLAN während des Auftrags. RT-FO verteilt Adressen per DHCP. Im Schulnetz wäre er selbst ein Fremdgerät wie der Pi bei F&amp;O. Haltet euch außerdem an die IT-Sicherheitsvorgaben eurer Schule für eigene Geräte.</div>
+
+<h2 class="bruch">Phase 0 · Vorbereitung</h2>
+<p class="ziel">Ziel: Eure Rechner sind bereit, ihr seid über die Konsole auf jedem Gerät, und alle Geräte sind im Werkszustand.</p>
+<h3>A · Solange ihr noch Internet habt (am besten schon vor dem Labortag)</h3>
+<ol>
+  <li><b>Terminalprogramm</b> installieren, z. B. PuTTY.</li>
+  <li><b>Wireshark</b> installieren, falls ihr es noch nicht habt (mit Npcap, sonst kann es nicht mitschneiden).</li>
+  <li><b>Konsolenkabel</b> einmal einstecken, solange der Rechner online ist. Windows holt den Treiber meist automatisch über Windows Update. Prüft im Geräte-Manager unter <b>Anschlüsse (COM &amp; LPT)</b>, ob ein COM-Port erscheint. Wenn nicht: Treiber beim Hersteller des Chips im Kabel laden (häufig FTDI).</li>
+  <li>Braucht ihr eine <b>USB-Netzwerkkarte</b>, diese ebenso einmal einstecken.</li>
+</ol>
+<h3>B · Im Labor</h3>
+<ol>
+  <li><b>WLAN aus.</b> Sonst gibt es zwei Standardgateways, und eure Messungen landen zum Teil im Schulnetz.</li>
+  <li>Netzwerkkabel (oder USB-Netzwerkkarte) zum Switch eurer Seite stecken.</li>
+  <li><b>Ping erlauben:</b> Windows beantwortet Pings ab Werk nicht. Schaut zuerst nach, welches <b>Netzwerkprofil</b> (Privat, Öffentlich oder Domäne) Windows dem Labornetz gegeben hat. Aktiviert dann in der Windows-Defender-Firewall unter den <b>erweiterten Einstellungen → eingehende Regeln</b> die Regel <i>„Datei- und Druckerfreigabe (Echoanforderung – ICMPv4 eingehend)“</i>, und zwar <b>nur für dieses Profil</b>. Die Firewall selbst bleibt an.</li>
+  <li>Konsolenkabel an den Router bzw. Switch, Terminalprogramm öffnen.</li>
+  <li>Jedes Gerät eurer Seite auf den <b>Werkszustand</b> setzen und neu starten, Switches einschließlich ihrer VLAN-Datenbank. Den Einrichtungsdialog nach dem Neustart überspringt ihr.</li>
+  <li>Am Router ablesen, wie seine Ethernet-Schnittstellen heißen, und eintragen:</li>
+</ol>
+<table>
+  <tr><th>Gerät</th><th>Schnittstelle zum LAN</th><th>Schnittstelle zur WAN-Verbindung</th></tr>
+  <tr><td>RT-FO</td><td class="f"></td><td class="f"></td></tr>
+  <tr><td>RT-LAGER</td><td class="f"></td><td class="f"></td></tr>
+</table>
+<p class="frage">Welches Netzwerkprofil hatte euer Labor-Anschluss, und warum hat Windows wohl dieses gewählt?</p>
+<div class="zeilen"></div><div class="zeilen"></div>
+<p class="frage">Ihr habt eben die Startkonfiguration gelöscht. Was passiert bei einem Stromausfall mit allem, was ihr ab jetzt einstellt, wenn ihr es nicht sichert?</p>
+<div class="zeilen"></div><div class="zeilen"></div>
+
+<h2>Phase 1 · Adressplan</h2>
+<p class="ziel">Ziel: Ein vollständiger Adressplan für Außenlager und WAN-Verbindung, abgezeichnet von eurer Lehrkraft, bevor ihr konfiguriert.</p>
+<p>Brandts Vorgaben: Das Außenlager braucht Platz für <b>bis zu 50 Geräte</b>, die WAN-Verbindung genau <b>zwei Adressen</b> (ein so kleines Netz nur zwischen zwei Routern heißt auch <b>Transfernetz</b>). Beide Netze kommen aus dem Block <b>192.168.60.0/24</b>, jeweils so klein wie möglich: das Lager <b>ganz vorn</b> im Block, die WAN-Verbindung <b>ganz hinten</b>. Router bekommen jeweils die erste nutzbare Adresse ihres LANs.</p>
+<table>
+  <tr><th></th><th>Netzadresse / Präfix</th><th>Subnetzmaske</th><th>erste nutzbare</th><th>letzte nutzbare</th><th>Broadcast</th><th style="width:6%">✓</th></tr>
+  <tr><td><b>LAN A</b> (Zentrale)</td><td>192.168.50.0/24</td><td>255.255.255.0</td><td>192.168.50.1</td><td>192.168.50.254</td><td>192.168.50.255</td><td></td></tr>
+  <tr><td><b>LAN B</b> (Lager)</td><td class="f"></td><td></td><td></td><td></td><td></td><td></td></tr>
+  <tr><td><b>WAN-Verbindung</b></td><td class="f"></td><td></td><td></td><td></td><td></td><td></td></tr>
+</table>
+<table>
+  <tr><th>Gerät</th><th>Schnittstelle</th><th>IP-Adresse / Präfix</th><th>Standardgateway</th><th style="width:6%">✓</th></tr>
+  <tr><td>RT-FO</td><td>LAN A</td><td>192.168.50.1/24</td><td>–</td><td></td></tr>
+  <tr><td>RT-FO</td><td>WAN-Verbindung</td><td class="f"></td><td>–</td><td></td></tr>
+  <tr><td>SW-FO</td><td>Verwaltung</td><td class="f"></td><td></td><td></td></tr>
+  <tr><td>PC-FO-1, PC-FO-2</td><td>Ethernet</td><td>per DHCP ab 192.168.50.100</td><td>per DHCP</td><td></td></tr>
+  <tr><td>RT-LAGER</td><td>WAN-Verbindung</td><td class="f"></td><td>–</td><td></td></tr>
+  <tr><td>RT-LAGER</td><td>LAN B</td><td class="f"></td><td>–</td><td></td></tr>
+  <tr><td>SW-LAGER</td><td>Verwaltung</td><td class="f"></td><td></td><td></td></tr>
+  <tr><td>PC-LAGER-1</td><td>Ethernet</td><td class="f"></td><td></td><td></td></tr>
+  <tr><td>PC-LAGER-2</td><td>Ethernet</td><td class="f"></td><td></td><td></td></tr>
+</table>
+<p class="frage">In LAN A gibt es einen DHCP-Server. Warum bekommt SW-FO trotzdem eine feste Adresse, und wo im Netz muss sie liegen?</p>
+<div class="zeilen"></div><div class="zeilen"></div>
+<div class="zeichen"><span>Adressplan geprüft (Lehrkraft)</span></div>
+
+<h2>Phase 2 · Zentrale: Adressen automatisch</h2>
+<p class="ziel">Ziel: RT-FO verteilt im LAN A Adressen ab 192.168.50.100, PC-FO-1 und PC-FO-2 beziehen sie automatisch, und ihr habt den Ablauf in Wireshark mitgeschnitten.</p>
+<div class="labor"><b class="k">Kalles Laborhinweis</b>Bei F&amp;O verteilt eigentlich SRV-DC01 die Adressen. Im Labor gibt es keinen Server, deshalb übernimmt das hier RT-FO. Für die PCs macht das keinen Unterschied: DHCP ist DHCP, egal wer antwortet.</div>
+<ol>
+  <li>Hostname RT-FO setzen, LAN-Schnittstelle mit 192.168.50.1/24 konfigurieren und einschalten.</li>
+  <li>SW-FO: Hostname und <b>Verwaltungsadresse</b> mit Standardgateway laut Adressplan.</li>
+  <li>Auf RT-FO einen DHCP-Pool für LAN A einrichten: Gateway 192.168.50.1, vergeben wird erst ab .100.</li>
+</ol>
+<div class="labor"><b class="k">Kalles Laborhinweis</b>Ein Switch arbeitet auf L2 und braucht zum Weiterleiten keine IP-Adresse. Eine Adresse bekommt er nur, damit man ihn übers Netz verwalten und anpingen kann. Bei Cisco sitzt sie an der Schnittstelle <code>Vlan1</code>. Was ein VLAN ist, kommt später im Unterricht. Hier reicht: Das ist der Anschluss des Switches an sein eigenes Netz.</div>
+<ol start="4">
+  <li>Wireshark auf PC-FO-1 starten (richtige Netzwerkkarte!), dann die IP-Konfiguration von PC-FO-1 auf <b>automatisch</b> stellen bzw. eine neue Adresse anfordern.</li>
+  <li>PC-FO-2 ebenso auf automatisch stellen. Beide PCs pingen sich gegenseitig und RT-FO.</li>
+</ol>
+<p class="frage">Ordnet die vier DHCP-Nachrichten in eurem Mitschnitt: Name, Absender-IP, Ziel-IP.</p>
+<table>
+  <tr><th>Nr.</th><th>Nachricht</th><th>Absender-IP</th><th>Ziel-IP</th></tr>
+  <tr><td>1</td><td class="f"></td><td></td><td></td></tr>
+  <tr><td>2</td><td class="f"></td><td></td><td></td></tr>
+  <tr><td>3</td><td class="f"></td><td></td><td></td></tr>
+  <tr><td>4</td><td class="f"></td><td></td><td></td></tr>
+</table>
+<p class="frage">Warum hat die erste Nachricht genau diese Absender- und Ziel-IP?</p>
+<div class="zeilen"></div><div class="zeilen"></div>
+<p class="frage">Welche Optionen stehen im Offer von RT-FO? Nennt mindestens drei mit Wert. Wie lange gilt die Lease?</p>
+<div class="zeilen"></div><div class="zeilen"></div>
+<p class="frage">Vergleicht <code>ipconfig /all</code> auf PC-FO-1 mit dem, was RT-FO über seine vergebenen Adressen weiß. Woran erkennt ihr, dass es derselbe PC ist?</p>
+<div class="zeilen"></div><div class="zeilen"></div>
+
+<h2>Phase 3 · Außenlager: Adressen von Hand</h2>
+<p class="ziel">Ziel: Im LAN B haben RT-LAGER, SW-LAGER und beide PCs ihre Adresse aus eurem Adressplan, alle erreichen sich gegenseitig.</p>
+<ol>
+  <li>RT-LAGER: Hostname, LAN-Schnittstelle laut Adressplan, einschalten.</li>
+  <li>PC-LAGER-1 und PC-LAGER-2: IP-Adresse, Subnetzmaske und Standardgateway in den Windows-Einstellungen von Hand eintragen.</li>
+  <li>SW-LAGER: Hostname und <b>Verwaltungsadresse</b> mit Standardgateway, wie SW-FO in Phase 2.</li>
+</ol>
+<p class="frage">Was zeigt <code>ipconfig /all</code> auf PC-LAGER-1 bei „DHCP aktiviert“, und welche Zeilen fehlen im Vergleich zu PC-FO-1?</p>
+<div class="zeilen"></div><div class="zeilen"></div>
+<p class="frage">Wozu braucht SW-LAGER ein Standardgateway, obwohl er selbst gar nichts routet?</p>
+<div class="zeilen"></div><div class="zeilen"></div>
+
+<h2>Phase 4 · Die WAN-Verbindung</h2>
+<p class="ziel">Ziel: Jeder PC der Zentrale erreicht jeden PC im Lager und umgekehrt, und ihr könnt an den Routing-Tabellen erklären, warum.</p>
+<ol>
+  <li>Router mit dem Kabel für die WAN-Verbindung verbinden, WAN-Schnittstellen laut Adressplan konfigurieren. Prüft: RT-FO erreicht RT-LAGER über die WAN-Verbindung.</li>
+</ol>
+<div class="labor"><b class="k">Kalles Laborhinweis</b>Ist eure WAN-Verbindung <b>seriell</b>, überträgt sie die Bits im Takt. Den Takt gibt genau eine Seite vor, die <b>DCE</b>. Welche das ist, entscheidet das Kabel: Ein Ende ist DCE, das andere DTE. Fehlt der Takt, steht die Schnittstelle auf „up / down“. Welche Seite DCE ist und wie ihr den Takt einstellt, steht in der Befehlsreferenz.</div>
+<ol start="2">
+  <li>Von PC-FO-1 aus PC-LAGER-1 anpingen. Notiert, was passiert. Schaut euch dann die Routing-Tabelle von RT-FO an.</li>
+</ol>
+<p class="frage">Was meldet der Ping, und wer meldet es? Welche Netze kennt RT-FO, und woher (Kennbuchstabe)?</p>
+<div class="zeilen"></div><div class="zeilen"></div><div class="zeilen"></div>
+<ol start="3">
+  <li>Beide Router bekommen eine <b>Standardroute</b> zur Gegenseite. Aus Sicht von RT-FO liegt alles, was er nicht direkt kennt, hinter der WAN-Verbindung, und für RT-LAGER genauso. Erst RT-FO einrichten und den Ping wiederholen, dann RT-LAGER.</li>
+</ol>
+<p class="frage">Nach der ersten Route: Was hat sich am Ping geändert, und warum klappt es noch nicht?</p>
+<div class="zeilen"></div><div class="zeilen"></div>
+<p class="frage">Vergleicht die Standardroute von RT-LAGER mit <code>route print</code> auf einem PC. Was ist gleich?</p>
+<div class="zeilen"></div><div class="zeilen"></div>
+<p class="frage">Die TTL in der Antwort: Notiert sie für einen Ping von PC-FO-1 an PC-FO-2, an RT-LAGER und an PC-LAGER-1. Was schließt ihr daraus? Prüft eure Erklärung in Wireshark am IP-Header des Pakets.</p>
+<table>
+  <tr><th>Ziel</th><th>TTL der Antwort</th><th>Erklärung</th></tr>
+  <tr><td>PC-FO-2</td><td class="f"></td><td></td></tr>
+  <tr><td>RT-LAGER</td><td class="f"></td><td></td></tr>
+  <tr><td>PC-LAGER-1</td><td class="f"></td><td></td></tr>
+</table>
+<p class="frage"><code>tracert</code> von PC-FO-1 an PC-LAGER-1: Welche Adressen erscheinen? Warum steht für RT-LAGER nicht dessen LAN-Adresse?</p>
+<div class="zeilen"></div><div class="zeilen"></div>
+<p class="frage">Versuch: PC-LAGER-1 deaktiviert kurz seine Firewall-Regel aus Phase 0, PC-FO-1 macht <code>tracert</code> und <code>ping</code>. Was seht ihr, und auf welcher Schicht liegt das Problem <i>nicht</i>? Danach die Regel wieder aktivieren.</p>
+<div class="zeilen"></div><div class="zeilen"></div>
+
+<h2>Phase 5 · Was weiß das Gerät?</h2>
+<p class="ziel">Ziel: Ihr wisst, welche Tabellen Switch und Router führen, wie ihr sie anzeigt und auf welcher Schicht sie arbeiten.</p>
+<p>Sucht euch in der Befehlsreferenz die passenden <code>show</code>-Befehle. Erzeugt vorher etwas Verkehr (pingen), sonst sind manche Tabellen leer.</p>
+<table>
+  <tr><th style="width:23%">Befehl</th><th style="width:15%">Gerät</th><th>Was steht drin? (ein Eintrag als Beispiel)</th><th style="width:10%">Schicht</th></tr>
+  <tr><td class="f" style="height:11mm"></td><td>SW-LAGER</td><td>welche MAC-Adresse an welchem Port</td><td></td></tr>
+  <tr><td style="height:11mm"></td><td>RT-FO</td><td>welche IP-Adresse zu welcher MAC-Adresse gehört</td><td></td></tr>
+  <tr><td style="height:11mm"></td><td>RT-LAGER</td><td>über welches Gateway welches Netz erreichbar ist</td><td></td></tr>
+  <tr><td style="height:11mm"></td><td>RT-FO</td><td>welcher PC welche Adresse geliehen hat</td><td></td></tr>
+  <tr><td style="height:11mm"></td><td>beide Router</td><td>Status, Geschwindigkeit und Fehlerzähler einer Schnittstelle</td><td></td></tr>
+</table>
+<p class="frage">Brandt fragt: „Hätten wir den Pi damals schneller gefunden, wenn wir so in unsere Geräte geschaut hätten?“ Nennt für L1, L2 und L3 je eine Stelle in eurem Labornetz (Gerät und Befehl), an der ein Fremdgerät auffallen würde.</p>
+<table>
+  <tr><th style="width:10%">Schicht</th><th style="width:30%">Gerät und Befehl</th><th>Was würde auffallen?</th></tr>
+  <tr><td>L1</td><td class="f" style="height:9mm"></td><td></td></tr>
+  <tr><td>L2</td><td class="f" style="height:9mm"></td><td></td></tr>
+  <tr><td>L3</td><td class="f" style="height:9mm"></td><td></td></tr>
+</table>
+
+<h3>★ Zusatz, wenn Zeit bleibt: Kalle versteckt ein Fremdgerät</h3>
+<p>Meldet eurer Lehrkraft, dass ihr so weit seid. Kalle schließt irgendwann unbemerkt ein Gerät im LAN A an. Danach fordern die PCs der Zentrale neue Adressen an, so lange, bis einer nicht mehr das richtige Standardgateway bekommt.</p>
+<p class="ziel">Ziel: Findet das Fremdgerät und belegt es: welche Adresse, welcher Switchport, welche Folgen für die PCs.</p>
+<p class="frage">Eure Belege (Befehl bzw. Werkzeug → Befund):</p>
+<div class="zeilen"></div><div class="zeilen"></div><div class="zeilen"></div><div class="zeilen"></div>
+
+<h2>Phase 6 · Aufräumen</h2>
+<p class="ziel">Ziel: Die Geräte sind leer für die nächste Gruppe, und eure Rechner funktionieren wieder im Schulnetz.</p>
+<ol>
+  <li>Alle Cisco-Geräte auf den Werkszustand setzen und neu starten (wie in Phase 0).</li>
+  <li>IP-Konfiguration auf <b>beiden</b> Lager-PCs wieder auf <b>automatisch</b> stellen.</li>
+  <li>Firewall-Regel aus Phase 0 wieder <b>deaktivieren</b>, und zwar dieselbe, die ihr aktiviert habt.</li>
+  <li>WLAN wieder an, Kabel und Konsolenkabel zurück.</li>
+</ol>
+<p class="notizen">Benutzte Notizen von Kalle: <span></span></p>
+
+<div class="ref bruch">
+<h2>Befehlsreferenz</h2>
+<p class="muted">Platzhalter in spitzen Klammern ersetzt ihr, z. B. <code>&lt;Schnittstelle&gt;</code> durch <code>FastEthernet0/0</code>.</p>
+
+<h3>Windows · Eingabeaufforderung</h3>
+<table>
+  <tr><td>ipconfig /all</td><td>IP-Konfiguration mit MAC-Adresse, DHCP-Server und Lease</td></tr>
+  <tr><td>ipconfig /release</td><td>gibt die per DHCP bezogene Adresse zurück</td></tr>
+  <tr><td>ipconfig /renew</td><td>fordert per DHCP eine neue Adresse an</td></tr>
+  <tr><td>ping &lt;IP-Adresse&gt;</td><td>prüft, ob jemand antwortet; zeigt auch die TTL der Antwort</td></tr>
+  <tr><td>tracert -d &lt;IP-Adresse&gt;</td><td>alle Router auf dem Weg zum Ziel; <code>-d</code> spart die Namensauflösung</td></tr>
+  <tr><td>route print -4</td><td>Routing-Tabelle des PCs</td></tr>
+  <tr><td>arp -a</td><td>ARP-Cache: welche IP-Adresse zu welcher MAC-Adresse gehört</td></tr>
+</table>
+<p class="muted">IP-Adresse von Hand oder automatisch: Einstellungen → Netzwerk und Internet → Ethernet → IP-Zuweisung bearbeiten, oder klassisch <code>ncpa.cpl</code> → Adapter → Eigenschaften → Internetprotokoll, Version 4 (TCP/IPv4).</p>
+
+<h3>Wireshark</h3>
+<table>
+  <tr><td>dhcp</td><td>Filter: nur DHCP</td></tr>
+  <tr><td>icmp</td><td>Filter: nur Ping und <code>tracert</code></td></tr>
+  <tr><td>arp</td><td>Filter: nur ARP</td></tr>
+</table>
+<h3>Cisco IOS · Hilfe beim Tippen</h3>
+<table>
+  <tr><td>?</td><td>alle Befehle, die im aktuellen Modus möglich sind</td></tr>
+  <tr><td>sh?</td><td>alle Befehle, die mit diesen Buchstaben beginnen</td></tr>
+  <tr><td>show ?</td><td>alles, was nach diesem Wort folgen kann</td></tr>
+  <tr><td>Tab-Taste</td><td>ergänzt ein angefangenes Wort, sobald es eindeutig ist</td></tr>
+  <tr><td>Strg + Umschalt + 6</td><td>bricht ab, was gerade läuft, z. B. einen <code>ping</code>, einen <code>traceroute</code> oder das Nachschlagen eines vertippten Befehls</td></tr>
+</table>
+<p class="muted">Befehle dürfen abgekürzt werden, sobald sie eindeutig sind, z. B. <code>copy run start</code> für <code>copy running-config startup-config</code> oder <code>conf t</code>. Die Referenz schreibt sie immer aus. Vor dem Zeichen der Eingabeaufforderung steht der Gerätename, ab Werk <code>Router</code> bzw. <code>Switch</code>.</p>
+<h3>Cisco IOS · Zwischen den Modi wechseln</h3>
+<table>
+  <tr><th>Befehl</th><th>Bedeutung</th><th>Router</th><th>Switch</th></tr>
+  <tr><td>enable</td><td>vom Benutzermodus (<span class="modus">&gt;</span>) in den privilegierten Modus (<span class="modus">#</span>)</td><td>×</td><td>×</td></tr>
+  <tr><td>configure terminal</td><td>vom privilegierten Modus in den Konfigurationsmodus (<span class="modus">(config)#</span>)</td><td>×</td><td>×</td></tr>
+  <tr><td>exit</td><td>eine Ebene zurück, z. B. von der Schnittstelle in den Konfigurationsmodus</td><td>×</td><td>×</td></tr>
+  <tr><td>end</td><td>aus jeder Konfigurationsebene zurück in den privilegierten Modus</td><td>×</td><td>×</td></tr>
+</table>
+<h3><span class="modus">#</span> Privilegierter Modus (anzeigen, sichern, löschen)</h3>
+<table>
+  <tr><th>Befehl</th><th>Bedeutung</th><th>Router</th><th>Switch</th></tr>
+  <tr><td>show running-config</td><td>die laufende Konfiguration (im Arbeitsspeicher)</td><td>×</td><td>×</td></tr>
+  <tr><td>show ip interface brief</td><td>alle Schnittstellen mit IP-Adresse und Status (Status = L1, Protocol = L2)</td><td>×</td><td>×</td></tr>
+  <tr><td>show interfaces &lt;Schnittstelle&gt;</td><td>eine Schnittstelle im Detail: Geschwindigkeit, Duplex, Fehlerzähler</td><td>×</td><td>×</td></tr>
+  <tr><td>show ip route</td><td>Routing-Tabelle (C = direkt verbunden, S* = Standardroute)</td><td>×</td><td></td></tr>
+  <tr><td>show arp</td><td>ARP-Tabelle des Geräts</td><td>×</td><td>×</td></tr>
+  <tr><td>show ip dhcp binding</td><td>per DHCP vergebene Adressen</td><td>×</td><td></td></tr>
+  <tr><td>show controllers serial &lt;Nr&gt;</td><td>serielle Schnittstelle: Kabelende DCE oder DTE, liegt ein Takt an?</td><td>×</td><td></td></tr>
+  <tr><td>show mac address-table</td><td>welche MAC-Adresse der Switch an welchem Port gelernt hat</td><td></td><td>×</td></tr>
+  <tr><td>copy running-config startup-config</td><td>laufende Konfiguration als Startkonfiguration sichern</td><td>×</td><td>×</td></tr>
+  <tr><td>erase startup-config</td><td>Startkonfiguration löschen (zurück zum Werkszustand nach dem Neustart)</td><td>×</td><td>×</td></tr>
+  <tr><td>delete vlan.dat</td><td>VLAN-Datenbank löschen, die der Switch getrennt von der Konfiguration speichert</td><td></td><td>×</td></tr>
+  <tr><td>reload</td><td>neu starten. Fragt das Gerät, ob es speichern soll: beim Zurücksetzen <code>no</code>. Mit <code>yes</code> schreibt es die laufende Konfiguration vorher in die Startkonfiguration.</td><td>×</td><td>×</td></tr>
+</table>
+<h3><span class="modus">(config)#</span> Konfigurationsmodus</h3>
+<table>
+  <tr><th>Befehl</th><th>Bedeutung</th><th>Router</th><th>Switch</th></tr>
+  <tr><td>hostname &lt;Name&gt;</td><td>Gerätename</td><td>×</td><td>×</td></tr>
+  <tr><td>no ip domain-lookup</td><td>vertippte Befehle nicht als Namen nachschlagen (spart Wartezeit)</td><td>×</td><td>×</td></tr>
+  <tr><td>interface &lt;Schnittstelle&gt;</td><td>eine Schnittstelle konfigurieren (Switch-Verwaltung: <code>interface vlan 1</code>)</td><td>×</td><td>×</td></tr>
+  <tr><td>ip dhcp excluded-address &lt;von&gt; &lt;bis&gt;</td><td>Adressbereich, den der DHCP-Dienst nicht vergibt</td><td>×</td><td></td></tr>
+  <tr><td>ip dhcp pool &lt;Name&gt;</td><td>DHCP-Pool anlegen und in seinen Modus wechseln</td><td>×</td><td></td></tr>
+  <tr><td>ip route 0.0.0.0 0.0.0.0 &lt;nächster Router&gt;</td><td>Standardroute: alles, wofür der Router keine genauere Route hat, geht an diesen Router</td><td>×</td><td></td></tr>
+  <tr><td>ip default-gateway &lt;IP-Adresse&gt;</td><td>Standardgateway für die Verwaltungsadresse</td><td></td><td>×</td></tr>
+</table>
+<h3><span class="modus">(config-if)#</span> Schnittstelle</h3>
+<table>
+  <tr><th>Befehl</th><th>Bedeutung</th><th>Router</th><th>Switch</th></tr>
+  <tr><td>ip address &lt;IP-Adresse&gt; &lt;Subnetzmaske&gt;</td><td>IP-Adresse der Schnittstelle (am Switch nur bei <code>interface vlan 1</code>)</td><td>×</td><td>×</td></tr>
+  <tr><td>no shutdown</td><td>Schnittstelle einschalten (Router-Schnittstellen und <code>vlan 1</code> am Switch sind ab Werk aus)</td><td>×</td><td>×</td></tr>
+  <tr><td>clock rate 64000</td><td>nur seriell und nur auf der DCE-Seite: Takt vorgeben (Bit/s)</td><td>×</td><td></td></tr>
+</table>
+<h3><span class="modus">(dhcp-config)#</span> DHCP-Pool</h3>
+<table>
+  <tr><th>Befehl</th><th>Bedeutung</th><th>Router</th><th>Switch</th></tr>
+  <tr><td>network &lt;Netzadresse&gt; &lt;Subnetzmaske&gt;</td><td>Netz, aus dem der Pool Adressen vergibt</td><td>×</td><td></td></tr>
+  <tr><td>default-router &lt;IP-Adresse&gt;</td><td>Standardgateway, das die PCs bekommen</td><td>×</td><td></td></tr>
+</table>
+</div>
+
+<div class="bruch">
+<h2>Kalles Notizen <span class="t">für die Lehrkraft: ausschneiden, Stufe für Stufe ausgeben</span></h2>
+<div class="karten">
+
+  <div class="karte"><span class="stufe">Stufe 1</span><div class="kopf"><img src="../../spiel/img/kalle.jpg" alt=""><div><b>Phase 0 · Konsole bleibt leer</b><small>Kalles Notiz</small></div></div>
+    <p>Ein leeres Terminal heißt noch nichts. Drückt erst mal Enter. Dann prüft: Steckt das Kabel am Anschluss <b>CONSOLE</b> und nicht an einem Netzwerkport? Und welcher <b>COM-Port</b> gehört zu eurem USB-Kabel?</p></div>
+  <div class="karte"><span class="stufe">Stufe 2</span><div class="kopf"><img src="../../spiel/img/kalle.jpg" alt=""><div><b>Phase 0 · Konsole bleibt leer</b><small>Kalles Notiz</small></div></div>
+    <p>Geräte-Manager → <b>Anschlüsse (COM &amp; LPT)</b>: Dort steht der COM-Port des Kabels, z. B. COM4. In PuTTY: Verbindungsart <b>Serial</b>, diesen Port, Geschwindigkeit <b>9600</b>. Taucht kein Anschluss auf, fehlt der Treiber. Den holt Windows meist über Windows Update, im Labor ohne Internet also nicht → Lehrkraft.</p></div>
+
+  <div class="karte"><span class="stufe">Stufe 1</span><div class="kopf"><img src="../../spiel/img/kalle.jpg" alt=""><div><b>Phase 0 · Werkszustand</b><small>Kalles Notiz</small></div></div>
+    <p>Ein Cisco-Gerät startet mit der <b>Startkonfiguration</b>. Was müsst ihr also löschen, und wann wirkt das? Ein Switch hebt außerdem noch eine eigene Datei auf. Schaut in der Befehlsreferenz beim privilegierten Modus.</p></div>
+  <div class="karte"><span class="stufe">Stufe 2</span><div class="kopf"><img src="../../spiel/img/kalle.jpg" alt=""><div><b>Phase 0 · Werkszustand</b><small>Kalles Notiz</small></div></div>
+    <p><code>enable</code> → <code>erase startup-config</code> (bestätigen), am Switch zusätzlich <code>delete vlan.dat</code> (bestätigen) → <code>reload</code>. Frage nach dem Speichern: <code>no</code>. Nach dem Start: „Would you like to enter the initial configuration dialog?“ → <code>no</code>. Fragt das Gerät nach einem Passwort, das ihr nicht kennt → Lehrkraft.</p></div>
+
+  <div class="karte"><span class="stufe">Stufe 1</span><div class="kopf"><img src="../../spiel/img/kalle.jpg" alt=""><div><b>Phase 1 · Wie groß ist das Netz?</b><small>Kalles Notiz</small></div></div>
+    <p>Zählt nicht nur die Geräte. Zwei Adressen jedes Netzes darf kein Gerät bekommen, welche? Und Netze gibt es nur in Größen, die eine Zweierpotenz sind.</p></div>
+  <div class="karte"><span class="stufe">Stufe 2</span><div class="kopf"><img src="../../spiel/img/kalle.jpg" alt=""><div><b>Phase 1 · Wie groß ist das Netz?</b><small>Kalles Notiz</small></div></div>
+    <p>Geräte + Netzadresse + Broadcast = mindestens nötige Adressen. Sucht die nächste Zweierpotenz 2<sup>n</sup>. Dann ist das Präfix 32 − n. „Ganz hinten“ heißt: Der letzte Block dieser Größe endet bei .255, also beginnt er bei 256 − Blockgröße.</p></div>
+
+  <div class="karte"><span class="stufe">Stufe 1</span><div class="kopf"><img src="../../spiel/img/kalle.jpg" alt=""><div><b>Phase 2–4 · Schnittstelle tot</b><small>Kalles Notiz</small></div></div>
+    <p>IP-Adresse eingetragen, aber nichts geht? Schaut nach, was der Router über den <b>Status</b> seiner Schnittstellen sagt. Ein Router ist da anders als ein Switch.</p></div>
+  <div class="karte"><span class="stufe">Stufe 2</span><div class="kopf"><img src="../../spiel/img/kalle.jpg" alt=""><div><b>Phase 2–4 · Schnittstelle tot</b><small>Kalles Notiz</small></div></div>
+    <p><code>show ip interface brief</code>. „administratively down“ → in der Schnittstelle <code>no shutdown</code>. „down / down“ → L1: Kabel, Port, Gegenseite eingeschaltet? Zwischen zwei Routern braucht ältere Hardware ein <b>Cross-Over-Kabel</b>. Seriell „up / down“ → kein Takt: <code>clock rate 64000</code> auf der DCE-Seite.</p></div>
+
+  <div class="karte"><span class="stufe">Stufe 1</span><div class="kopf"><img src="../../spiel/img/kalle.jpg" alt=""><div><b>Phase 2 · DHCP-Pool</b><small>Kalles Notiz</small></div></div>
+    <p>Ein DHCP-Dienst muss wissen: aus welchem Netz, welches Gateway er mitteilt und was er <b>nicht</b> vergeben darf. Das sind drei Dinge, und eins davon steht <i>außerhalb</i> des Pools.</p></div>
+  <div class="karte"><span class="stufe">Stufe 2</span><div class="kopf"><img src="../../spiel/img/kalle.jpg" alt=""><div><b>Phase 2 · DHCP-Pool</b><small>Kalles Notiz</small></div></div>
+    <p>Im Konfigurationsmodus: <code>ip dhcp excluded-address 192.168.50.1 192.168.50.99</code>, dann <code>ip dhcp pool FO-LAN</code>, darin <code>network 192.168.50.0 255.255.255.0</code> und <code>default-router 192.168.50.1</code>.</p></div>
+
+  <div class="karte"><span class="stufe">Stufe 1</span><div class="kopf"><img src="../../spiel/img/kalle.jpg" alt=""><div><b>Phase 2 · Wireshark zeigt kein DHCP</b><small>Kalles Notiz</small></div></div>
+    <p>Lauscht Wireshark überhaupt an der Karte, die am Labornetz hängt? Und läuft der Mitschnitt schon, <b>bevor</b> der PC fragt? DHCP passiert nur in dem Moment, in dem eine Adresse angefordert wird.</p></div>
+  <div class="karte"><span class="stufe">Stufe 2</span><div class="kopf"><img src="../../spiel/img/kalle.jpg" alt=""><div><b>Phase 2 · Wireshark zeigt kein DHCP</b><small>Kalles Notiz</small></div></div>
+    <p>Karte wählen, die zum Labor gehört (oft „Ethernet 2“ o. ä. bei USB-Karten). Mitschnitt starten, Filter <code>dhcp</code>. Dann in der Eingabeaufforderung <code>ipconfig /release</code>, danach <code>ipconfig /renew</code>.</p></div>
+
+  <div class="karte"><span class="stufe">Stufe 1</span><div class="kopf"><img src="../../spiel/img/kalle.jpg" alt=""><div><b>Phase 2–4 · Ping geht nicht</b><small>Kalles Notiz</small></div></div>
+    <p>Arbeitet euch hoch wie im Fall: Steht <code>arp -a</code> die MAC-Adresse der Gegenseite? Dann sind L1 und L2 in Ordnung. Wer lässt den Ping dann noch nicht durch?</p></div>
+  <div class="karte"><span class="stufe">Stufe 2</span><div class="kopf"><img src="../../spiel/img/kalle.jpg" alt=""><div><b>Phase 2–4 · Ping geht nicht</b><small>Kalles Notiz</small></div></div>
+    <p>Die Firewall des Ziel-PCs. Die Echo-Regel gibt es <b>dreimal</b>: für Domäne, Privat und Öffentlich. Aktiv sein muss die für das Profil, das Windows dem Labornetz gegeben hat (Einstellungen → Netzwerk und Internet → Ethernet → Netzwerkprofiltyp).</p></div>
+
+  <div class="karte"><span class="stufe">Stufe 1</span><div class="kopf"><img src="../../spiel/img/kalle.jpg" alt=""><div><b>Phase 2–3 · Switch ohne Adresse</b><small>Kalles Notiz</small></div></div>
+    <p>Ein Switch hat an seinen Ports keine IP-Adressen. Seine Verwaltungsadresse sitzt an einer eigenen, virtuellen Schnittstelle. Steht im Laborhinweis. Und auch die muss eingeschaltet sein.</p></div>
+  <div class="karte"><span class="stufe">Stufe 2</span><div class="kopf"><img src="../../spiel/img/kalle.jpg" alt=""><div><b>Phase 2–3 · Switch ohne Adresse</b><small>Kalles Notiz</small></div></div>
+    <p><code>interface vlan 1</code> → <code>ip address &lt;IP&gt; &lt;Maske&gt;</code> → <code>no shutdown</code> → <code>exit</code>. Damit er auch aus dem anderen Netz antwortet: <code>ip default-gateway &lt;LAN-IP eures Routers&gt;</code> im Konfigurationsmodus.</p></div>
+
+  <div class="karte"><span class="stufe">Stufe 1</span><div class="kopf"><img src="../../spiel/img/kalle.jpg" alt=""><div><b>Phase 4 · Anderes Netz unerreichbar</b><small>Kalles Notiz</small></div></div>
+    <p>Ein Router kennt von sich aus nur die Netze, an denen er selbst hängt. Schaut in seine Routing-Tabelle: Steht das Zielnetz drin? Und denkt an den <b>Rückweg</b>. Die Antwort muss auch zurückfinden.</p></div>
+  <div class="karte"><span class="stufe">Stufe 2</span><div class="kopf"><img src="../../spiel/img/kalle.jpg" alt=""><div><b>Phase 4 · Anderes Netz unerreichbar</b><small>Kalles Notiz</small></div></div>
+    <p>„Zielnetz nicht erreichbar“ = euer eigener Router kennt das Ziel nicht. „Zeitüberschreitung“ = der Hinweg klappt, aber der Router der <b>Gegenseite</b> weiß nicht, wohin mit der Antwort. Standardroute mit <code>ip route 0.0.0.0 0.0.0.0 &lt;WAN-IP der Gegenseite&gt;</code>.</p></div>
+
+  <div class="karte"><span class="stufe">Stufe 1</span><div class="kopf"><img src="../../spiel/img/kalle.jpg" alt=""><div><b>Phase 5 · Tabelle ist leer</b><small>Kalles Notiz</small></div></div>
+    <p>Switches und Router lernen nur aus Verkehr, den sie gesehen haben, und vergessen nach einer Weile wieder. Was müsst ihr also kurz vorher tun?</p></div>
+  <div class="karte"><span class="stufe">Stufe 2</span><div class="kopf"><img src="../../spiel/img/kalle.jpg" alt=""><div><b>Phase 5 · Tabelle ist leer</b><small>Kalles Notiz</small></div></div>
+    <p>Einmal quer durchs Netz pingen, dann sofort den <code>show</code>-Befehl. Einträge in der MAC-Adresstabelle verschwinden nach etwa fünf Minuten ohne Verkehr.</p></div>
+  <div class="karte"><span class="stufe">Stufe 1</span><div class="kopf"><img src="../../spiel/img/kalle.jpg" alt=""><div><b>Phase 5 · Welche Schicht?</b><small>Kalles Notiz</small></div></div>
+    <p>Fragt bei jeder Tabelle: Womit arbeitet sie? Mit Ports und MAC-Adressen, mit IP-Adressen und Netzen oder mit Kabel und Signal?</p></div>
+  <div class="karte"><span class="stufe">Stufe 2</span><div class="kopf"><img src="../../spiel/img/kalle.jpg" alt=""><div><b>Phase 5 · Welche Schicht?</b><small>Kalles Notiz</small></div></div>
+    <p>Schlagt im Agenten-Handbuch des Spiels nach: MAC-Adresstabelle, Routing-Tabelle und DHCP stehen dort bei ihrer Schicht. Die ARP-Tabelle verbindet zwei Schichten. Entscheidet wie in Einsatz 2, wofür ihr Eintrag gebraucht wird.</p></div>
+
+  <div class="karte"><span class="stufe">Stufe 1</span><div class="kopf"><img src="../../spiel/img/kalle.jpg" alt=""><div><b>★ Zusatz · Fremdgerät</b><small>Kalles Notiz</small></div></div>
+    <p>Genau wie bei F&amp;O: Wer hat dem PC seine Adresse gegeben? Schaut in <code>ipconfig /all</code> nach dem DHCP-Server und in Wireshark in die Offers. Gibt es mehr als einen Absender?</p></div>
+  <div class="karte"><span class="stufe">Stufe 2</span><div class="kopf"><img src="../../spiel/img/kalle.jpg" alt=""><div><b>★ Zusatz · Fremdgerät</b><small>Kalles Notiz</small></div></div>
+    <p>IP des Fremdgeräts → <code>arp -a</code> liefert seine MAC-Adresse → <code>show mac address-table</code> auf SW-FO verrät den Port. Bonus: <code>tracert</code> von einem betroffenen PC zeigt einen Hop mehr.</p></div>
+
+</div>
+</div>
+
+</body>
+</html>

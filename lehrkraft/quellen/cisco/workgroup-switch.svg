@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape" version="1.1" width="50" height="26" viewBox="0 0 50 26">
+<path transform="matrix(.1,0,0,-.1,0,26)" d="M370.199 13.6563V129.605H13V13.6563H370.199"/>
+<path transform="matrix(.1,0,0,-.1,0,26)" d="M12.0664 129.02 156.355 245.965H489.645L369.867 129.02H12.0664"/>
+<path transform="matrix(.1,0,0,-.1,0,26)" stroke-width="4" stroke-linecap="butt" stroke-miterlimit="4" stroke-linejoin="miter" fill="none" stroke="#ffffff" d="M12.0664 129.02 156.355 245.965H489.645L369.867 129.02H12.0664Z"/>
+<path transform="matrix(.1,0,0,-.1,0,26)" d="M370 10 489.313 138.922 489.398 245.754 370 129.188V10"/>
+<path transform="matrix(.1,0,0,-.1,0,26)" stroke-width="4" stroke-linecap="butt" stroke-miterlimit="4" stroke-linejoin="miter" fill="none" stroke="#ffffff" d="M370 10 489.313 138.922 489.398 245.754 370 129.188V10Z"/>
+<path transform="matrix(.1,0,0,-.1,0,26)" d="M221.449 159.445 214.52 153.766H125.426L116.547 144.887 92.3945 155.406 140.949 169.289 132.355 159.445H221.449" fill="#ffffff"/>
+<path transform="matrix(.1,0,0,-.1,0,26)" d="M291.449 203.195 284.52 197.516H195.426L186.547 188.637 162.395 199.156 210.949 213.039 202.355 203.195H291.449" fill="#ffffff"/>
+<path transform="matrix(.1,0,0,-.1,0,26)" d="M237.16 174.906 244.09 180.586H333.184L342.063 189.469 366.215 178.949 317.66 165.063 326.254 174.906H237.16" fill="#ffffff"/>
+<path transform="matrix(.1,0,0,-.1,0,26)" d="M283.41 218.656 290.34 224.336H379.434L388.313 233.219 412.465 222.699 363.91 208.813 372.504 218.656H283.41" fill="#ffffff"/>
+</svg>

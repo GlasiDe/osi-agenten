@@ -5,12 +5,13 @@ const { pathToFileURL } = require('url');
 
 const ROOT = path.resolve(__dirname, '..');
 const SHOTS = path.join(__dirname, 'shots');
-// Chromium-Browser für Tests und PDFs: CHROME_PATH, sonst Edge/Chrome an den üblichen Orten (Windows, macOS, Linux).
+// Chromium-Browser für Tests und PDFs: CHROME_PATH, sonst Edge/Chrome/Vivaldi an den üblichen Orten (Windows, macOS, Linux).
 const EDGE = [
   process.env.CHROME_PATH,
   'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe',
   'C:/Program Files/Microsoft/Edge/Application/msedge.exe',
   'C:/Program Files/Google/Chrome/Application/chrome.exe',
+  process.env.LOCALAPPDATA && path.join(process.env.LOCALAPPDATA, 'Vivaldi/Application/vivaldi.exe'),
   '/Applications/Microsoft Edge.app/Contents/MacOS/Microsoft Edge',
   '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
   '/usr/bin/microsoft-edge', '/usr/bin/google-chrome', '/usr/bin/chromium', '/usr/bin/chromium-browser'

@@ -53,8 +53,12 @@ Ein Merkkasten im Auftrag eines Außeneinsatzes („Kalles Laborhinweis“), der
 _Avoid_: Fehlerhinweis, Disclaimer
 
 **Labornetz**:
-Ein echtes Netz aus Hardware (Switches, Router, Kabel), das die Lernenden im Klassenraum aufbauen. Bisher nicht im Spiel; der Begriff ist dafür reserviert.
+Ein echtes Netz aus Hardware (Switches, Router, Kabel), das die Lernenden im Klassenraum aufbauen. Bisher nur in Laboraufträgen, nicht im Spiel.
 _Avoid_: Simulationsnetz, Testnetz
+
+**Laborauftrag**:
+Differenzierungsmaterial außerhalb des Spiels für Lernende, die mit dem Spiel fertig sind: ein Auftrag an einem Labornetz mit Befehlsreferenz und gestuften Hilfen. Er setzt den Fall fort, gehört aber nicht zum Spiel und bringt keine Punkte.
+_Avoid_: Lab, Bonuslevel, Außeneinsatz, Einsatz
 
 ## Spielstand und Fortschritt
 
@@ -105,8 +109,12 @@ Das jederzeit aufrufbare Nachschlagewerk im Spiel. Es enthält die Schichten L1�
 _Avoid_: Hilfe, Glossar
 
 **Befehlsreferenz**:
-Teil des Agenten-Handbuchs mit den Befehlen, die im Spiel und in den Außeneinsätzen gebraucht werden, gegliedert nach Umgebung (Windows-Eingabeaufforderung, Cisco IOS) und bei Cisco nach Gerät und Modus (`Switch>`, `Switch#`, …).
+Teil des Agenten-Handbuchs mit den Befehlen, die im Spiel und in den Außeneinsätzen gebraucht werden, oder Anhang eines Laborauftrags mit dessen Befehlen. Beide sind gleich gegliedert nach Umgebung (Windows-Eingabeaufforderung, Cisco IOS) und bei Cisco nach Gerät und Modus (`Switch>`, `Switch#`, …).
 _Avoid_: Spickzettel
+
+**Kalles Notizen**:
+Die gestuften Hilfen eines Laborauftrags auf Papier, vom Denkanstoß bis zum konkreten Befehl. Sie kosten nichts.
+_Avoid_: Tipp, Lösung
 
 **Spickzettel**:
 Die Befehlsliste im simulierten Terminal eines einzelnen Schritts.

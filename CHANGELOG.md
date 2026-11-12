@@ -2,6 +2,11 @@
 
 Was sich für Lernende und Lehrkräfte ändert. Jede Version ist online sofort live und steht als ZIP unter den GitHub-Releases; der Abschnitt einer Version ist zugleich ihre Release-Notiz ([ADR 0006](docs/adr/0006-jeder-push-eine-version.md)). Ältere Spielstände laden weiter.
 
+## v1.3.0 – 12.11.2026
+
+### Für Lehrkräfte
+- **Laborauftrag „Außenlager“** zur Differenzierung für Lernende, die mit dem Spiel fertig sind (3–4 Unterrichtsstunden, echte Cisco-Router und -Switches): Die Agentinnen und Agenten bauen für F&O ein Außenlager mit eigener WAN-Verbindung auf (Ethernet oder seriell). Inhalt: IP-Adressen per DHCP und von Hand, Wireshark, Adressplan mit /26 und /30, Standardroute auf dem Router, Tabellen von Switch und Router. Dazu eine Lehrkraft-Fassung mit Musterlösung und Hilfekarten „Kalles Notizen“ zum Ausschneiden.
+
 ## v1.2.2 – 14.10.2026
 
 ### Für Lernende
